@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ControlCheck · Índice de Soberanía Digital</title>
+<title>ControlCheck · ISD‑MIND · Soberanía Digital y Cognitiva</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -72,7 +72,7 @@ h1 em { color: var(--acento); font-style: normal; }
 /* BLOQUES INFO */
 .bloques-info {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: var(--borde);
   border: 1px solid var(--borde);
@@ -523,6 +523,71 @@ canvas#radarCanvas { max-width: 100%; }
   .ejemplos-grid { grid-template-columns: 1fr; }
   .isd-numero { font-size: 60px; }
 }
+
+/* ESTILOS PARA MÓDULO ISD‑MIND */
+details#modulo-mind {
+  margin: 30px 0;
+  border: 1px solid var(--borde2);
+  border-radius: 8px;
+  background: var(--fondo2);
+}
+details#modulo-mind summary {
+  padding: 16px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--fondo3);
+  border-radius: 8px;
+  font-size: 1.2em;
+}
+details#modulo-mind summary::-webkit-details-marker { color: var(--acento); }
+.mind-pregunta {
+  border: 1px solid var(--borde);
+  margin: 16px;
+  padding: 16px;
+  background: var(--fondo3);
+}
+.mind-pregunta h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--acento);
+}
+.mind-select {
+  width: 100%;
+  background: var(--fondo2);
+  border: 1px solid var(--borde2);
+  color: var(--texto);
+  padding: 10px;
+  font-family: inherit;
+  margin-top: 8px;
+}
+.mind-radar-svg {
+  background: var(--fondo2);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px;
+  text-align: center;
+}
+.mind-btn {
+  background: var(--acento);
+  border: none;
+  color: var(--fondo);
+  padding: 10px 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  margin: 0 8px 16px 16px;
+}
+.mind-btn.reset {
+  background: var(--borde2);
+  color: var(--texto2);
+}
+.mind-resultado {
+  margin: 16px;
+  padding: 16px;
+  background: var(--fondo3);
+  border-left: 4px solid var(--acento);
+}
 </style>
 </head>
 <body>
@@ -531,25 +596,26 @@ canvas#radarCanvas { max-width: 100%; }
 <!-- HEADER -->
 <div class="header">
   <div class="badge">Argira Station · Portal 2030</div>
-  <h1>Control<em>Check</em></h1>
-  <div class="subtitulo">// Índice de Soberanía Digital (ISD) v3.0 + D9 Semáforo de Libertad Digital</div>
+  <h1>Control<em>Check</em> + ISD‑<em>MIND</em></h1>
+  <div class="subtitulo">// Índice de Soberanía Digital v3.2 + Protocolo de Soberanía Cognitiva v1.0</div>
   <p class="descripcion">
-    <strong>Protocolo de verificación objetiva</strong> para medir el nivel de control distribuido de cualquier sistema digital, plataforma o entidad. Incluye ahora <strong>D9 — Daño Psicológico y Arquitectura de Captura Conductual</strong>. Basado en fuentes verificables públicas.
+    <strong>Doble auditoría:</strong> evalúa la <strong>estructura de control</strong> (ISD Digital) y la <strong>autonomía cognitiva</strong> (ISD‑MIND) de cualquier plataforma, app o sistema. Basado en fuentes públicas y verificación directa.
   </p>
 </div>
 
 <div class="bloques-info">
-  <div class="bloque-info"><div class="num">8+D9</div><div class="lbl">Dimensiones</div></div>
-  <div class="bloque-info"><div class="num">3</div><div class="lbl">Bloques de peso</div></div>
-  <div class="bloque-info"><div class="num">ISD</div><div class="lbl">Índice verificable</div></div>
+  <div class="bloque-info"><div class="num">8+D9</div><div class="lbl">Dimensiones Digitales</div></div>
+  <div class="bloque-info"><div class="num">9D</div><div class="lbl">ISD‑MIND Cognitivo</div></div>
+  <div class="bloque-info"><div class="num">2</div><div class="lbl">Índices Integrados</div></div>
+  <div class="bloque-info"><div class="num">ISD</div><div class="lbl">Informe Unificado</div></div>
 </div>
 
-<!-- FORMULARIO -->
+<!-- FORMULARIO DIGITAL -->
 <div id="formulario">
   <div class="input-section">
     <label class="input-label" for="nomSistema">Sistema a analizar</label>
     <div class="input-wrap">
-      <input type="text" id="nomSistema" class="input-sistema" placeholder="ej: Spotify, Wikipedia, tu empresa..." maxlength="60">
+      <input type="text" id="nomSistema" class="input-sistema" placeholder="ej: Spotify, TikTok, Claude, Instagram..." maxlength="60">
     </div>
   </div>
 
@@ -561,14 +627,14 @@ canvas#radarCanvas { max-width: 100%; }
   </div>
 
   <button class="btn-analizar" id="btnAnalizar" onclick="calcularISD()" disabled>
-    Calcular ISD →
+    Calcular ISD Digital →
   </button>
 </div>
 
-<!-- RESULTADO -->
+<!-- RESULTADO DIGITAL + COGNITIVO -->
 <div id="resultado">
   <div class="res-header">
-    <div class="res-entidad">Informe ISD · ControlCheck v2.0</div>
+    <div class="res-entidad">Informe ISD · ControlCheck v3.2</div>
     <div class="res-nombre" id="resNombre">—</div>
   </div>
 
@@ -584,37 +650,53 @@ canvas#radarCanvas { max-width: 100%; }
   <div id="vetoPanel"></div>
 
   <div class="radar-section">
-    <div class="radar-titulo">// Hexágono de dependencia</div>
+    <div class="radar-titulo">// Hexágono de dependencia digital</div>
     <div class="radar-wrap">
       <canvas id="radarCanvas" width="320" height="320"></canvas>
     </div>
   </div>
 
   <div class="desglose">
-    <div class="radar-titulo">// Desglose por bloque</div>
+    <div class="radar-titulo">// Desglose por bloque (digital)</div>
     <div id="desgloseWrap"></div>
   </div>
 
-  <div class="ficha" id="fichaTecnica"></div>
+  <!-- MÓDULO ISD‑MIND DESPLEGABLE -->
+  <details id="modulo-mind" open>
+    <summary>🧠 ISD‑MIND · Auditoría Cognitiva del Usuario</summary>
+    <p style="margin: 16px; color: var(--texto2);">Evalúa cómo esta plataforma afecta tu autonomía cognitiva, emocional y atencional (9 dimensiones, escala 0-3).</p>
+    <div id="mindFormContainer"></div>
+    <div id="mindResultado" class="mind-resultado" style="display: none;">
+      <strong>ISD‑MIND:</strong> <span id="mindScore">—</span> — <span id="mindCat">—</span>
+    </div>
+    <div class="mind-radar-svg">
+      <svg id="mindRadar" viewBox="0 0 200 200" width="200" height="200">
+        <circle cx="100" cy="100" r="2" fill="#e6edf3"/>
+        <circle cx="100" cy="100" r="30" fill="none" stroke="#30363d" stroke-width="0.5"/>
+        <circle cx="100" cy="100" r="60" fill="none" stroke="#30363d" stroke-width="0.5"/>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#30363d" stroke-width="0.5"/>
+        <line x1="100" y1="10" x2="100" y2="190" stroke="#30363d" stroke-width="0.5"/>
+        <line x1="10" y1="100" x2="190" y2="100" stroke="#30363d" stroke-width="0.5"/>
+        <line x1="30" y1="30" x2="170" y2="170" stroke="#30363d" stroke-width="0.5"/>
+        <line x1="170" y1="30" x2="30" y2="170" stroke="#30363d" stroke-width="0.5"/>
+        <polygon id="mindPolygon" points="100,25 155,80 145,145 100,175 55,145 45,80" fill="rgba(88,166,255,0.25)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="100" y="8" fill="#8b949e" font-size="8" text-anchor="middle">D₁ Ritmo</text>
+        <text x="180" y="103" fill="#8b949e" font-size="8" text-anchor="end">D₂ Dependencia</text>
+        <text x="165" y="180" fill="#8b949e" font-size="8" text-anchor="end">D₃ Contexto</text>
+        <text x="100" y="192" fill="#8b949e" font-size="8" text-anchor="middle">D₄ Persuasivo</text>
+        <text x="35" y="180" fill="#8b949e" font-size="8" text-anchor="start">D₅ Autonomía</text>
+        <text x="20" y="103" fill="#8b949e" font-size="8" text-anchor="start">D₈ Riesgo</text>
+      </svg>
+      <p style="font-size: 0.8rem; color: var(--texto2); margin-top: 8px;">Radar ISD‑MIND (se actualiza con tus respuestas)</p>
+    </div>
+  </details>
 
-  <div class="veredicto" id="veredictoPanel"></div>
-
-  <div class="alternativas" id="alternativasPanel">
-    <div class="alt-titulo">// Alternativas con mayor soberanía</div>
-    <div id="altLista"></div>
-  </div>
-
-  <!-- D9 SEMÁFORO DE LIBERTAD DIGITAL -->
+  <!-- Panel D9 original de ControlCheck (daño psicológico) -->
   <div id="d9Panel" style="display:none; margin:40px 0; border:1px solid #21262d; background:#0d1117; padding:24px;">
     <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#d29922; margin-bottom:16px;">
       // D9 — Semáforo de Libertad Digital · Daño Psicológico y Captura Conductual
     </div>
-    <div style="font-size:13px; color:#8b949e; margin-bottom:20px; font-family:'IBM Plex Sans',sans-serif;">
-      Dimensión experimental basada en literatura académica verificable. Evalúa patrones de diseño persuasivo, conocimiento interno del daño y arquitectura de control conductual.
-    </div>
-
     <div id="d9Indicadores"></div>
-
     <div style="margin-top:24px; padding:16px; border:1px solid #21262d; background:#080b0f;">
       <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#8b949e; margin-bottom:8px;">// Puntuación D9</div>
       <div style="display:flex; align-items:center; gap:16px;">
@@ -622,23 +704,21 @@ canvas#radarCanvas { max-width: 100%; }
         <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:#8b949e;">/3.0</span>
         <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border:1px solid;" id="d9Estado">—</span>
       </div>
-      <div id="d9Omega" style="font-size:13px; color:#8b949e; margin-top:8px; font-family:'IBM Plex Sans',sans-serif;"></div>
-    </div>
-
-    <div style="margin-top:16px; font-size:11px; color:#555; font-family:'IBM Plex Mono',monospace;">
-      Fuentes: Center for Humane Technology · Harris (2016) · Facebook Papers · JustDeleteMe · Data Transfer Initiative · ToS;DR
+      <div id="d9Omega" style="font-size:13px; color:#8b949e; margin-top:8px;"></div>
     </div>
   </div>
-
-  <!-- BTN ACTIVAR D9 -->
   <div id="btnD9Wrap" style="margin:24px 0; display:none;">
     <button class="btn-export" onclick="activarD9()" style="width:100%; padding:16px; border-color:#d29922; color:#d29922;">
       ⚠ Añadir análisis D9 — Daño Psicológico y Captura Conductual
     </button>
   </div>
 
+  <div class="ficha" id="fichaTecnica"></div>
+  <div class="veredicto" id="veredictoPanel"></div>
+  <div class="alternativas" id="alternativasPanel"><div class="alt-titulo">// Alternativas con mayor soberanía</div><div id="altLista"></div></div>
+
   <div class="export-section">
-    <div class="radar-titulo" style="margin-bottom:12px;">// Exportar informe</div>
+    <div class="radar-titulo">// Exportar informe unificado</div>
     <button class="btn-export" onclick="exportarJSON()">↓ JSON</button>
     <button class="btn-export" onclick="exportarMD()">↓ Markdown</button>
   </div>
@@ -651,789 +731,271 @@ canvas#radarCanvas { max-width: 100%; }
   <button class="btn-reiniciar" onclick="reiniciar()">← Nuevo análisis</button>
 </div>
 
-<div class="footer" style="padding: 40px 20px; border-top: 1px solid #21262d; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8b949e; text-align: center; line-height: 1.8;">
-  
-  <div class="frase" style="margin-bottom: 15px; font-style: italic; color: #c9d1d9;">
-    "El amor no tiene formato." — Jose Ranero García, 2026
-  </div>
-
-  <div style="margin-bottom: 10px;">
-    <strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.19323538" target="_blank" style="color: #58a6ff; text-decoration: underline;">10.5281/zenodo.19323538</a> | 
-    <strong>ORCID:</strong> <a href="https://orcid.org/0009-0009-3168-6379" target="_blank" style="color: #58a6ff; text-decoration: underline;">0009-0009-3168-6379</a>
-  </div>
-
-  <div style="margin-bottom: 15px;">
-    This work is licensed under 
-    <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" style="color: #8b949e; text-decoration: underline;">
-      CC BY-SA 4.0
-    </a>
-  </div>
-
-  <div style="font-size: 10px; opacity: 0.9; letter-spacing: 1px;">
-    ControlCheck v3.0 · <a href="https://argira.eus" target="_blank" style="color: #58a6ff; text-decoration: underline; font-weight: bold;">argira.eus</a> · AGPLv3 · 📡 528Hz
-  </div>
+<div class="footer">
+  <div class="frase">"El amor no tiene formato." — Jose Ranero García, 2026</div>
+  <div><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.19323538" target="_blank">10.5281/zenodo.19323538</a> | <strong>ORCID:</strong> <a href="https://orcid.org/0009-0009-3168-6379" target="_blank">0009-0009-3168-6379</a></div>
+  <div>ControlCheck v3.2 · ISD‑MIND v1.0 · <a href="https://argira.eus" target="_blank">argira.eus</a> · AGPLv3</div>
 </div>
-
-
-</div>
-
 
 </div><!-- /wrap -->
 
 <script>
-// ============================================================
-// DIMENSIONES — 8 verificables con fuente pública
-// ============================================================
+// ==================== MÓDULO DIGITAL (ControlCheck original) ====================
 const DIM = [
-  // BLOQUE CRÍTICO (40%)
-  {
-    id:'terminacion', bloque:'critico', num:'D2',
-    texto:'¿Puede el servicio terminar tu acceso de forma unilateral y sin causa justificada?',
-    fuente:'Términos de Servicio → Sección "Terminación" o "Suspension"',
-    busca:'"{sistema}" terms of service termination clause',
-    opciones:[
-      {txt:'Sí, sin aviso previo ni justificación requerida', pts:1},
-      {txt:'Sí, pero con aviso mínimo (24-30 días) o proceso de apelación', pts:2},
-      {txt:'No, requiere causa documentada y proceso formal', pts:3},
-    ]
-  },
-  {
-    id:'portabilidad', bloque:'critico', num:'D3',
-    texto:'¿Puedes exportar todos tus datos en formato abierto e interoperable?',
-    fuente:'Política de privacidad → "Portabilidad de datos" · GDPR Art. 20',
-    busca:'"{sistema}" data export portability GDPR',
-    opciones:[
-      {txt:'No existe exportación o el formato es propietario no estándar', pts:1},
-      {txt:'Exportación parcial o en formato poco interoperable', pts:2},
-      {txt:'Exportación completa en formato abierto (JSON, CSV, XML estándar)', pts:3},
-    ]
-  },
-  // BLOQUE ESTRUCTURAL (30%)
-  {
-    id:'estructura', bloque:'estructural', num:'D1',
-    texto:'¿Cuál es la estructura legal de propiedad de la entidad?',
-    fuente:'Registro Mercantil · Wikipedia · Crunchbase · Estatutos públicos',
-    busca:'"{sistema}" legal structure ownership cooperative',
-    opciones:[
-      {txt:'Sociedad Anónima o LLC con accionistas privados (lucro)', pts:1},
-      {txt:'Fundación, B-Corp o empresa mixta con compromisos públicos', pts:2},
-      {txt:'Cooperativa, bien común, entidad sin ánimo de lucro con voto de miembros', pts:3},
-    ]
-  },
-  {
-    id:'beneficios', bloque:'estructural', num:'D5',
-    texto:'¿Cómo se distribuyen los beneficios económicos generados?',
-    fuente:'Informe anual · Filing SEC/CNMV · Estructura accionarial pública',
-    busca:'"{sistema}" annual report profit distribution shareholders',
-    opciones:[
-      {txt:'Se concentran en accionistas o propietarios (dividendos privados)', pts:1},
-      {txt:'Reinversión parcial, con retorno moderado a comunidad o trabajadores', pts:2},
-      {txt:'Reparto entre todos los participantes o reinversión total en misión', pts:3},
-    ]
-  },
-  {
-    id:'jurisdiccion', bloque:'estructural', num:'D8',
-    texto:'¿En qué jurisdicción opera legalmente el servicio?',
-    fuente:'Privacy Policy → "Governing Law" · Sede fiscal registrada',
-    busca:'"{sistema}" governing law jurisdiction privacy policy',
-    opciones:[
-      {txt:'Paraíso fiscal, jurisdicción opaca o sin tratados de protección de datos', pts:1},
-      {txt:'EE.UU. u otra con tratados parciales (sujeta a Cloud Act u equivalente)', pts:2},
-      {txt:'UE / Espacio Económico Europeo con GDPR aplicable y derecho al olvido', pts:3},
-    ]
-  },
-  // BLOQUE TRANSPARENCIA (30%)
-  {
-    id:'gobierno', bloque:'transparencia', num:'D4',
-    texto:'¿Cómo se toman las decisiones sobre el servicio?',
-    fuente:'Estatutos · Informes de gobernanza · Estructura del consejo directivo',
-    busca:'"{sistema}" governance board structure decision making',
-    opciones:[
-      {txt:'Decisión unilateral del CEO/fundador o accionistas mayoritarios', pts:1},
-      {txt:'Junta directiva con cierta rendición de cuentas pública', pts:2},
-      {txt:'Voto real de usuarios o miembros en decisiones clave', pts:3},
-    ]
-  },
-  {
-    id:'codigo', bloque:'transparencia', num:'D6',
-    texto:'¿Es el código fuente auditable externamente?',
-    fuente:'GitHub · GitLab · Open Source Initiative · Licencia pública',
-    busca:'"{sistema}" open source github license',
-    opciones:[
-      {txt:'Código 100% propietario, no auditable', pts:1},
-      {txt:'Parcialmente abierto o con auditorías externas periódicas', pts:2},
-      {txt:'100% open source con licencia libre (MIT, GPL, AGPL, Apache)', pts:3},
-    ]
-  },
-  {
-    id:'alternativas', bloque:'transparencia', num:'D7',
-    texto:'¿Existen alternativas reales con interoperabilidad de datos?',
-    fuente:'Directorios open source · AlternativeTo · F-Droid · investigación de mercado',
-    busca:'"{sistema}" open source alternatives interoperable',
-    opciones:[
-      {txt:'No hay alternativas viables o el formato es incompatible con todas', pts:1},
-      {txt:'Hay alternativas pero la migración es costosa o con pérdida de datos', pts:2},
-      {txt:'Múltiples alternativas con estándar de importación/exportación común', pts:3},
-    ]
-  }
+  { id:'terminacion', bloque:'critico', num:'D2', texto:'¿Puede el servicio terminar tu acceso de forma unilateral y sin causa justificada?', fuente:'Términos de Servicio → Sección "Terminación" o "Suspension"', busca:'"{sistema}" terms of service termination clause', opciones:[{txt:'Sí, sin aviso previo ni justificación requerida', pts:1},{txt:'Sí, pero con aviso mínimo (24-30 días) o proceso de apelación', pts:2},{txt:'No, requiere causa documentada y proceso formal', pts:3}] },
+  { id:'portabilidad', bloque:'critico', num:'D3', texto:'¿Puedes exportar todos tus datos en formato abierto e interoperable?', fuente:'Política de privacidad → "Portabilidad de datos" · GDPR Art. 20', busca:'"{sistema}" data export portability GDPR', opciones:[{txt:'No existe exportación o el formato es propietario no estándar', pts:1},{txt:'Exportación parcial o en formato poco interoperable', pts:2},{txt:'Exportación completa en formato abierto (JSON, CSV, XML estándar)', pts:3}] },
+  { id:'estructura', bloque:'estructural', num:'D1', texto:'¿Cuál es la estructura legal de propiedad de la entidad?', fuente:'Registro Mercantil · Wikipedia · Crunchbase · Estatutos públicos', busca:'"{sistema}" legal structure ownership cooperative', opciones:[{txt:'Sociedad Anónima o LLC con accionistas privados (lucro)', pts:1},{txt:'Fundación, B-Corp o empresa mixta con compromisos públicos', pts:2},{txt:'Cooperativa, bien común, entidad sin ánimo de lucro con voto de miembros', pts:3}] },
+  { id:'beneficios', bloque:'estructural', num:'D5', texto:'¿Cómo se distribuyen los beneficios económicos generados?', fuente:'Informe anual · Filing SEC/CNMV · Estructura accionarial pública', busca:'"{sistema}" annual report profit distribution shareholders', opciones:[{txt:'Se concentran en accionistas o propietarios (dividendos privados)', pts:1},{txt:'Reinversión parcial, con retorno moderado a comunidad o trabajadores', pts:2},{txt:'Reparto entre todos los participantes o reinversión total en misión', pts:3}] },
+  { id:'jurisdiccion', bloque:'estructural', num:'D8', texto:'¿En qué jurisdicción opera legalmente el servicio?', fuente:'Privacy Policy → "Governing Law" · Sede fiscal registrada', busca:'"{sistema}" governing law jurisdiction privacy policy', opciones:[{txt:'Paraíso fiscal, jurisdicción opaca o sin tratados de protección de datos', pts:1},{txt:'EE.UU. u otra con tratados parciales (sujeta a Cloud Act u equivalente)', pts:2},{txt:'UE / Espacio Económico Europeo con GDPR aplicable y derecho al olvido', pts:3}] },
+  { id:'gobierno', bloque:'transparencia', num:'D4', texto:'¿Cómo se toman las decisiones sobre el servicio?', fuente:'Estatutos · Informes de gobernanza · Estructura del consejo directivo', busca:'"{sistema}" governance board structure decision making', opciones:[{txt:'Decisión unilateral del CEO/fundador o accionistas mayoritarios', pts:1},{txt:'Junta directiva con cierta rendición de cuentas pública', pts:2},{txt:'Voto real de usuarios o miembros en decisiones clave', pts:3}] },
+  { id:'codigo', bloque:'transparencia', num:'D6', texto:'¿Es el código fuente auditable externamente?', fuente:'GitHub · GitLab · Open Source Initiative · Licencia pública', busca:'"{sistema}" open source github license', opciones:[{txt:'Código 100% propietario, no auditable', pts:1},{txt:'Parcialmente abierto o con auditorías externas periódicas', pts:2},{txt:'100% open source con licencia libre (MIT, GPL, AGPL, Apache)', pts:3}] },
+  { id:'alternativas', bloque:'transparencia', num:'D7', texto:'¿Existen alternativas reales con interoperabilidad de datos?', fuente:'Directorios open source · AlternativeTo · F-Droid · investigación de mercado', busca:'"{sistema}" open source alternatives interoperable', opciones:[{txt:'No hay alternativas viables o el formato es incompatible con todas', pts:1},{txt:'Hay alternativas pero la migración es costosa o con pérdida de datos', pts:2},{txt:'Múltiples alternativas con estándar de importación/exportación común', pts:3}] }
 ];
-
-// Pesos por bloque
 const PESOS = { critico: 0.40, estructural: 0.30, transparencia: 0.30 };
-const DIMS_BLOQUE = {
-  critico: ['terminacion','portabilidad'],
-  estructural: ['estructura','beneficios','jurisdiccion'],
-  transparencia: ['gobierno','codigo','alternativas']
-};
-
-// Alternativas sugeridas por puntuación baja
-const ALTERNATIVAS_DB = {
-  spotify: ['Bandcamp (artistas reciben más)', 'Funkwhale (federado)', 'Radio Paradise (libre)'],
-  twitter: ['Mastodon (federado, open source)', 'Pixelfed', 'Misskey'],
-  whatsapp: ['Signal (open source, sin datos)', 'Matrix/Element (federado)', 'Briar'],
-  amazon: ['Cooperativa local', 'Mercado libre P2P', 'OpenFoodFacts'],
-  default: ['Busca en alternativeto.net', 'Explora F-Droid para apps móvil', 'Consulta switching.software']
-};
-
-// Ejemplos precargados
+const DIMS_BLOQUE = { critico: ['terminacion','portabilidad'], estructural: ['estructura','beneficios','jurisdiccion'], transparencia: ['gobierno','codigo','alternativas'] };
+const ALTERNATIVAS_DB = { spotify: ['Bandcamp', 'Funkwhale'], twitter: ['Mastodon', 'Pixelfed'], whatsapp: ['Signal', 'Matrix'], amazon: ['Cooperativas locales'], default: ['alternativeto.net', 'switching.software'] };
 const EJEMPLOS = [
   { nombre:'Spotify', tipo:'Streaming musical', pts:{terminacion:1,portabilidad:1,estructura:1,beneficios:1,jurisdiccion:2,gobierno:1,codigo:1,alternativas:2} },
-  { nombre:'Wikipedia', tipo:'Enciclopedia libre', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} },
-  { nombre:'Signal', tipo:'Mensajería segura', pts:{terminacion:2,portabilidad:2,estructura:3,beneficios:3,jurisdiccion:2,gobierno:2,codigo:3,alternativas:2} },
+  { nombre:'Wikipedia', tipo:'Enciclopedia', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} },
+  { nombre:'Signal', tipo:'Mensajería', pts:{terminacion:2,portabilidad:2,estructura:3,beneficios:3,jurisdiccion:2,gobierno:2,codigo:3,alternativas:2} },
   { nombre:'Twitter/X', tipo:'Red social', pts:{terminacion:1,portabilidad:1,estructura:1,beneficios:1,jurisdiccion:2,gobierno:1,codigo:1,alternativas:1} },
   { nombre:'Som Energia', tipo:'Cooperativa energía', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:3,codigo:2,alternativas:2} },
-  { nombre:'Linux', tipo:'Sistema operativo', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} },
+  { nombre:'Linux', tipo:'SO', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} }
 ];
-
 let respuestas = {};
 let nombreActual = '';
 let isdActual = 0;
 
-// ============================================================
-// RENDER PREGUNTAS
-// ============================================================
 function renderPreguntas() {
   const wrap = document.getElementById('preguntasWrap');
-  const bloques = [
-    { id:'critico', label:'Bloque Crítico — Capacidad de Salida', peso:'40%' },
-    { id:'estructural', label:'Bloque Estructural — Naturaleza del Dueño', peso:'30%' },
-    { id:'transparencia', label:'Bloque Transparencia — Auditoría', peso:'30%' }
-  ];
-
-  wrap.innerHTML = bloques.map(b => {
-    const dims = DIMS_BLOQUE[b.id].map(did => DIM.find(d => d.id === did));
-    return `
-      <div class="bloque-${b.id}">
-        <div class="bloque-titulo">
-          ${b.label}
-          <span class="peso">Peso: ${b.peso}</span>
-        </div>
-        ${dims.map(d => renderPregunta(d)).join('')}
-      </div>
-    `;
-  }).join('');
+  const bloques = [{ id:'critico', label:'Bloque Crítico — Capacidad de Salida', peso:'40%' },{ id:'estructural', label:'Bloque Estructural — Naturaleza del Dueño', peso:'30%' },{ id:'transparencia', label:'Bloque Transparencia — Auditoría', peso:'30%' }];
+  wrap.innerHTML = bloques.map(b => `<div class="bloque-${b.id}"><div class="bloque-titulo">${b.label}<span class="peso">Peso: ${b.peso}</span></div>${DIMS_BLOQUE[b.id].map(id => renderPregunta(DIM.find(d=>d.id===id))).join('')}</div>`).join('');
 }
-
 function renderPregunta(d) {
   const nombre = document.getElementById('nomSistema').value.trim() || 'este sistema';
   const busca = d.busca.replace('{sistema}', nombre);
   const urlBusca = `https://www.google.com/search?q=${encodeURIComponent(busca)}`;
-  return `
-    <div class="pregunta" id="preg-${d.id}">
-      <div class="preg-header">
-        <span class="preg-num">${d.num}</span>
-        <div class="preg-texto">${d.texto}</div>
-      </div>
-      <div class="preg-fuente">
-        📁 ${d.fuente}
-        <a href="${urlBusca}" target="_blank" class="btn-buscar">🔍 Buscar</a>
-      </div>
-      <div class="opciones">
-        ${d.opciones.map((o,i) => `
-          <label class="opcion" id="op-${d.id}-${i}" onclick="seleccionar('${d.id}',${o.pts},${i},${d.opciones.length})">
-            <input type="radio" name="${d.id}">
-            <span class="opcion-pts pts-${o.pts}">${o.pts}p</span>
-            <span>${o.txt}</span>
-          </label>
-        `).join('')}
-        <label class="opcion" id="op-${d.id}-ns" onclick="seleccionarNS('${d.id}',${d.opciones.length})">
-          <input type="radio" name="${d.id}">
-          <span class="opcion-pts pts-ns">?</span>
-          <span class="desglose-ns">Sin datos suficientes para verificar</span>
-        </label>
-      </div>
-    </div>
-  `;
+  return `<div class="pregunta" id="preg-${d.id}"><div class="preg-header"><span class="preg-num">${d.num}</span><div class="preg-texto">${d.texto}</div></div><div class="preg-fuente">📁 ${d.fuente}<a href="${urlBusca}" target="_blank" class="btn-buscar">🔍 Buscar</a></div><div class="opciones">${d.opciones.map((o,i)=>`<label class="opcion" id="op-${d.id}-${i}" onclick="seleccionar('${d.id}',${o.pts},${i},${d.opciones.length})"><input type="radio" name="${d.id}"><span class="opcion-pts pts-${o.pts}">${o.pts}p</span><span>${o.txt}</span></label>`).join('')}<label class="opcion" id="op-${d.id}-ns" onclick="seleccionarNS('${d.id}',${d.opciones.length})"><input type="radio" name="${d.id}"><span class="opcion-pts pts-ns">?</span><span>Sin datos suficientes para verificar</span></label></div></div>`;
 }
-
 function actualizarBuscadores() {
   const nombre = document.getElementById('nomSistema').value.trim() || 'este sistema';
-  DIM.forEach(d => {
-    const busca = d.busca.replace('{sistema}', nombre);
-    const url = `https://www.google.com/search?q=${encodeURIComponent(busca)}`;
-    const links = document.querySelectorAll(`#preg-${d.id} .btn-buscar`);
-    links.forEach(l => l.href = url);
-  });
+  DIM.forEach(d => { const busca = d.busca.replace('{sistema}', nombre); const url = `https://www.google.com/search?q=${encodeURIComponent(busca)}`; document.querySelectorAll(`#preg-${d.id} .btn-buscar`).forEach(l=>l.href=url); });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  renderPreguntas();
-  renderEjemplos();
-  document.getElementById('nomSistema').addEventListener('input', actualizarBuscadores);
-});
-
 function seleccionar(id, pts, idx, total) {
   respuestas[id] = pts;
-  for (let j = 0; j < total; j++) {
-    const el = document.getElementById(`op-${id}-${j}`);
-    if (el) el.className = 'opcion' + (j === idx ? ` sel sel-${pts}` : '');
-  }
-  const ns = document.getElementById(`op-${id}-ns`);
-  if (ns) ns.className = 'opcion';
+  for (let j=0;j<total;j++) { let el=document.getElementById(`op-${id}-${j}`); if(el) el.className='opcion'+(j===idx?` sel sel-${pts}`:''); }
+  let ns=document.getElementById(`op-${id}-ns`); if(ns) ns.className='opcion';
   actualizarProgreso();
 }
-
 function seleccionarNS(id, total) {
-  respuestas[id] = null;
-  for (let j = 0; j < total; j++) {
-    const el = document.getElementById(`op-${id}-${j}`);
-    if (el) el.className = 'opcion';
-  }
-  const ns = document.getElementById(`op-${id}-ns`);
-  if (ns) ns.className = 'opcion sel';
+  respuestas[id]=null;
+  for(let j=0;j<total;j++){let el=document.getElementById(`op-${id}-${j}`);if(el)el.className='opcion';}
+  let ns=document.getElementById(`op-${id}-ns`);if(ns)ns.className='opcion sel';
   actualizarProgreso();
 }
-
 function actualizarProgreso() {
-  const respondidas = Object.keys(respuestas).length;
-  const pct = (respondidas / 8) * 100;
-  document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('progTxt').textContent = `${respondidas} / 8 dimensiones`;
-  document.getElementById('btnAnalizar').disabled = respondidas < 3;
+  let respondidas=Object.keys(respuestas).length;
+  let pct=(respondidas/8)*100;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=`${respondidas} / 8 dimensiones`;
+  document.getElementById('btnAnalizar').disabled=respondidas<3;
 }
-
-// ============================================================
-// CÁLCULO ISD
-// ============================================================
 function calcularISD() {
-  nombreActual = document.getElementById('nomSistema').value.trim() || 'Sistema analizado';
-
-  // Calcular ISD ponderado
-  let sumaPonderada = 0;
-  let pesoTotal = 0;
-  let vetoActivo = false;
-
-  Object.entries(DIMS_BLOQUE).forEach(([bloque, ids]) => {
-    const peso = PESOS[bloque];
-    const respondidas = ids.filter(id => respuestas[id] != null);
-    if (respondidas.length === 0) return;
-    const mediaBloque = respondidas.reduce((s, id) => s + respuestas[id], 0) / respondidas.length;
-    sumaPonderada += mediaBloque * peso;
-    pesoTotal += peso;
+  nombreActual=document.getElementById('nomSistema').value.trim()||'Sistema analizado';
+  let sumaPonderada=0, pesoTotal=0, vetoActivo=false;
+  Object.entries(DIMS_BLOQUE).forEach(([bloque,ids])=>{
+    let peso=PESOS[bloque];
+    let respondidas=ids.filter(id=>respuestas[id]!=null);
+    if(respondidas.length===0)return;
+    let mediaBloque=respondidas.reduce((s,id)=>s+respuestas[id],0)/respondidas.length;
+    sumaPonderada+=mediaBloque*peso;
+    pesoTotal+=peso;
   });
-
-  let isd = pesoTotal > 0 ? sumaPonderada / pesoTotal : 0;
-
-  // Disyuntor de emergencia: si D2 o D3 = 1, reducir 20%
-  if (respuestas['terminacion'] === 1 || respuestas['portabilidad'] === 1) {
-    isd *= 0.8;
-    vetoActivo = true;
-  }
-
-  isd = Math.max(1, Math.min(3, isd));
-  isdActual = isd;
-
+  let isd=pesoTotal>0?sumaPonderada/pesoTotal:0;
+  if(respuestas['terminacion']===1||respuestas['portabilidad']===1){isd*=0.8; vetoActivo=true;}
+  isd=Math.max(1,Math.min(3,isd)); isdActual=isd;
   mostrarResultado(isd, vetoActivo);
 }
-
-function getColor(isd) {
-  if (isd < 1.8) return '#f85149';
-  if (isd < 2.3) return '#d29922';
-  return '#3fb950';
+function getColor(isd){if(isd<1.8)return '#f85149';if(isd<2.3)return '#d29922';return '#3fb950';}
+function getEstado(isd){if(isd<1.8)return 'CAPTURA · LOCK-IN DETECTADO';if(isd<2.3)return 'RIESGO MODERADO';return 'SIMBIÓTICO · GRIFO DISTRIBUIDO';}
+function getVeredicto(nombre,isd){if(isd<1.8)return `<strong>${nombre}</strong> presenta un <strong>Protocolo de Retención Activo</strong>. La entidad puede cesar el servicio unilateralmente, los datos no son portables en formato abierto y/o el control está concentrado en actores privados sin rendición de cuentas.`;if(isd<2.3)return `<strong>${nombre}</strong> muestra una <strong>Relación de Riesgo Moderado</strong>. Existen barreras de salida reales pero con fricciones.`;return `<strong>${nombre}</strong> presenta un modelo de <strong>Grifo Distribuido</strong>. El control es genuinamente compartido, los datos son portables y existe gobernanza colectiva.`;}
+function mostrarResultado(isd,vetoActivo){
+  let color=getColor(isd);
+  document.getElementById('resNombre').textContent=nombreActual;
+  document.getElementById('isdNum').textContent=isd.toFixed(2); document.getElementById('isdNum').style.color=color;
+  document.getElementById('isdEstado').textContent=getEstado(isd); document.getElementById('isdEstado').style.color=color; document.getElementById('isdEstado').style.borderColor=color;
+  document.getElementById('vetoPanel').innerHTML=vetoActivo?`<div class="veto-panel"><div class="veto-titulo">⚠ Disyuntor de Emergencia Activado</div><div class="veto-texto">Se ha detectado que la terminación unilateral (D2) o la falta de portabilidad (D3) puntúan en nivel crítico. El ISD final ha sido reducido un 20% automáticamente.</div></div>`:'';
+  dibujarRadar(); renderDesglose(color); renderFicha(isd,color);
+  document.getElementById('veredictoPanel').innerHTML=`<strong style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${color};display:block;margin-bottom:8px;">// Veredicto técnico</strong>${getVeredicto(nombreActual,isd)}`;
+  if(isd<1.8){let panel=document.getElementById('alternativasPanel');panel.style.display='block';let key=nombreActual.toLowerCase().split(' ')[0];let alts=ALTERNATIVAS_DB[key]||ALTERNATIVAS_DB.default;document.getElementById('altLista').innerHTML=alts.map(a=>`<div class="alt-item">→ ${a}</div>`).join('');}
+  document.getElementById('btnD9Wrap').style.display='block';
+  document.getElementById('formulario').style.display='none'; document.getElementById('resultado').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function getEstado(isd) {
-  if (isd < 1.8) return 'CAPTURA · LOCK-IN DETECTADO';
-  if (isd < 2.3) return 'RIESGO MODERADO';
-  return 'SIMBIÓTICO · GRIFO DISTRIBUIDO';
+function dibujarRadar(){
+  let canvas=document.getElementById('radarCanvas'),ctx=canvas.getContext('2d'),cx=160,cy=160,R=120,labels=['D2 Term.','D3 Port.','D1 Estr.','D5 Benef.','D8 Juris.','D4 Gob.','D6 Cód.','D7 Alt.'],ids=['terminacion','portabilidad','estructura','beneficios','jurisdiccion','gobierno','codigo','alternativas'],N=8;
+  ctx.clearRect(0,0,320,320);
+  for(let n=1;n<=3;n++){ctx.beginPath();for(let i=0;i<N;i++){let ang=(2*Math.PI*i/N)-Math.PI/2,r=R*(n/3),x=cx+r*Math.cos(ang),y=cy+r*Math.sin(ang);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.closePath();ctx.strokeStyle=n===3?'#21262d':'#1a1f26';ctx.stroke();}
+  for(let i=0;i<N;i++){let ang=(2*Math.PI*i/N)-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(ang),cy+R*Math.sin(ang));ctx.strokeStyle='#21262d';ctx.stroke();}
+  ctx.beginPath();let hasData=false;
+  for(let i=0;i<N;i++){let ang=(2*Math.PI*i/N)-Math.PI/2,val=respuestas[ids[i]],r=val!=null?R*(val/3):R*0.1,x=cx+r*Math.cos(ang),y=cy+r*Math.sin(ang);if(!hasData){ctx.moveTo(x,y);hasData=true;}else ctx.lineTo(x,y);}
+  ctx.closePath();ctx.fillStyle='rgba(88,166,255,0.12)';ctx.fill();ctx.strokeStyle='#58a6ff';ctx.lineWidth=1.5;ctx.stroke();
+  for(let i=0;i<N;i++){let ang=(2*Math.PI*i/N)-Math.PI/2,val=respuestas[ids[i]],r=val!=null?R*(val/3):R*0.1,x=cx+r*Math.cos(ang),y=cy+r*Math.sin(ang);ctx.beginPath();ctx.arc(x,y,3,0,2*Math.PI);ctx.fillStyle=val!=null?getColor(val):'#444';ctx.fill();}
+  ctx.font='10px IBM Plex Mono';ctx.fillStyle='#8b949e';ctx.textAlign='center';
+  for(let i=0;i<N;i++){let ang=(2*Math.PI*i/N)-Math.PI/2,x=cx+(R+20)*Math.cos(ang),y=cy+(R+20)*Math.sin(ang);ctx.fillText(labels[i],x,y+4);}
 }
-
-function getVeredicto(nombre, isd) {
-  if (isd < 1.8) return `<strong>${nombre}</strong> presenta un <strong>Protocolo de Retención Activo</strong>. La entidad puede cesar el servicio unilateralmente, los datos no son portables en formato abierto y/o el control está concentrado en actores privados sin rendición de cuentas. La relación usuario-sistema es de <strong>captura estructural</strong>.`;
-  if (isd < 2.3) return `<strong>${nombre}</strong> muestra una <strong>Relación de Riesgo Moderado</strong>. Existen barreras de salida reales (formato de datos, aviso mínimo, beneficio privado dominante). El usuario tiene cierta autonomía pero con fricciones importantes. Hay margen de mejora estructural.`;
-  return `<strong>${nombre}</strong> presenta un modelo de <strong>Grifo Distribuido</strong>. El control es genuinamente compartido, los datos son portables y existen mecanismos reales de gobernanza colectiva. La salida técnica es equivalente a la permanencia. Modelo de referencia.`;
+function renderDesglose(colorPrincipal){
+  let wrap=document.getElementById('desgloseWrap'),bloques=[{id:'critico',label:'Bloque Crítico (40%)',color:'#f85149',ids:['terminacion','portabilidad']},{id:'estructural',label:'Bloque Estructural (30%)',color:'#d29922',ids:['estructura','beneficios','jurisdiccion']},{id:'transparencia',label:'Bloque Transparencia (30%)',color:'#58a6ff',ids:['gobierno','codigo','alternativas']}];
+  wrap.innerHTML=bloques.map(b=>`<div class="desglose-bloque"><div class="desglose-bloque-titulo" style="color:${b.color}">${b.label}</div>${b.ids.map(id=>{let d=DIM.find(x=>x.id===id),val=respuestas[id],pct=val!=null?(val/3)*100:5,c=val!=null?getColor(val):'#444';return `<div class="desglose-item"><div class="desglose-dim">${d.num} ${id}</div><div class="desglose-barra-bg"><div class="desglose-barra-fill" style="width:${pct}%;background:${c}"></div></div><div class="desglose-val" style="color:${c}">${val!=null?val:'?'}</div></div>`;}).join('')}</div>`).join('');
 }
-
-// ============================================================
-// MOSTRAR RESULTADO
-// ============================================================
-function mostrarResultado(isd, vetoActivo) {
-  const color = getColor(isd);
-
-  document.getElementById('resNombre').textContent = nombreActual;
-  document.getElementById('isdNum').textContent = isd.toFixed(2);
-  document.getElementById('isdNum').style.color = color;
-  document.getElementById('isdEstado').textContent = getEstado(isd);
-  document.getElementById('isdEstado').style.color = color;
-  document.getElementById('isdEstado').style.borderColor = color;
-
-  // Veto
-  const vetoPanel = document.getElementById('vetoPanel');
-  if (vetoActivo) {
-    vetoPanel.innerHTML = `
-      <div class="veto-panel">
-        <div class="veto-titulo">⚠ Disyuntor de Emergencia Activado</div>
-        <div class="veto-texto">
-          Se ha detectado que la terminación unilateral (D2) o la falta de portabilidad (D3) puntúan en nivel crítico. 
-          Según el protocolo ISD, <strong>sin salida efectiva el resto de dimensiones son cosméticas</strong>. 
-          El ISD final ha sido reducido un 20% automáticamente.<br><br>
-          <em>Transparencia cosmética: El acceso al servicio está supeditado a voluntad unilateral pese a otras métricas positivas.</em>
-        </div>
-      </div>
-    `;
-  } else {
-    vetoPanel.innerHTML = '';
-  }
-
-  // Radar
-  dibujarRadar();
-
-  // Desglose
-  renderDesglose(color);
-
-  // Ficha técnica
-  renderFicha(isd, color);
-
-  // Veredicto
-  const vEl = document.getElementById('veredictoPanel');
-  vEl.style.borderColor = color;
-  vEl.style.background = color + '08';
-  vEl.innerHTML = `<strong style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${color};display:block;margin-bottom:8px;">// Veredicto técnico</strong>${getVeredicto(nombreActual, isd)}`;
-
-  // Alternativas si ISD bajo
-  if (isd < 1.8) {
-    const panel = document.getElementById('alternativasPanel');
-    panel.style.display = 'block';
-    panel.style.borderColor = '#3fb950';
-    const key = nombreActual.toLowerCase().split(' ')[0];
-    const alts = ALTERNATIVAS_DB[key] || ALTERNATIVAS_DB.default;
-    document.getElementById('altLista').innerHTML = alts.map(a => `<div class="alt-item">→ ${a}</div>`).join('');
-  }
-
-  // Mostrar botón D9
-  document.getElementById('btnD9Wrap').style.display = 'block';
-
-  // Mostrar
-  document.getElementById('formulario').style.display = 'none';
-  document.getElementById('resultado').style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function renderFicha(isd,color){
+  let fecha=new Date().toISOString().split('T')[0],respondidas=Object.values(respuestas).filter(v=>v!=null).length,estado=getEstado(isd),colorClass=isd<1.8?'rojo':isd<2.3?'amarillo':'verde';
+  document.getElementById('fichaTecnica').innerHTML=`<div class="ficha-titulo">// Ficha Técnica — Reporte de Fricción</div><div class="ficha-linea"><span class="ficha-key">Entidad:</span><span class="ficha-val">${nombreActual}</span></div><div class="ficha-linea"><span class="ficha-key">Fecha:</span><span class="ficha-val">${fecha}</span></div><div class="ficha-linea"><span class="ficha-key">Protocolo:</span><span class="ficha-val">ISD v3.2 + ISD‑MIND v1.0 · Argira</span></div><div class="ficha-linea"><span class="ficha-key">Dims. resp:</span><span class="ficha-val">${respondidas}/8</span></div><div class="ficha-linea"><span class="ficha-key">ISD Final:</span><span class="ficha-val ${colorClass}">${isd.toFixed(2)} / 3.0</span></div><div class="ficha-linea"><span class="ficha-key">Estado:</span><span class="ficha-val ${colorClass}">${estado}</span></div>`;
 }
-
-// ============================================================
-// RADAR
-// ============================================================
-function dibujarRadar() {
-  const canvas = document.getElementById('radarCanvas');
-  const ctx = canvas.getContext('2d');
-  const cx = 160, cy = 160, R = 120;
-  const labels = ['D2 Term.','D3 Port.','D1 Estr.','D5 Benef.','D8 Juris.','D4 Gob.','D6 Cód.','D7 Alt.'];
-  const ids = ['terminacion','portabilidad','estructura','beneficios','jurisdiccion','gobierno','codigo','alternativas'];
-  const N = 8;
-
-  ctx.clearRect(0, 0, 320, 320);
-
-  // Fondo polígonos
-  [1,2,3].forEach(nivel => {
-    ctx.beginPath();
-    for (let i = 0; i < N; i++) {
-      const ang = (2 * Math.PI * i / N) - Math.PI/2;
-      const r = R * (nivel/3);
-      const x = cx + r * Math.cos(ang);
-      const y = cy + r * Math.sin(ang);
-      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-    }
-    ctx.closePath();
-    ctx.strokeStyle = nivel === 3 ? '#21262d' : '#1a1f26';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  });
-
-  // Ejes
-  for (let i = 0; i < N; i++) {
-    const ang = (2 * Math.PI * i / N) - Math.PI/2;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + R * Math.cos(ang), cy + R * Math.sin(ang));
-    ctx.strokeStyle = '#21262d';
-    ctx.stroke();
-  }
-
-  // Datos
-  ctx.beginPath();
-  let hasData = false;
-  for (let i = 0; i < N; i++) {
-    const ang = (2 * Math.PI * i / N) - Math.PI/2;
-    const val = respuestas[ids[i]];
-    const r = val != null ? R * (val/3) : R * 0.1;
-    const x = cx + r * Math.cos(ang);
-    const y = cy + r * Math.sin(ang);
-    if (!hasData) { ctx.moveTo(x,y); hasData=true; } else ctx.lineTo(x,y);
-  }
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(88,166,255,0.12)';
-  ctx.fill();
-  ctx.strokeStyle = '#58a6ff';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Puntos
-  for (let i = 0; i < N; i++) {
-    const ang = (2 * Math.PI * i / N) - Math.PI/2;
-    const val = respuestas[ids[i]];
-    const r = val != null ? R * (val/3) : R * 0.1;
-    const x = cx + r * Math.cos(ang);
-    const y = cy + r * Math.sin(ang);
-    ctx.beginPath();
-    ctx.arc(x, y, 3, 0, 2*Math.PI);
-    const c = val != null ? getColor(val) : '#444';
-    ctx.fillStyle = c;
-    ctx.fill();
-  }
-
-  // Labels
-  ctx.font = '10px IBM Plex Mono';
-  ctx.fillStyle = '#8b949e';
-  ctx.textAlign = 'center';
-  for (let i = 0; i < N; i++) {
-    const ang = (2 * Math.PI * i / N) - Math.PI/2;
-    const x = cx + (R+20) * Math.cos(ang);
-    const y = cy + (R+20) * Math.sin(ang);
-    ctx.fillText(labels[i], x, y+4);
-  }
+function exportarJSON(){
+  let data={protocolo:'ISD v3.2 + ISD‑MIND v1.0',entidad:nombreActual,fecha:new Date().toISOString(),isd_digital:isdActual.toFixed(2),estado_digital:getEstado(isdActual),dimensiones_digital:Object.fromEntries(DIM.map(d=>[d.id,respuestas[d.id]])),isd_mind:window.mindScoreGlobal||null,detalle_mind:window.mindRespuestasGlobal||null};
+  let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ISD_${nombreActual.replace(/\s/g,'_')}_${new Date().toISOString().split('T')[0]}.json`;a.click();
 }
-
-// ============================================================
-// DESGLOSE
-// ============================================================
-function renderDesglose(colorPrincipal) {
-  const wrap = document.getElementById('desgloseWrap');
-  const bloques = [
-    { id:'critico', label:'Bloque Crítico (40%)', color:'#f85149', ids:['terminacion','portabilidad'] },
-    { id:'estructural', label:'Bloque Estructural (30%)', color:'#d29922', ids:['estructura','beneficios','jurisdiccion'] },
-    { id:'transparencia', label:'Bloque Transparencia (30%)', color:'#58a6ff', ids:['gobierno','codigo','alternativas'] }
-  ];
-
-  wrap.innerHTML = bloques.map(b => {
-    const items = b.ids.map(id => {
-      const d = DIM.find(x => x.id === id);
-      const val = respuestas[id];
-      const pct = val != null ? (val/3)*100 : 5;
-      const c = val != null ? getColor(val) : '#444';
-      return `
-        <div class="desglose-item">
-          <div class="desglose-dim">${d.num} ${d.id.charAt(0).toUpperCase()+d.id.slice(1)}</div>
-          <div class="desglose-barra-bg">
-            <div class="desglose-barra-fill" style="width:${pct}%;background:${c}"></div>
-          </div>
-          <div class="desglose-val" style="color:${c}">${val != null ? val : '?'}</div>
-        </div>
-      `;
-    }).join('');
-    return `
-      <div class="desglose-bloque">
-        <div class="desglose-bloque-titulo" style="color:${b.color}">${b.label}</div>
-        ${items}
-      </div>
-    `;
-  }).join('');
+function exportarMD(){
+  let md=`# Informe ISD + ISD‑MIND\n\n**Entidad:** ${nombreActual}\n**Fecha:** ${new Date().toISOString().split('T')[0]}\n**ISD Digital:** ${isdActual.toFixed(2)}/3.0 (${getEstado(isdActual)})\n\n## Dimensiones digitales\n| Dim | Puntuación |\n|-----|------------|\n${DIM.map(d=>`| ${d.num} | ${respuestas[d.id]!=null?respuestas[d.id]+'/3':'Sin datos'} |`).join('\n')}\n\n## ISD‑MIND Cognitivo\n${window.mindScoreGlobal?`**ISD‑MIND:** ${window.mindScoreGlobal.toFixed(2)}/3.0 — ${window.mindCatGlobal}`:'No evaluado'}\n\n---\n*Análisis basado en fuentes públicas.*`;
+  let blob=new Blob([md],{type:'text/markdown'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ISD_${nombreActual.replace(/\s/g,'_')}_${new Date().toISOString().split('T')[0]}.md`;a.click();
 }
+function reiniciar(){respuestas={};respuestasD9={};d9Activo=false;nombreActual='';isdActual=0;window.mindScoreGlobal=null;window.mindCatGlobal=null;document.getElementById('formulario').style.display='block';document.getElementById('resultado').style.display='none';document.getElementById('alternativasPanel').style.display='none';document.getElementById('d9Panel').style.display='none';document.getElementById('btnD9Wrap').style.display='none';document.getElementById('nomSistema').value='';document.getElementById('btnAnalizar').disabled=true;document.getElementById('progFill').style.width='0%';document.getElementById('progTxt').textContent='0 / 8 dimensiones';renderPreguntas();renderMindForm();window.scrollTo({top:0,behavior:'smooth'});}
+function cargarEjemplo(nombre){let e=EJEMPLOS.find(x=>x.nombre===nombre);if(!e)return;reiniciar();setTimeout(()=>{document.getElementById('nomSistema').value=e.nombre;actualizarBuscadores();DIM.forEach(d=>{let val=e.pts[d.id];if(val!=null){let idx=d.opciones.findIndex(o=>o.pts===val);if(idx>=0)seleccionar(d.id,val,idx,d.opciones.length);}});setTimeout(()=>calcularISD(),200);},100);}
+document.addEventListener('DOMContentLoaded',()=>{renderPreguntas();renderEjemplos();document.getElementById('nomSistema').addEventListener('input',actualizarBuscadores);renderMindForm();});
+function renderEjemplos(){let grid=document.getElementById('ejGrid');grid.innerHTML=EJEMPLOS.map(e=>{let isd=calcularISDEjemplo(e.pts),color=getColor(isd);return `<div class="ej-item" onclick="cargarEjemplo('${e.nombre}')"><div class="ej-nombre">${e.nombre}</div><div class="ej-tipo">${e.tipo}</div><div class="ej-isd" style="color:${color}">${isd.toFixed(2)}/3.0</div></div>`;}).join('');}
+function calcularISDEjemplo(pts){let sumaPonderada=0,pesoTotal=0;Object.entries(DIMS_BLOQUE).forEach(([bloque,ids])=>{let peso=PESOS[bloque],vals=ids.filter(id=>pts[id]!=null).map(id=>pts[id]);if(vals.length===0)return;sumaPonderada+=(vals.reduce((s,v)=>s+v,0)/vals.length)*peso;pesoTotal+=peso;});let isd=pesoTotal>0?sumaPonderada/pesoTotal:0;if(pts.terminacion===1||pts.portabilidad===1)isd*=0.8;return Math.max(1,Math.min(3,isd));}
 
-// ============================================================
-// FICHA TÉCNICA
-// ============================================================
-function renderFicha(isd, color) {
-  const fecha = new Date().toISOString().split('T')[0];
-  const respondidas = Object.values(respuestas).filter(v => v != null).length;
-  const estado = getEstado(isd);
-  const colorClass = isd < 1.8 ? 'rojo' : isd < 2.3 ? 'amarillo' : 'verde';
-
-  document.getElementById('fichaTecnica').innerHTML = `
-    <div class="ficha-titulo">// Ficha Técnica — Reporte de Fricción</div>
-    <div class="ficha-linea"><span class="ficha-key">Entidad:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="ficha-val">${nombreActual}</span></div>
-    <div class="ficha-linea"><span class="ficha-key">Fecha:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="ficha-val">${fecha}</span></div>
-    <div class="ficha-linea"><span class="ficha-key">Protocolo:&nbsp;&nbsp;&nbsp;</span><span class="ficha-val">ISD v2.0 · ControlCheck · Argira Station</span></div>
-    <div class="ficha-linea"><span class="ficha-key">Dims. resp:&nbsp;&nbsp;</span><span class="ficha-val">${respondidas}/8</span></div>
-    <div class="ficha-linea"><span class="ficha-key">ISD Final:&nbsp;&nbsp;&nbsp;</span><span class="ficha-val ${colorClass}">${isd.toFixed(2)} / 3.0</span></div>
-    <div class="ficha-linea"><span class="ficha-key">Estado:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="ficha-val ${colorClass}">${estado}</span></div>
-    <div class="ficha-linea"><span class="ficha-key">D2 Terminac:</span><span class="ficha-val ${respuestas.terminacion===1?'rojo':respuestas.terminacion===3?'verde':'amarillo'}">${respuestas.terminacion != null ? respuestas.terminacion+'/3' : 'Sin datos'}</span></div>
-    <div class="ficha-linea"><span class="ficha-key">D3 Portabil:</span><span class="ficha-val ${respuestas.portabilidad===1?'rojo':respuestas.portabilidad===3?'verde':'amarillo'}">${respuestas.portabilidad != null ? respuestas.portabilidad+'/3' : 'Sin datos'}</span></div>
-    <div class="ficha-linea"><span class="ficha-key">Nota legal:&nbsp;</span><span class="ficha-val" style="color:#555">Análisis basado en fuentes públicas. No constituye asesoría legal.</span></div>
-  `;
-}
-
-// ============================================================
-// EXPORT
-// ============================================================
-function exportarJSON() {
-  const data = {
-    protocolo: 'ISD v2.0 · ControlCheck · Argira Station',
-    entidad: nombreActual,
-    fecha: new Date().toISOString(),
-    isd: isdActual.toFixed(2),
-    estado: getEstado(isdActual),
-    dimensiones: Object.fromEntries(
-      DIM.map(d => [d.id, { puntuacion: respuestas[d.id], maximo: 3 }])
-    ),
-    nota: 'Análisis basado en fuentes públicas verificables. No constituye asesoría legal.',
-    fuente: 'https://argira.eus'
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `ISD_${nombreActual.replace(/\s/g,'_')}_${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-}
-
-function exportarMD() {
-  const fecha = new Date().toISOString().split('T')[0];
-  let md = `# Reporte ISD · ControlCheck v2.0\n\n`;
-  md += `**Entidad:** ${nombreActual}  \n`;
-  md += `**Fecha:** ${fecha}  \n`;
-  md += `**Protocolo:** ISD v2.0 · Argira Station  \n`;
-  md += `**ISD Final:** ${isdActual.toFixed(2)} / 3.0  \n`;
-  md += `**Estado:** ${getEstado(isdActual)}  \n\n`;
-  md += `## Dimensiones\n\n`;
-  md += `| Dim | Nombre | Puntuación |\n|-----|--------|------------|\n`;
-  DIM.forEach(d => {
-    const v = respuestas[d.id];
-    md += `| ${d.num} | ${d.id} | ${v != null ? v+'/3' : 'Sin datos'} |\n`;
-  });
-  md += `\n## Veredicto\n\n${getVeredicto(nombreActual, isdActual).replace(/<[^>]+>/g,'')}\n\n`;
-  md += `---\n*Análisis basado en fuentes públicas. No constituye asesoría legal.*  \n*Fuente: https://argira.eus*\n`;
-
-  const blob = new Blob([md], { type:'text/markdown' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `ISD_${nombreActual.replace(/\s/g,'_')}_${fecha}.md`;
-  a.click();
-}
-
-// ============================================================
-// EJEMPLOS
-// ============================================================
-function calcularISDEjemplo(pts) {
-  let sumaPonderada = 0;
-  let pesoTotal = 0;
-  Object.entries(DIMS_BLOQUE).forEach(([bloque, ids]) => {
-    const peso = PESOS[bloque];
-    const vals = ids.filter(id => pts[id] != null).map(id => pts[id]);
-    if (vals.length === 0) return;
-    const media = vals.reduce((s,v) => s+v, 0) / vals.length;
-    sumaPonderada += media * peso;
-    pesoTotal += peso;
-  });
-  let isd = pesoTotal > 0 ? sumaPonderada / pesoTotal : 0;
-  if (pts.terminacion === 1 || pts.portabilidad === 1) isd *= 0.8;
-  return Math.max(1, Math.min(3, isd));
-}
-
-function renderEjemplos() {
-  const grid = document.getElementById('ejGrid');
-  grid.innerHTML = EJEMPLOS.map(e => {
-    const isd = calcularISDEjemplo(e.pts);
-    const color = getColor(isd);
-    return `
-      <div class="ej-item" onclick="cargarEjemplo('${e.nombre}')">
-        <div class="ej-nombre">${e.nombre}</div>
-        <div class="ej-tipo">${e.tipo}</div>
-        <div class="ej-isd" style="color:${color}">${isd.toFixed(2)}/3.0</div>
-      </div>
-    `;
-  }).join('');
-}
-
-function cargarEjemplo(nombre) {
-  const e = EJEMPLOS.find(x => x.nombre === nombre);
-  if (!e) return;
-  reiniciar();
-  setTimeout(() => {
-    document.getElementById('nomSistema').value = e.nombre;
-    actualizarBuscadores();
-    DIM.forEach((d, i) => {
-      const val = e.pts[d.id];
-      if (val != null) {
-        const idx = d.opciones.findIndex(o => o.pts === val);
-        if (idx >= 0) seleccionar(d.id, val, idx, d.opciones.length);
-      }
-    });
-    setTimeout(() => calcularISD(), 200);
-  }, 100);
-}
-
-// ============================================================
-// D9 — SEMÁFORO DE LIBERTAD DIGITAL
-// ============================================================
-const D9_INDICADORES = [
-  { id:'d9_1', nombre:'Patrones de Diseño Persuasivo', peso:0.25,
-    desc:'Notificaciones de refuerzo variable, rachas de uso, recompensas intermitentes verificables.',
-    fuente:'Center for Humane Technology · Harris (2016) · Documentación pública de la interfaz',
-    opciones:[
-      { txt:'Múltiples patrones activos sin opt-out real', pts:1 },
-      { txt:'Patrones presentes pero con opt-out disponible', pts:2 },
-      { txt:'Sin patrones persuasivos o con control total del usuario', pts:3 },
-    ]},
-  { id:'d9_2', nombre:'Conocimiento Interno del Daño', peso:0.30, critico:true,
-    desc:'Existencia de documentos internos que evidencien conocimiento del daño psicológico causado.',
-    fuente:'Litigios públicos · Facebook Papers · Haugen · Informes de transparencia',
-    opciones:[
-      { txt:'Daño documentado internamente y ocultado (ej: Facebook Papers)', pts:1 },
-      { txt:'Daño reconocido públicamente sin acción correctiva efectiva', pts:2 },
-      { txt:'Sin evidencia de daño conocido o con acción correctiva documentada', pts:3 },
-    ]},
-  { id:'d9_3', nombre:'Puntuación de Opacidad', peso:0.20,
-    desc:'Presencia y calidad de informes de transparencia periódicos y verificables.',
-    fuente:'ToS;DR · Historial público de versiones de condiciones · Informes anuales',
-    opciones:[
-      { txt:'Sin informes de transparencia publicados', pts:1 },
-      { txt:'Informes parciales o sin auditoría externa', pts:2 },
-      { txt:'Informes completos, periódicos y auditados externamente', pts:3 },
-    ]},
-  { id:'d9_4', nombre:'Costo de Salida', peso:0.15,
-    desc:'Tiempo y pasos necesarios para eliminar cuenta y exportar todos los datos en formato funcional.',
-    fuente:'JustDeleteMe · Data Transfer Initiative · Prueba directa verificable',
-    opciones:[
-      { txt:'Más de 10 pasos o datos no exportables en formato abierto', pts:1 },
-      { txt:'Proceso complejo con pérdida parcial de datos o formato propietario', pts:2 },
-      { txt:'Menos de 3 pasos con exportación completa en formato abierto', pts:3 },
-    ]},
-  { id:'d9_5', nombre:'Autonomía de Interfaz', peso:0.10,
-    desc:'Capacidad del usuario de desactivar algoritmos de recomendación y usar orden cronológico puro.',
-    fuente:'Documentación pública · Configuración verificable de la plataforma',
-    opciones:[
-      { txt:'Algoritmo de recomendación forzado, sin alternativa', pts:1 },
-      { txt:'Control parcial del algoritmo disponible', pts:2 },
-      { txt:'Control total — feed cronológico puro disponible', pts:3 },
-    ]},
+// ==================== MÓDULO ISD‑MIND COGNITIVO ====================
+const MIND_DIMS = [
+  { id:'d1', nombre:'Ritmo Cognitivo', texto:'¿La app interrumpe constantemente con notificaciones o estímulos rápidos?', opciones:[{pts:0,txt:'Sí, constantemente (muy intrusiva)'},{pts:1,txt:'Frecuentemente'},{pts:2,txt:'A veces'},{pts:3,txt:'No, respeta el ritmo del usuario'}] },
+  { id:'d2', nombre:'Dependencia Emocional', texto:'¿La app usa métricas sociales (likes, vistas, rachas) para generar dependencia?', opciones:[{pts:0,txt:'Sí, de forma intensa'},{pts:1,txt:'Sí, moderadamente'},{pts:2,txt:'Muy poco'},{pts:3,txt:'No, evita métricas dopaminérgicas'}] },
+  { id:'d3', nombre:'Captura de Contexto Personal', texto:'¿La app infiere emociones, hábitos o patrones íntimos?', opciones:[{pts:0,txt:'Sí, de forma profunda'},{pts:1,txt:'Sí, parcialmente'},{pts:2,txt:'Muy poco'},{pts:3,txt:'No, respeta el contexto personal'}] },
+  { id:'d4', nombre:'Diseño Persuasivo', texto:'¿La app usa scroll infinito, autoplay o nudges manipulativos?', opciones:[{pts:0,txt:'Sí, intensamente'},{pts:1,txt:'Sí, moderadamente'},{pts:2,txt:'Muy poco'},{pts:3,txt:'No, diseño ético'}] },
+  { id:'d5', nombre:'Autonomía Cognitiva', texto:'¿La app permite controlar el feed, desconectar y decidir el ritmo?', opciones:[{pts:0,txt:'No, controla todo'},{pts:1,txt:'Muy poco control'},{pts:2,txt:'Control parcial'},{pts:3,txt:'Control total del usuario'}] },
+  { id:'d6', nombre:'Portabilidad Cognitiva', texto:'¿Puedes mantener tus hábitos y tu identidad fuera de la app?', opciones:[{pts:0,txt:'No, genera dependencia total'},{pts:1,txt:'Difícil'},{pts:2,txt:'Posible'},{pts:3,txt:'Sí, totalmente'}] },
+  { id:'d7', nombre:'Transparencia Psicológica', texto:'¿La app explica cómo te influye y qué datos emocionales usa?', opciones:[{pts:0,txt:'Nada transparente'},{pts:1,txt:'Poca transparencia'},{pts:2,txt:'Transparencia parcial'},{pts:3,txt:'Transparencia total'}] },
+  { id:'d8', nombre:'Riesgo Psicológico', texto:'¿La app genera ansiedad, estrés, adicción o afecta al sueño?', opciones:[{pts:0,txt:'Sí, mucho'},{pts:1,txt:'Moderado'},{pts:2,txt:'Bajo'},{pts:3,txt:'No, protege la salud mental'}] },
+  { id:'d9', nombre:'Disyuntor Cognitivo', texto:'¿La app puede llegar a tomar control de tu atención o emociones?', opciones:[{pts:0,txt:'Sí, claramente'},{pts:1,txt:'A veces'},{pts:2,txt:'Muy poco'},{pts:3,txt:'No, nunca'}] }
 ];
+let mindRespuestas = {};
 
-let respuestasD9 = {};
-let d9Activo = false;
-
-function activarD9() {
-  d9Activo = true;
-  document.getElementById('btnD9Wrap').style.display = 'none';
-  document.getElementById('d9Panel').style.display = 'block';
-  renderD9Indicadores();
-}
-
-function renderD9Indicadores() {
-  const container = document.getElementById('d9Indicadores');
-  container.innerHTML = D9_INDICADORES.map((d, i) => `
-    <div style="border:1px solid #21262d; background:#080b0f; padding:16px; margin-bottom:8px;">
-      <div style="display:flex; gap:10px; margin-bottom:8px;">
-        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:${d.critico?'#f85149':'#d29922'}; flex-shrink:0; padding-top:2px;">D9.${i+1}${d.critico?' ⚠':''}</span>
-        <div>
-          <div style="font-size:14px; color:#c9d1d9; font-weight:600; margin-bottom:2px;">${d.nombre}</div>
-          <div style="font-size:12px; color:#8b949e;">${d.desc}</div>
-          <div style="font-size:11px; color:#444; margin-top:4px; font-style:italic;">📁 ${d.fuente}</div>
-        </div>
-        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#d29922; flex-shrink:0;">W=${d.peso}</span>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:4px;">
-        ${d.opciones.map((o, j) => `
-          <label id="d9op-${d.id}-${j}" onclick="seleccionarD9('${d.id}',${o.pts},${j},${d.opciones.length})"
-            style="display:flex; align-items:flex-start; gap:8px; padding:8px 10px; border:1px solid #21262d; cursor:pointer; font-size:13px; color:#8b949e; transition:all 0.15s;">
-            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:${o.pts===1?'#f85149':o.pts===2?'#d29922':'#3fb950'}; flex-shrink:0;">${o.pts}p</span>
-            <span>${o.txt}</span>
-          </label>
-        `).join('')}
-        <label id="d9op-${d.id}-ns" onclick="seleccionarD9NS('${d.id}',${d.opciones.length})"
-          style="display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid #21262d; cursor:pointer; font-size:12px; color:#555; font-style:italic;">
-          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#555;">?p</span>
-          <span>Sin datos suficientes para verificar</span>
-        </label>
-      </div>
+function renderMindForm() {
+  let container = document.getElementById('mindFormContainer');
+  if (!container) return;
+  container.innerHTML = MIND_DIMS.map(d => `
+    <div class="mind-pregunta">
+      <h4>${d.id.toUpperCase()} — ${d.nombre}</h4>
+      <p style="font-size:14px; color:#8b949e;">${d.texto}</p>
+      <select class="mind-select" id="mind-${d.id}" data-id="${d.id}">
+        <option value="">— Selecciona —</option>
+        ${d.opciones.map(o => `<option value="${o.pts}">${o.pts} — ${o.txt}</option>`).join('')}
+      </select>
     </div>
   `).join('');
-}
-
-function seleccionarD9(id, pts, idx, total) {
-  respuestasD9[id] = pts;
-  for (let j = 0; j < total; j++) {
-    const el = document.getElementById(`d9op-${id}-${j}`);
-    if (el) el.style.cssText = j === idx
-      ? `display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid ${pts===1?'#f85149':pts===2?'#d29922':'#3fb950'};cursor:pointer;font-size:13px;color:#c9d1d9;background:rgba(255,255,255,0.03);`
-      : `display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid #21262d;cursor:pointer;font-size:13px;color:#8b949e;`;
+  // Añadir botón de calcular y reset
+  let btnDiv = document.createElement('div');
+  btnDiv.innerHTML = `<button class="mind-btn" id="mindCalcular">Calcular ISD‑MIND</button>
+                      <button class="mind-btn reset" id="mindReset">Resetear evaluación</button>`;
+  container.appendChild(btnDiv);
+  document.getElementById('mindCalcular').addEventListener('click', calcularMind);
+  document.getElementById('mindReset').addEventListener('click', resetMind);
+  // Cargar respuestas guardadas
+  const saved = localStorage.getItem('mindRespuestas');
+  if (saved) {
+    try {
+      mindRespuestas = JSON.parse(saved);
+      for (let id in mindRespuestas) {
+        let sel = document.getElementById(`mind-${id}`);
+        if (sel) sel.value = mindRespuestas[id];
+      }
+      calcularMind(); // actualiza radar y resultado
+    } catch(e) {}
   }
-  const ns = document.getElementById(`d9op-${id}-ns`);
-  if (ns) ns.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #21262d;cursor:pointer;font-size:12px;color:#555;font-style:italic;`;
-  calcularD9();
 }
 
-function seleccionarD9NS(id, total) {
-  respuestasD9[id] = null;
-  for (let j = 0; j < total; j++) {
-    const el = document.getElementById(`d9op-${id}-${j}`);
-    if (el) el.style.cssText = `display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid #21262d;cursor:pointer;font-size:13px;color:#8b949e;`;
+function calcularMind() {
+  let suma = 0, total = 0;
+  for (let d of MIND_DIMS) {
+    let sel = document.getElementById(`mind-${d.id}`);
+    if (sel && sel.value !== '') {
+      let val = parseFloat(sel.value);
+      mindRespuestas[d.id] = val;
+      suma += val;
+      total++;
+    } else {
+      mindRespuestas[d.id] = null;
+    }
   }
-  const ns = document.getElementById(`d9op-${id}-ns`);
-  if (ns) ns.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #58a6ff;cursor:pointer;font-size:12px;color:#c9d1d9;font-style:italic;background:rgba(88,166,255,0.05);`;
-  calcularD9();
+  if (total === 0) return;
+  let isd = suma / total;
+  let categoria = '';
+  let color = '';
+  if (isd < 1.0) { categoria = '⚠️ Captura Cognitiva (riesgo crítico)'; color = '#f85149'; }
+  else if (isd < 2.0) { categoria = '⚠️ Riesgo Moderado'; color = '#d29922'; }
+  else if (isd < 2.7) { categoria = '✔ Autonomía Parcial'; color = '#d29922'; }
+  else { categoria = '✔✔ Soberanía Cognitiva'; color = '#3fb950'; }
+  document.getElementById('mindScore').textContent = isd.toFixed(2);
+  document.getElementById('mindCat').textContent = categoria;
+  document.getElementById('mindResultado').style.display = 'block';
+  // Guardar global para export
+  window.mindScoreGlobal = isd;
+  window.mindCatGlobal = categoria;
+  window.mindRespuestasGlobal = mindRespuestas;
+  // Actualizar radar
+  actualizarRadarMind(isd, color);
+  localStorage.setItem('mindRespuestas', JSON.stringify(mindRespuestas));
 }
 
-function calcularD9() {
-  const respondidas = D9_INDICADORES.filter(d => respuestasD9[d.id] != null);
-  if (respondidas.length === 0) return;
-
-  let suma = 0;
-  let pesoTotal = 0;
-  respondidas.forEach(d => {
-    suma += respuestasD9[d.id] * d.peso;
-    pesoTotal += d.peso;
+function actualizarRadarMind(isd, color) {
+  const poly = document.getElementById('mindPolygon');
+  if (!poly) return;
+  const cx = 100, cy = 100, rMax = 90;
+  const valores = MIND_DIMS.map(d => mindRespuestas[d.id] != null ? mindRespuestas[d.id] : 0);
+  // Ángulos para las 6 dimensiones del radar (coincide con las etiquetas: D1, D2, D3, D4, D5, D8)
+  const angulos = [-90, -30, 30, 90, 150, -150];
+  const puntos = valores.slice(0,6).map((v, i) => {
+    const r = (v / 3) * rMax;
+    const rad = angulos[i] * Math.PI / 180;
+    const x = cx + r * Math.cos(rad);
+    const y = cy + r * Math.sin(rad);
+    return x.toFixed(1) + "," + y.toFixed(1);
   });
+  poly.setAttribute('points', puntos.join(' '));
+  poly.setAttribute('fill', color + '40'); // transparencia
+}
 
-  let score = pesoTotal > 0 ? suma / pesoTotal : 0;
-
-  // Disyuntor: si D9.2 = 1, Ω = 0.2
-  const omegaActivo = respuestasD9['d9_2'] === 1;
-  if (omegaActivo) score *= 0.2;
-  score = Math.max(1, Math.min(3, score));
-
-  const color = score < 1.5 ? '#f85149' : score < 2.3 ? '#d29922' : '#3fb950';
-  const estado = score < 1.5 ? '🔴 CAPTURA CONDUCTUAL' : score < 2.3 ? '🟡 RIESGO MODERADO' : '🟢 LIBERTAD DIGITAL';
-
-  const scoreEl = document.getElementById('d9Score');
-  const estadoEl = document.getElementById('d9Estado');
-  const omegaEl = document.getElementById('d9Omega');
-
-  if (scoreEl) { scoreEl.textContent = score.toFixed(2); scoreEl.style.color = color; }
-  if (estadoEl) { estadoEl.textContent = estado; estadoEl.style.color = color; estadoEl.style.borderColor = color; }
-  if (omegaEl) {
-    omegaEl.textContent = omegaActivo
-      ? '⚠ Disyuntor D9 activado: daño interno documentado detectado. Puntuación reducida al 20%.'
-      : `Dimensiones respondidas: ${respondidas.length}/${D9_INDICADORES.length}`;
-    omegaEl.style.color = omegaActivo ? '#f85149' : '#8b949e';
+function resetMind() {
+  mindRespuestas = {};
+  localStorage.removeItem('mindRespuestas');
+  for (let d of MIND_DIMS) {
+    let sel = document.getElementById(`mind-${d.id}`);
+    if (sel) sel.value = '';
   }
+  document.getElementById('mindResultado').style.display = 'none';
+  window.mindScoreGlobal = null;
+  window.mindCatGlobal = null;
+  window.mindRespuestasGlobal = null;
+  // Resetear radar a valores de ejemplo
+  const poly = document.getElementById('mindPolygon');
+  if (poly) poly.setAttribute('points', '100,25 155,80 145,145 100,175 55,145 45,80');
 }
 
-function reiniciar() {
-  respuestas = {};
-  respuestasD9 = {};
-  d9Activo = false;
-  nombreActual = '';
-  isdActual = 0;
-  document.getElementById('formulario').style.display = 'block';
-  document.getElementById('resultado').style.display = 'none';
-  document.getElementById('alternativasPanel').style.display = 'none';
-  document.getElementById('d9Panel').style.display = 'none';
-  document.getElementById('btnD9Wrap').style.display = 'none';
-  document.getElementById('nomSistema').value = '';
-  document.getElementById('btnAnalizar').disabled = true;
-  document.getElementById('progFill').style.width = '0%';
-  document.getElementById('progTxt').textContent = '0 / 8 dimensiones';
-  renderPreguntas();
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
+// ==================== D9 (ControlCheck) ====================
+const D9_INDICADORES = [
+  { id:'d9_1', nombre:'Patrones de Diseño Persuasivo', peso:0.25, desc:'Notificaciones de refuerzo variable, rachas...', fuente:'Center for Humane Technology', opciones:[{txt:'Múltiples patrones activos sin opt-out real', pts:1},{txt:'Patrones presentes pero con opt-out disponible', pts:2},{txt:'Sin patrones persuasivos o con control total', pts:3}] },
+  { id:'d9_2', nombre:'Conocimiento Interno del Daño', peso:0.30, critico:true, desc:'Existencia de documentos internos que evidencien daño psicológico.', fuente:'Facebook Papers', opciones:[{txt:'Daño documentado internamente y ocultado', pts:1},{txt:'Daño reconocido sin acción correctiva', pts:2},{txt:'Sin evidencia de daño conocido', pts:3}] },
+  { id:'d9_3', nombre:'Puntuación de Opacidad', peso:0.20, desc:'Informes de transparencia periódicos.', fuente:'ToS;DR', opciones:[{txt:'Sin informes de transparencia', pts:1},{txt:'Informes parciales', pts:2},{txt:'Informes completos auditados', pts:3}] },
+  { id:'d9_4', nombre:'Costo de Salida', peso:0.15, desc:'Pasos para eliminar cuenta y exportar datos.', fuente:'JustDeleteMe', opciones:[{txt:'>10 pasos o datos no exportables', pts:1},{txt:'Proceso complejo con pérdida', pts:2},{txt:'<3 pasos con exportación completa', pts:3}] },
+  { id:'d9_5', nombre:'Autonomía de Interfaz', peso:0.10, desc:'Desactivar algoritmos de recomendación.', fuente:'Configuración', opciones:[{txt:'Algoritmo forzado', pts:1},{txt:'Control parcial', pts:2},{txt:'Control total', pts:3}] }
+];
+let respuestasD9 = {};
+let d9Activo = false;
+function activarD9(){d9Activo=true;document.getElementById('btnD9Wrap').style.display='none';document.getElementById('d9Panel').style.display='block';renderD9Indicadores();}
+function renderD9Indicadores(){let container=document.getElementById('d9Indicadores');container.innerHTML=D9_INDICADORES.map((d,i)=>`<div style="border:1px solid #21262d; background:#080b0f; padding:16px; margin-bottom:8px;"><div style="display:flex; gap:10px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:${d.critico?'#f85149':'#d29922'};">D9.${i+1}${d.critico?' ⚠':''}</span><div><div style="font-size:14px; font-weight:600;">${d.nombre}</div><div style="font-size:12px; color:#8b949e;">${d.desc}</div><div style="font-size:11px; color:#444;">📁 ${d.fuente}</div></div></div><div style="display:flex; flex-direction:column; gap:4px; margin-top:8px;">${d.opciones.map((o,j)=>`<label id="d9op-${d.id}-${j}" onclick="seleccionarD9('${d.id}',${o.pts},${j},${d.opciones.length})" style="display:flex; gap:8px; padding:8px; border:1px solid #21262d; cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:${o.pts===1?'#f85149':o.pts===2?'#d29922':'#3fb950'};">${o.pts}p</span><span>${o.txt}</span></label>`).join('')}<label id="d9op-${d.id}-ns" onclick="seleccionarD9NS('${d.id}',${d.opciones.length})" style="display:flex; gap:8px; padding:8px; border:1px solid #21262d; cursor:pointer; font-style:italic;"><span>?</span><span>Sin datos suficientes</span></label></div></div>`).join('');}
+function seleccionarD9(id,pts,idx,total){respuestasD9[id]=pts;for(let j=0;j<total;j++){let el=document.getElementById(`d9op-${id}-${j}`);if(el)el.style.cssText=j===idx?`display:flex;gap:8px;padding:8px;border:1px solid ${pts===1?'#f85149':pts===2?'#d29922':'#3fb950'};cursor:pointer;background:rgba(255,255,255,0.03);color:#c9d1d9;`:`display:flex;gap:8px;padding:8px;border:1px solid #21262d;cursor:pointer;`;}let ns=document.getElementById(`d9op-${id}-ns`);if(ns)ns.style.cssText=`display:flex;gap:8px;padding:8px;border:1px solid #21262d;cursor:pointer;font-style:italic;`;calcularD9();}
+function seleccionarD9NS(id,total){respuestasD9[id]=null;for(let j=0;j<total;j++){let el=document.getElementById(`d9op-${id}-${j}`);if(el)el.style.cssText=`display:flex;gap:8px;padding:8px;border:1px solid #21262d;cursor:pointer;`;}let ns=document.getElementById(`d9op-${id}-ns`);if(ns)ns.style.cssText=`display:flex;gap:8px;padding:8px;border:1px solid #58a6ff;cursor:pointer;background:rgba(88,166,255,0.05);`;calcularD9();}
+function calcularD9(){let respondidas=D9_INDICADORES.filter(d=>respuestasD9[d.id]!=null);if(respondidas.length===0)return;let suma=0,pesoTotal=0;respondidas.forEach(d=>{suma+=respuestasD9[d.id]*d.peso;pesoTotal+=d.peso;});let score=pesoTotal>0?suma/pesoTotal:0;if(respuestasD9['d9_2']===1)score*=0.2;score=Math.max(1,Math.min(3,score));let color=score<1.5?'#f85149':score<2.3?'#d29922':'#3fb950';let estado=score<1.5?'🔴 CAPTURA CONDUCTUAL':score<2.3?'🟡 RIESGO MODERADO':'🟢 LIBERTAD DIGITAL';document.getElementById('d9Score').textContent=score.toFixed(2);document.getElementById('d9Estado').textContent=estado;document.getElementById('d9Estado').style.color=color;document.getElementById('d9Estado').style.borderColor=color;document.getElementById('d9Omega').innerHTML=respuestasD9['d9_2']===1?'⚠ Disyuntor D9 activado: daño interno documentado.':`Dimensiones respondidas: ${respondidas.length}/${D9_INDICADORES.length}`;}
 </script>
 </body>
 </html>
