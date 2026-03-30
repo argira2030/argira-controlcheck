@@ -532,14 +532,14 @@ canvas#radarCanvas { max-width: 100%; }
 <div class="header">
   <div class="badge">Argira Station · Portal 2030</div>
   <h1>Control<em>Check</em></h1>
-  <div class="subtitulo">// Índice de Soberanía Digital (ISD) v2.0</div>
+  <div class="subtitulo">// Índice de Soberanía Digital (ISD) v3.0 + D9 Semáforo de Libertad Digital</div>
   <p class="descripcion">
-    <strong>Protocolo de verificación objetiva</strong> para medir el nivel de control distribuido de cualquier sistema digital, plataforma o entidad. No evalúa si un sistema es bueno o malo — mide su nivel de <strong>hermetismo frente a la autonomía del usuario</strong>. Basado en fuentes verificables públicas.
+    <strong>Protocolo de verificación objetiva</strong> para medir el nivel de control distribuido de cualquier sistema digital, plataforma o entidad. Incluye ahora <strong>D9 — Daño Psicológico y Arquitectura de Captura Conductual</strong>. Basado en fuentes verificables públicas.
   </p>
 </div>
 
 <div class="bloques-info">
-  <div class="bloque-info"><div class="num">8</div><div class="lbl">Dimensiones</div></div>
+  <div class="bloque-info"><div class="num">8+D9</div><div class="lbl">Dimensiones</div></div>
   <div class="bloque-info"><div class="num">3</div><div class="lbl">Bloques de peso</div></div>
   <div class="bloque-info"><div class="num">ISD</div><div class="lbl">Índice verificable</div></div>
 </div>
@@ -604,6 +604,39 @@ canvas#radarCanvas { max-width: 100%; }
     <div id="altLista"></div>
   </div>
 
+  <!-- D9 SEMÁFORO DE LIBERTAD DIGITAL -->
+  <div id="d9Panel" style="display:none; margin:40px 0; border:1px solid #21262d; background:#0d1117; padding:24px;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#d29922; margin-bottom:16px;">
+      // D9 — Semáforo de Libertad Digital · Daño Psicológico y Captura Conductual
+    </div>
+    <div style="font-size:13px; color:#8b949e; margin-bottom:20px; font-family:'IBM Plex Sans',sans-serif;">
+      Dimensión experimental basada en literatura académica verificable. Evalúa patrones de diseño persuasivo, conocimiento interno del daño y arquitectura de control conductual.
+    </div>
+
+    <div id="d9Indicadores"></div>
+
+    <div style="margin-top:24px; padding:16px; border:1px solid #21262d; background:#080b0f;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#8b949e; margin-bottom:8px;">// Puntuación D9</div>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:48px; font-weight:700;" id="d9Score">—</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:#8b949e;">/3.0</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border:1px solid;" id="d9Estado">—</span>
+      </div>
+      <div id="d9Omega" style="font-size:13px; color:#8b949e; margin-top:8px; font-family:'IBM Plex Sans',sans-serif;"></div>
+    </div>
+
+    <div style="margin-top:16px; font-size:11px; color:#555; font-family:'IBM Plex Mono',monospace;">
+      Fuentes: Center for Humane Technology · Harris (2016) · Facebook Papers · JustDeleteMe · Data Transfer Initiative · ToS;DR
+    </div>
+  </div>
+
+  <!-- BTN ACTIVAR D9 -->
+  <div id="btnD9Wrap" style="margin:24px 0; display:none;">
+    <button class="btn-export" onclick="activarD9()" style="width:100%; padding:16px; border-color:#d29922; color:#d29922;">
+      ⚠ Añadir análisis D9 — Daño Psicológico y Captura Conductual
+    </button>
+  </div>
+
   <div class="export-section">
     <div class="radar-titulo" style="margin-bottom:12px;">// Exportar informe</div>
     <button class="btn-export" onclick="exportarJSON()">↓ JSON</button>
@@ -637,7 +670,7 @@ canvas#radarCanvas { max-width: 100%; }
   </div>
 
   <div style="font-size: 10px; opacity: 0.9; letter-spacing: 1px;">
-    ControlCheck v2.0 · <a href="https://argira.eus" target="_blank" style="color: #58a6ff; text-decoration: underline; font-weight: bold;">argira.eus</a> · AGPLv3 · 📡 528Hz
+    ControlCheck v3.0 · <a href="https://argira.eus" target="_blank" style="color: #58a6ff; text-decoration: underline; font-weight: bold;">argira.eus</a> · AGPLv3 · 📡 528Hz
   </div>
 </div>
 
@@ -987,6 +1020,9 @@ function mostrarResultado(isd, vetoActivo) {
     document.getElementById('altLista').innerHTML = alts.map(a => `<div class="alt-item">→ ${a}</div>`).join('');
   }
 
+  // Mostrar botón D9
+  document.getElementById('btnD9Wrap').style.display = 'block';
+
   // Mostrar
   document.getElementById('formulario').style.display = 'none';
   document.getElementById('resultado').style.display = 'block';
@@ -1234,13 +1270,163 @@ function cargarEjemplo(nombre) {
   }, 100);
 }
 
+// ============================================================
+// D9 — SEMÁFORO DE LIBERTAD DIGITAL
+// ============================================================
+const D9_INDICADORES = [
+  { id:'d9_1', nombre:'Patrones de Diseño Persuasivo', peso:0.25,
+    desc:'Notificaciones de refuerzo variable, rachas de uso, recompensas intermitentes verificables.',
+    fuente:'Center for Humane Technology · Harris (2016) · Documentación pública de la interfaz',
+    opciones:[
+      { txt:'Múltiples patrones activos sin opt-out real', pts:1 },
+      { txt:'Patrones presentes pero con opt-out disponible', pts:2 },
+      { txt:'Sin patrones persuasivos o con control total del usuario', pts:3 },
+    ]},
+  { id:'d9_2', nombre:'Conocimiento Interno del Daño', peso:0.30, critico:true,
+    desc:'Existencia de documentos internos que evidencien conocimiento del daño psicológico causado.',
+    fuente:'Litigios públicos · Facebook Papers · Haugen · Informes de transparencia',
+    opciones:[
+      { txt:'Daño documentado internamente y ocultado (ej: Facebook Papers)', pts:1 },
+      { txt:'Daño reconocido públicamente sin acción correctiva efectiva', pts:2 },
+      { txt:'Sin evidencia de daño conocido o con acción correctiva documentada', pts:3 },
+    ]},
+  { id:'d9_3', nombre:'Puntuación de Opacidad', peso:0.20,
+    desc:'Presencia y calidad de informes de transparencia periódicos y verificables.',
+    fuente:'ToS;DR · Historial público de versiones de condiciones · Informes anuales',
+    opciones:[
+      { txt:'Sin informes de transparencia publicados', pts:1 },
+      { txt:'Informes parciales o sin auditoría externa', pts:2 },
+      { txt:'Informes completos, periódicos y auditados externamente', pts:3 },
+    ]},
+  { id:'d9_4', nombre:'Costo de Salida', peso:0.15,
+    desc:'Tiempo y pasos necesarios para eliminar cuenta y exportar todos los datos en formato funcional.',
+    fuente:'JustDeleteMe · Data Transfer Initiative · Prueba directa verificable',
+    opciones:[
+      { txt:'Más de 10 pasos o datos no exportables en formato abierto', pts:1 },
+      { txt:'Proceso complejo con pérdida parcial de datos o formato propietario', pts:2 },
+      { txt:'Menos de 3 pasos con exportación completa en formato abierto', pts:3 },
+    ]},
+  { id:'d9_5', nombre:'Autonomía de Interfaz', peso:0.10,
+    desc:'Capacidad del usuario de desactivar algoritmos de recomendación y usar orden cronológico puro.',
+    fuente:'Documentación pública · Configuración verificable de la plataforma',
+    opciones:[
+      { txt:'Algoritmo de recomendación forzado, sin alternativa', pts:1 },
+      { txt:'Control parcial del algoritmo disponible', pts:2 },
+      { txt:'Control total — feed cronológico puro disponible', pts:3 },
+    ]},
+];
+
+let respuestasD9 = {};
+let d9Activo = false;
+
+function activarD9() {
+  d9Activo = true;
+  document.getElementById('btnD9Wrap').style.display = 'none';
+  document.getElementById('d9Panel').style.display = 'block';
+  renderD9Indicadores();
+}
+
+function renderD9Indicadores() {
+  const container = document.getElementById('d9Indicadores');
+  container.innerHTML = D9_INDICADORES.map((d, i) => `
+    <div style="border:1px solid #21262d; background:#080b0f; padding:16px; margin-bottom:8px;">
+      <div style="display:flex; gap:10px; margin-bottom:8px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:${d.critico?'#f85149':'#d29922'}; flex-shrink:0; padding-top:2px;">D9.${i+1}${d.critico?' ⚠':''}</span>
+        <div>
+          <div style="font-size:14px; color:#c9d1d9; font-weight:600; margin-bottom:2px;">${d.nombre}</div>
+          <div style="font-size:12px; color:#8b949e;">${d.desc}</div>
+          <div style="font-size:11px; color:#444; margin-top:4px; font-style:italic;">📁 ${d.fuente}</div>
+        </div>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#d29922; flex-shrink:0;">W=${d.peso}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        ${d.opciones.map((o, j) => `
+          <label id="d9op-${d.id}-${j}" onclick="seleccionarD9('${d.id}',${o.pts},${j},${d.opciones.length})"
+            style="display:flex; align-items:flex-start; gap:8px; padding:8px 10px; border:1px solid #21262d; cursor:pointer; font-size:13px; color:#8b949e; transition:all 0.15s;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:${o.pts===1?'#f85149':o.pts===2?'#d29922':'#3fb950'}; flex-shrink:0;">${o.pts}p</span>
+            <span>${o.txt}</span>
+          </label>
+        `).join('')}
+        <label id="d9op-${d.id}-ns" onclick="seleccionarD9NS('${d.id}',${d.opciones.length})"
+          style="display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid #21262d; cursor:pointer; font-size:12px; color:#555; font-style:italic;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#555;">?p</span>
+          <span>Sin datos suficientes para verificar</span>
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function seleccionarD9(id, pts, idx, total) {
+  respuestasD9[id] = pts;
+  for (let j = 0; j < total; j++) {
+    const el = document.getElementById(`d9op-${id}-${j}`);
+    if (el) el.style.cssText = j === idx
+      ? `display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid ${pts===1?'#f85149':pts===2?'#d29922':'#3fb950'};cursor:pointer;font-size:13px;color:#c9d1d9;background:rgba(255,255,255,0.03);`
+      : `display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid #21262d;cursor:pointer;font-size:13px;color:#8b949e;`;
+  }
+  const ns = document.getElementById(`d9op-${id}-ns`);
+  if (ns) ns.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #21262d;cursor:pointer;font-size:12px;color:#555;font-style:italic;`;
+  calcularD9();
+}
+
+function seleccionarD9NS(id, total) {
+  respuestasD9[id] = null;
+  for (let j = 0; j < total; j++) {
+    const el = document.getElementById(`d9op-${id}-${j}`);
+    if (el) el.style.cssText = `display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid #21262d;cursor:pointer;font-size:13px;color:#8b949e;`;
+  }
+  const ns = document.getElementById(`d9op-${id}-ns`);
+  if (ns) ns.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #58a6ff;cursor:pointer;font-size:12px;color:#c9d1d9;font-style:italic;background:rgba(88,166,255,0.05);`;
+  calcularD9();
+}
+
+function calcularD9() {
+  const respondidas = D9_INDICADORES.filter(d => respuestasD9[d.id] != null);
+  if (respondidas.length === 0) return;
+
+  let suma = 0;
+  let pesoTotal = 0;
+  respondidas.forEach(d => {
+    suma += respuestasD9[d.id] * d.peso;
+    pesoTotal += d.peso;
+  });
+
+  let score = pesoTotal > 0 ? suma / pesoTotal : 0;
+
+  // Disyuntor: si D9.2 = 1, Ω = 0.2
+  const omegaActivo = respuestasD9['d9_2'] === 1;
+  if (omegaActivo) score *= 0.2;
+  score = Math.max(1, Math.min(3, score));
+
+  const color = score < 1.5 ? '#f85149' : score < 2.3 ? '#d29922' : '#3fb950';
+  const estado = score < 1.5 ? '🔴 CAPTURA CONDUCTUAL' : score < 2.3 ? '🟡 RIESGO MODERADO' : '🟢 LIBERTAD DIGITAL';
+
+  const scoreEl = document.getElementById('d9Score');
+  const estadoEl = document.getElementById('d9Estado');
+  const omegaEl = document.getElementById('d9Omega');
+
+  if (scoreEl) { scoreEl.textContent = score.toFixed(2); scoreEl.style.color = color; }
+  if (estadoEl) { estadoEl.textContent = estado; estadoEl.style.color = color; estadoEl.style.borderColor = color; }
+  if (omegaEl) {
+    omegaEl.textContent = omegaActivo
+      ? '⚠ Disyuntor D9 activado: daño interno documentado detectado. Puntuación reducida al 20%.'
+      : `Dimensiones respondidas: ${respondidas.length}/${D9_INDICADORES.length}`;
+    omegaEl.style.color = omegaActivo ? '#f85149' : '#8b949e';
+  }
+}
+
 function reiniciar() {
   respuestas = {};
+  respuestasD9 = {};
+  d9Activo = false;
   nombreActual = '';
   isdActual = 0;
   document.getElementById('formulario').style.display = 'block';
   document.getElementById('resultado').style.display = 'none';
   document.getElementById('alternativasPanel').style.display = 'none';
+  document.getElementById('d9Panel').style.display = 'none';
+  document.getElementById('btnD9Wrap').style.display = 'none';
   document.getElementById('nomSistema').value = '';
   document.getElementById('btnAnalizar').disabled = true;
   document.getElementById('progFill').style.width = '0%';
