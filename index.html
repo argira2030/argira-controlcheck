@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ControlCheck v3.3 · Auditoría Dual + D9</title>
+<title>ControlCheck v3.5 · Auditoría Dual + D9</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
@@ -204,6 +204,14 @@ canvas {
   text-decoration: none;
   border-radius: 3px;
 }
+.ayuda-texto {
+  font-size: 0.7rem;
+  color: var(--texto2);
+  margin-top: 5px;
+  padding: 4px;
+  background: var(--fondo2);
+  border-radius: 4px;
+}
 select {
   background: var(--fondo2);
   border: 1px solid var(--borde2);
@@ -239,6 +247,24 @@ select {
   margin-top: 8px;
   font-weight: bold;
   display: none;
+}
+.progress-indicator {
+  font-size: 0.7rem;
+  color: var(--texto2);
+  margin: 5px 0 10px;
+  text-align: right;
+  font-family: 'IBM Plex Mono';
+}
+.veto-msg, .alternativas-sugeridas {
+  background: rgba(248,81,73,0.1);
+  border-left: 3px solid var(--red);
+  padding: 10px;
+  margin: 15px 0;
+  font-size: 0.8rem;
+}
+.alternativas-sugeridas {
+  border-left-color: var(--green);
+  background: rgba(63,185,80,0.05);
 }
 .resultados-globales {
   background: var(--card);
@@ -321,6 +347,24 @@ summary {
 .d9-indicador select {
   margin-top: 8px;
 }
+.ejemplos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.ej-item {
+  background: var(--fondo3);
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.ej-item:hover { background: var(--fondo2); border-color: var(--accent); }
+.ej-nombre { font-weight: bold; font-size: 0.8rem; }
+.ej-tipo { font-size: 0.7rem; color: var(--texto2); }
 @media (max-width: 800px) {
   .two-columns { grid-template-columns: 1fr; }
   .system-bar { flex-direction: column; align-items: stretch; }
@@ -332,7 +376,7 @@ summary {
 <div class="container">
   <div class="header">
     <div class="badge">Argira Station · Portal 2030</div>
-    <h1>Control<em style="color:var(--accent)">Check</em> v3.3</h1>
+    <h1>Control<em style="color:var(--accent)">Check</em> v3.5</h1>
     <div class="subtitulo">Auditoría Dual: Poder Estructural (ISD) + Autonomía Cognitiva (ISD‑MIND) + D9</div>
     <a href="https://doi.org/10.5281/zenodo.19336184" target="_blank" class="doi-badge">DOI: 10.5281/zenodo.19336184</a>
   </div>
@@ -343,30 +387,37 @@ summary {
       <input type="text" id="systemName" placeholder="ej: Facebook, TikTok, Instagram, Claude..." value="">
     </div>
     <div class="action-buttons">
-      <button class="big-button" id="updateSearchBtn">🔍 BUSCAR / ACTUALIZAR</button>
+      <button class="big-button" id="updateSearchBtn">🔍 BUSCAR (opcional)</button>
       <button class="reset-button" id="fullResetBtn">⟳ NUEVA EVALUACIÓN</button>
     </div>
     <span id="feedbackMsg" class="feedback-msg"></span>
   </div>
 
+  <div style="margin-bottom: 20px;">
+    <div class="subtitulo" style="margin-bottom: 5px;">📋 Ejemplos rápidos:</div>
+    <div class="ejemplos-grid" id="ejemplosGrid"></div>
+  </div>
+
   <div class="two-columns">
-    <!-- COLUMNA ISD ESTRUCTURAL -->
     <div class="column">
       <h2><span class="accent">[ ISD ]</span> Soberanía Digital</h2>
       <canvas id="chartISD" width="400" height="300"></canvas>
       <div id="isd-questions"></div>
+      <div class="progress-indicator" id="isd-progress">0/8 respondidas</div>
       <div class="score-summary">
         <span class="status-label" id="isd-status-label">Puntuación</span>
         <span class="big-score" id="isd-score">--</span>
         <div id="omega-isd-msg" class="omega-msg">⚠ OMEGA: ESTRUCTURA CONCENTRADA ACTIVADA</div>
       </div>
+      <div id="veto-isd-msg" class="veto-msg" style="display:none;"></div>
+      <div id="alternativas-isd" class="alternativas-sugeridas" style="display:none;"></div>
     </div>
 
-    <!-- COLUMNA ISD-MIND COGNITIVO -->
     <div class="column">
       <h2><span style="color:var(--mind)">[ ISD‑MIND ]</span> Soberanía Cognitiva</h2>
       <canvas id="chartMIND" width="400" height="300"></canvas>
       <div id="mind-questions"></div>
+      <div class="progress-indicator" id="mind-progress">0/9 respondidas</div>
       <div class="score-summary">
         <span class="status-label" id="mind-status-label">Puntuación</span>
         <span class="big-score" id="mind-score">--</span>
@@ -397,6 +448,7 @@ summary {
   <details>
     <summary>⚠️ D9 – Daño Psicológico y Captura Conductual (opcional)</summary>
     <div id="d9-panel" style="margin-top:15px;"></div>
+    <div class="progress-indicator" id="d9-progress">0/5 respondidas</div>
     <div class="score-summary" style="margin-top:15px;">
       <span class="status-label" id="d9-status-label">Puntuación D9</span>
       <span class="big-score" id="d9-score">--</span>
@@ -411,63 +463,69 @@ summary {
 </div>
 
 <script>
-// ------------------------------------------------------------
-// 1. DIMENSIONES CON OPCIONES ESPECÍFICAS
-// ------------------------------------------------------------
+// ==================== 1. DIMENSIONES Y DATOS ====================
 const ISD_DIMS = [
   { id: 'terminacion', label: 'Terminación unilateral', weight: 0.15,
     desc: '¿Puede el servicio terminar tu acceso de forma unilateral y sin causa justificada?',
+    ayuda: 'Busca en los "Términos de Servicio" palabras como "terminación", "suspensión", "cancelación". Si dice que pueden cerrarte la cuenta sin aviso o por cualquier motivo, es 1p. Si dan aviso previo (24-30 días) o hay posibilidad de apelar, es 2p. Si requieren causa legal y proceso formal, es 3p.',
     fuente: 'Términos de Servicio → Sección "Terminación"',
-    search: 'terms of service termination clause',
+    search_es: 'cláusula de terminación condiciones servicio',
     opts: ['1p — Sí, sin aviso previo ni justificación requerida',
            '2p — Sí, pero con aviso mínimo (24-30 días) o proceso de apelación',
            '3p — No, requiere causa documentada y proceso formal'] },
   { id: 'portabilidad', label: 'Portabilidad de datos', weight: 0.15,
     desc: '¿Puedes exportar todos tus datos en formato abierto e interoperable?',
+    ayuda: 'Busca "exportar datos", "descargar información", "portabilidad". Si no se puede exportar o es en formato propietario, 1p. Si se puede exportar pero en formato poco útil o faltan datos, 2p. Si exportación completa en JSON/CSV/XML estándar, 3p.',
     fuente: 'Política de privacidad → "Portabilidad de datos" · GDPR Art. 20',
-    search: 'data export portability GDPR',
+    search_es: 'exportar datos portabilidad formato abierto',
     opts: ['1p — No existe exportación o el formato es propietario no estándar',
            '2p — Exportación parcial o en formato poco interoperable',
            '3p — Exportación completa en formato abierto (JSON, CSV, XML estándar)'] },
   { id: 'estructura', label: 'Estructura legal', weight: 0.10,
     desc: '¿Cuál es la estructura legal de propiedad de la entidad?',
+    ayuda: 'Investiga si es una empresa con ánimo de lucro (Sociedad Anónima, LLC) → 1p. Si es fundación, B-Corp o tiene compromisos públicos → 2p. Si es cooperativa, bien común, sin ánimo de lucro con voto de los miembros → 3p.',
     fuente: 'Registro Mercantil · Wikipedia · Crunchbase',
-    search: 'legal structure ownership cooperative',
+    search_es: 'estructura legal propiedad empresa',
     opts: ['1p — Sociedad Anónima o LLC con accionistas privados (lucro)',
            '2p — Fundación, B-Corp o empresa mixta con compromisos públicos',
            '3p — Cooperativa, bien común, entidad sin ánimo de lucro con voto de miembros'] },
   { id: 'beneficios', label: 'Distribución de beneficios', weight: 0.10,
     desc: '¿Cómo se distribuyen los beneficios económicos generados?',
-    fuente: 'Informe anual · Filing SEC/CNMV · Estructura accionarial pública',
-    search: 'annual report profit distribution',
+    ayuda: 'Si los beneficios van a accionistas privados (dividendos) → 1p. Si reinvierten parte en la comunidad o trabajadores → 2p. Si reparten entre todos los participantes o reinvierten totalmente en la misión → 3p.',
+    fuente: 'Informe anual · Estructura accionarial pública',
+    search_es: 'distribución de beneficios informe anual',
     opts: ['1p — Se concentran en accionistas o propietarios (dividendos privados)',
            '2p — Reinversión parcial, con retorno moderado a comunidad o trabajadores',
            '3p — Reparto entre todos los participantes o reinversión total en misión'] },
   { id: 'jurisdiccion', label: 'Jurisdicción', weight: 0.10,
     desc: '¿En qué jurisdicción opera legalmente el servicio?',
-    fuente: 'Privacy Policy → "Governing Law" · Sede fiscal registrada',
-    search: 'governing law jurisdiction',
+    ayuda: 'Si está en paraíso fiscal o sin tratados de protección de datos → 1p. Si está en EE.UU. (sujeta a Cloud Act) → 2p. Si está en UE/EEE con GDPR aplicable → 3p.',
+    fuente: 'Privacy Policy → "Governing Law"',
+    search_es: 'jurisdicción ley aplicable política privacidad',
     opts: ['1p — Paraíso fiscal, jurisdicción opaca o sin tratados de protección de datos',
            '2p — EE.UU. u otra con tratados parciales (sujeta a Cloud Act u equivalente)',
            '3p — UE / Espacio Económico Europeo con GDPR aplicable y derecho al olvido'] },
   { id: 'gobierno', label: 'Gobernanza', weight: 0.10,
     desc: '¿Cómo se toman las decisiones sobre el servicio?',
-    fuente: 'Estatutos · Informes de gobernanza · Estructura del consejo directivo',
-    search: 'governance board structure',
+    ayuda: 'Si decide el CEO o accionistas mayoritarios → 1p. Si hay junta directiva con rendición de cuentas → 2p. Si los usuarios o miembros votan decisiones clave → 3p.',
+    fuente: 'Estatutos · Informes de gobernanza',
+    search_es: 'gobernanza estructura consejo',
     opts: ['1p — Decisión unilateral del CEO/fundador o accionistas mayoritarios',
            '2p — Junta directiva con cierta rendición de cuentas pública',
            '3p — Voto real de usuarios o miembros en decisiones clave'] },
   { id: 'codigo', label: 'Código fuente auditable', weight: 0.20,
     desc: '¿Es el código fuente auditable externamente?',
-    fuente: 'GitHub · GitLab · Open Source Initiative · Licencia pública',
-    search: 'open source github license',
+    ayuda: 'Si es 100% propietario y no se puede auditar → 1p. Si es parcialmente abierto o hay auditorías externas periódicas → 2p. Si es open source con licencia libre (MIT, GPL, AGPL) → 3p.',
+    fuente: 'GitHub · Open Source Initiative',
+    search_es: 'código fuente abierto licencia',
     opts: ['1p — Código 100% propietario, no auditable',
            '2p — Parcialmente abierto o con auditorías externas periódicas',
            '3p — 100% open source con licencia libre (MIT, GPL, AGPL, Apache)'] },
   { id: 'alternativas', label: 'Alternativas interoperables', weight: 0.10,
     desc: '¿Existen alternativas reales con interoperabilidad de datos?',
-    fuente: 'Directorios open source · AlternativeTo · F-Droid · investigación de mercado',
-    search: 'open source alternatives interoperable',
+    ayuda: 'Si no hay alternativas viables o los formatos son incompatibles → 1p. Si hay alternativas pero migrar es costoso o con pérdida de datos → 2p. Si hay múltiples alternativas con estándares comunes de importación/exportación → 3p.',
+    fuente: 'AlternativeTo · F-Droid',
+    search_es: 'alternativas código abierto interoperabilidad',
     opts: ['1p — No hay alternativas viables o el formato es incompatible con todas',
            '2p — Hay alternativas pero la migración es costosa o con pérdida de datos',
            '3p — Múltiples alternativas con estándar de importación/exportación común'] }
@@ -476,54 +534,63 @@ const ISD_DIMS = [
 const MIND_DIMS = [
   { id: 'd1', label: 'Ritmo Cognitivo', weight: 0.15,
     desc: '¿La app interrumpe constantemente con notificaciones o estímulos rápidos?',
+    ayuda: 'Si te bombardea con notificaciones sin control → 0p. Si es frecuente → 1p. Si a veces → 2p. Si respeta tu ritmo y puedes silenciar → 3p.',
     opts: ['0 — Sí, constantemente (muy intrusiva)',
            '1 — Frecuentemente',
            '2 — A veces',
            '3 — No, respeta el ritmo del usuario'] },
   { id: 'd2', label: 'Dependencia Emocional', weight: 0.10,
     desc: '¿La app usa métricas sociales (likes, vistas, rachas) para generar dependencia?',
+    ayuda: 'Si usa likes, rachas, recompensas para engancharte → 0p. Si lo usa moderadamente → 1p. Si muy poco → 2p. Si no usa métricas dopaminérgicas → 3p.',
     opts: ['0 — Sí, de forma intensa',
            '1 — Sí, moderadamente',
            '2 — Muy poco',
            '3 — No, evita métricas dopaminérgicas'] },
   { id: 'd3', label: 'Captura de Contexto Personal', weight: 0.10,
     desc: '¿La app infiere emociones, hábitos o patrones íntimos?',
+    ayuda: 'Si analiza tus emociones y patrones de forma profunda → 0p. Si parcialmente → 1p. Si muy poco → 2p. Si respeta tu contexto → 3p.',
     opts: ['0 — Sí, de forma profunda',
            '1 — Sí, parcialmente',
            '2 — Muy poco',
            '3 — No, respeta el contexto personal'] },
   { id: 'd4', label: 'Diseño Persuasivo', weight: 0.15,
     desc: '¿La app usa scroll infinito, autoplay o nudges manipulativos?',
+    ayuda: 'Si usa scroll infinito, autoplay, etc. intensamente → 0p. Si moderadamente → 1p. Si muy poco → 2p. Si diseño ético → 3p.',
     opts: ['0 — Sí, intensamente',
            '1 — Sí, moderadamente',
            '2 — Muy poco',
            '3 — No, diseño ético'] },
   { id: 'd5', label: 'Autonomía Cognitiva', weight: 0.15,
     desc: '¿La app permite controlar el feed, desconectar y decidir el ritmo?',
+    ayuda: 'Si controla todo (no puedes silenciar, no puedes elegir orden) → 0p. Si muy poco control → 1p. Si control parcial → 2p. Si control total → 3p.',
     opts: ['0 — No, controla todo',
            '1 — Muy poco control',
            '2 — Control parcial',
            '3 — Control total del usuario'] },
   { id: 'd6', label: 'Portabilidad Cognitiva', weight: 0.10,
     desc: '¿Puedes mantener tus hábitos y tu identidad fuera de la app?',
+    ayuda: 'Si genera dependencia total (no puedes dejar de usarla) → 0p. Si es difícil → 1p. Si es posible → 2p. Si totalmente → 3p.',
     opts: ['0 — No, genera dependencia total',
            '1 — Difícil',
            '2 — Posible',
            '3 — Sí, totalmente'] },
   { id: 'd7', label: 'Transparencia Psicológica', weight: 0.10,
     desc: '¿La app explica cómo te influye y qué datos emocionales usa?',
+    ayuda: 'Si nada transparente → 0p. Si poca transparencia → 1p. Si transparencia parcial → 2p. Si transparencia total → 3p.',
     opts: ['0 — Nada transparente',
            '1 — Poca transparencia',
            '2 — Transparencia parcial',
            '3 — Transparencia total'] },
   { id: 'd8', label: 'Riesgo Psicológico', weight: 0.15,
     desc: '¿La app genera ansiedad, estrés, adicción o afecta al sueño?',
+    ayuda: 'Si mucho → 0p. Si moderado → 1p. Si bajo → 2p. Si protege la salud mental → 3p.',
     opts: ['0 — Sí, mucho',
            '1 — Moderado',
            '2 — Bajo',
            '3 — No, protege la salud mental'] },
   { id: 'd9', label: 'Disyuntor Cognitivo', weight: 0, isDisruptor: true,
     desc: '¿La app puede llegar a tomar control de tu atención o emociones?',
+    ayuda: 'Si claramente puede tomar control → 0p. Si a veces → 1p. Si muy poco → 2p. Si nunca → 3p.',
     opts: ['0 — Sí, claramente',
            '1 — A veces',
            '2 — Muy poco',
@@ -533,37 +600,51 @@ const MIND_DIMS = [
 const D9_INDICADORES = [
   { id: 'd9_1', nombre: 'Patrones de Diseño Persuasivo', peso: 0.25,
     desc: 'Notificaciones de refuerzo variable, rachas, recompensas intermitentes.',
+    ayuda: '¿La plataforma usa técnicas de enganche como notificaciones constantes, rachas, recompensas?',
     fuente: 'Center for Humane Technology',
     opts: ['1p — Múltiples patrones activos sin opt-out real',
            '2p — Patrones presentes pero con opt-out disponible',
            '3p — Sin patrones persuasivos o con control total'] },
   { id: 'd9_2', nombre: 'Conocimiento Interno del Daño', peso: 0.30, critico: true,
     desc: 'Existencia de documentos internos que evidencien daño psicológico.',
+    ayuda: '¿Se han filtrado documentos internos (ej. Facebook Papers) que muestren que sabían del daño y lo ocultaron?',
     fuente: 'Facebook Papers, litigios',
     opts: ['1p — Daño documentado internamente y ocultado',
            '2p — Daño reconocido sin acción correctiva',
            '3p — Sin evidencia de daño conocido'] },
   { id: 'd9_3', nombre: 'Opacidad de Datos', peso: 0.20,
     desc: 'Informes de transparencia periódicos y verificables.',
+    ayuda: '¿Publican informes de transparencia sobre solicitudes de datos, moderación, etc.?',
     fuente: 'ToS;DR',
     opts: ['1p — Sin informes de transparencia',
            '2p — Informes parciales',
            '3p — Informes completos auditados'] },
   { id: 'd9_4', nombre: 'Costo de Salida (Lock-in)', peso: 0.15,
     desc: 'Pasos y tiempo para eliminar cuenta y exportar datos.',
+    ayuda: '¿Cuántos pasos y tiempo cuesta eliminar la cuenta y exportar tus datos?',
     fuente: 'JustDeleteMe',
     opts: ['1p — Más de 10 pasos o datos no exportables',
            '2p — Proceso complejo con pérdida parcial',
            '3p — Menos de 3 pasos con exportación completa'] },
   { id: 'd9_5', nombre: 'Autonomía de Interfaz', peso: 0.10,
     desc: 'Capacidad de desactivar algoritmos de recomendación y usar orden cronológico puro.',
+    ayuda: '¿Puedes usar un feed cronológico sin algoritmo?',
     fuente: 'Configuración pública',
     opts: ['1p — Algoritmo forzado, sin alternativa',
            '2p — Control parcial del algoritmo',
            '3p — Control total – feed cronológico disponible'] }
 ];
 
-// Estado
+const EJEMPLOS = [
+  { nombre:'Spotify', tipo:'Streaming', pts:{terminacion:1,portabilidad:1,estructura:1,beneficios:1,jurisdiccion:2,gobierno:1,codigo:1,alternativas:2} },
+  { nombre:'Wikipedia', tipo:'Enciclopedia', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} },
+  { nombre:'Signal', tipo:'Mensajería', pts:{terminacion:2,portabilidad:2,estructura:3,beneficios:3,jurisdiccion:2,gobierno:2,codigo:3,alternativas:2} },
+  { nombre:'Twitter/X', tipo:'Red social', pts:{terminacion:1,portabilidad:1,estructura:1,beneficios:1,jurisdiccion:2,gobierno:1,codigo:1,alternativas:1} },
+  { nombre:'Som Energia', tipo:'Cooperativa', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:3,codigo:2,alternativas:2} },
+  { nombre:'Linux', tipo:'SO', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} }
+];
+
+// Estado global
 let isdValues = {};
 let mindValues = {};
 let d9Values = {};
@@ -571,15 +652,13 @@ let isdScore = 0, mindScore = 0, d9Score = 0;
 let isdOmega = false, mindOmega = false, d9Omega = false;
 let chartISD, chartMIND;
 
-// ------------------------------------------------------------
-// 2. RENDERIZADO CON OPCIONES ESPECÍFICAS
-// ------------------------------------------------------------
+// ==================== 2. RENDERIZADO DE PREGUNTAS ====================
 function renderISD() {
   const container = document.getElementById('isd-questions');
   if (!container) return;
   const system = document.getElementById('systemName').value.trim() || 'este sistema';
   container.innerHTML = ISD_DIMS.map(d => {
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(`"${system}" ${d.search}`)}`;
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(`"${system}" ${d.search_es}`)}`;
     const optsHtml = d.opts.map((txt, idx) => `<option value="${idx+1}">${txt}</option>`).join('');
     return `
       <div class="pregunta-card">
@@ -589,10 +668,11 @@ function renderISD() {
         </div>
         <div class="preg-fuente">
           📁 ${d.fuente}
-          <a href="${searchUrl}" target="_blank" class="btn-buscar" data-search="${d.search}">🔍 Buscar</a>
+          <a href="${searchUrl}" target="_blank" class="btn-buscar" data-search="${d.search_es}">🔍 Buscar en Google</a>
         </div>
+        <div class="ayuda-texto">💡 ${d.ayuda}</div>
         <select id="isd-${d.id}" onchange="updateISD()">
-          <option value="">— Selecciona —</option>
+          <option value="">— Selecciona según lo que encuentres —</option>
           ${optsHtml}
         </select>
       </div>
@@ -602,6 +682,7 @@ function renderISD() {
     const sel = document.getElementById(`isd-${d.id}`);
     if (sel && isdValues[d.id] !== undefined) sel.value = isdValues[d.id];
   }
+  updateISDProgress();
 }
 
 function renderMIND() {
@@ -615,8 +696,9 @@ function renderMIND() {
           <span class="preg-num">${d.id.toUpperCase()}</span>
           <span class="preg-texto">${d.desc}</span>
         </div>
+        <div class="ayuda-texto">💡 ${d.ayuda}</div>
         <select id="mind-${d.id}" onchange="updateMIND()">
-          <option value="">— Selecciona —</option>
+          <option value="">— Selecciona según tu experiencia —</option>
           ${optsHtml}
         </select>
       </div>
@@ -626,6 +708,7 @@ function renderMIND() {
     const sel = document.getElementById(`mind-${d.id}`);
     if (sel && mindValues[d.id] !== undefined) sel.value = mindValues[d.id];
   }
+  updateMINDProgress();
 }
 
 function renderD9() {
@@ -637,6 +720,7 @@ function renderD9() {
       <div class="d9-indicador">
         <strong>${d.nombre} ${d.critico ? '⚠️' : ''}</strong><br>
         <span style="font-size:0.75rem; color:var(--texto2);">${d.desc} (Peso ${d.peso*100}%)</span><br>
+        <div class="ayuda-texto" style="margin:4px 0;">💡 ${d.ayuda}</div>
         <span style="font-size:0.7rem; color:#555;">📁 ${d.fuente}</span>
         <select id="d9-${d.id}" onchange="updateD9()">
           <option value="">— Selecciona —</option>
@@ -649,11 +733,30 @@ function renderD9() {
     const sel = document.getElementById(`d9-${d.id}`);
     if (sel && d9Values[d.id] !== undefined) sel.value = d9Values[d.id];
   }
+  updateD9Progress();
 }
 
-// ------------------------------------------------------------
-// 3. CÁLCULO DE ÍNDICES
-// ------------------------------------------------------------
+// Progreso
+function updateISDProgress() {
+  const total = ISD_DIMS.length;
+  const answered = ISD_DIMS.filter(d => isdValues[d.id] !== undefined).length;
+  const el = document.getElementById('isd-progress');
+  if (el) el.innerText = `${answered}/${total} respondidas`;
+}
+function updateMINDProgress() {
+  const total = MIND_DIMS.length;
+  const answered = MIND_DIMS.filter(d => mindValues[d.id] !== undefined).length;
+  const el = document.getElementById('mind-progress');
+  if (el) el.innerText = `${answered}/${total} respondidas`;
+}
+function updateD9Progress() {
+  const total = D9_INDICADORES.length;
+  const answered = D9_INDICADORES.filter(d => d9Values[d.id] !== undefined).length;
+  const el = document.getElementById('d9-progress');
+  if (el) el.innerText = `${answered}/${total} respondidas`;
+}
+
+// Cálculos
 function computeISD() {
   let sum = 0, totalWeight = 0;
   for (let d of ISD_DIMS) {
@@ -671,7 +774,6 @@ function computeISD() {
   isdScore = final;
   return final;
 }
-
 function computeMIND() {
   let sum = 0, totalWeight = 0;
   for (let d of MIND_DIMS) {
@@ -691,7 +793,6 @@ function computeMIND() {
   mindScore = final;
   return final;
 }
-
 function computeD9() {
   let sum = 0, totalWeight = 0;
   for (let d of D9_INDICADORES) {
@@ -710,9 +811,7 @@ function computeD9() {
   return final;
 }
 
-// ------------------------------------------------------------
-// 4. ACTUALIZACIÓN DE UI
-// ------------------------------------------------------------
+// Radares y actualización UI
 function initCharts() {
   const ctxISD = document.getElementById('chartISD').getContext('2d');
   const ctxMIND = document.getElementById('chartMIND').getContext('2d');
@@ -727,13 +826,11 @@ function initCharts() {
     options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' } } }, plugins: { legend: { display: false } } }
   });
 }
-
 function updateAll() {
   const isdFinal = computeISD();
   const mindFinal = computeMIND();
   const d9Final = computeD9();
 
-  // ISD UI
   document.getElementById('isd-score').innerText = isdFinal.toFixed(2);
   document.getElementById('final-isd-val').innerText = isdFinal.toFixed(2);
   const isdColor = isdFinal < 1.5 ? '#f85149' : (isdFinal < 2.5 ? '#d29922' : '#3fb950');
@@ -742,7 +839,6 @@ function updateAll() {
   const isdStatus = isdFinal < 1.5 ? 'Captura Crítica' : (isdFinal < 2.5 ? 'Riesgo Moderado' : 'Soberanía Simbiótica');
   document.getElementById('isd-status-label').innerHTML = isdStatus;
 
-  // MIND UI
   document.getElementById('mind-score').innerText = mindFinal.toFixed(2);
   document.getElementById('final-mind-val').innerText = mindFinal.toFixed(2);
   const mindColor = mindFinal < 1.5 ? '#f85149' : (mindFinal < 2.5 ? '#d29922' : '#3fb950');
@@ -751,7 +847,6 @@ function updateAll() {
   const mindStatus = mindFinal < 1.5 ? 'Captura Cognitiva' : (mindFinal < 2.5 ? 'Riesgo Cognitivo Moderado' : 'Soberanía Cognitiva');
   document.getElementById('mind-status-label').innerHTML = mindStatus;
 
-  // D9 UI
   document.getElementById('d9-score').innerText = d9Final.toFixed(2);
   const d9Color = d9Final < 1.5 ? '#f85149' : (d9Final < 2.5 ? '#d29922' : '#3fb950');
   document.getElementById('d9-score').style.color = d9Color;
@@ -759,29 +854,41 @@ function updateAll() {
   const d9Status = d9Final < 1.5 ? 'Captura Conductual' : (d9Final < 2.5 ? 'Riesgo Moderado' : 'Libertad Digital');
   document.getElementById('d9-status-label').innerHTML = d9Status;
 
-  // Veredicto
+  const vetoDiv = document.getElementById('veto-isd-msg');
+  if (isdValues['terminacion'] == 1 || isdValues['portabilidad'] == 1) {
+    vetoDiv.style.display = 'block';
+    vetoDiv.innerHTML = '⚠️ <strong>Disyuntor de Emergencia activado</strong>: la terminación unilateral o la falta de portabilidad crítica anulan parte de la soberanía. El ISD final ya ha sido penalizado un 20% automáticamente.';
+  } else {
+    vetoDiv.style.display = 'none';
+  }
+
+  const altDiv = document.getElementById('alternativas-isd');
+  if (isdFinal < 1.8) {
+    altDiv.style.display = 'block';
+    altDiv.innerHTML = '<strong>💡 Alternativas con mayor soberanía:</strong><br> → Mastodon / Pixelfed (para redes sociales)<br> → Signal / Matrix (mensajería)<br> → Bandcamp / Funkwhale (música)<br> → Explora <a href="https://alternativeto.net" target="_blank" style="color:var(--accent)">AlternativeTo.net</a>';
+  } else {
+    altDiv.style.display = 'none';
+  }
+
   const veredicto = `<strong>Veredicto técnico:</strong> La entidad evaluada muestra un Índice de Soberanía Digital de <strong>${isdFinal.toFixed(2)}/3.0</strong> (${isdStatus}) y un Índice de Soberanía Cognitiva de <strong>${mindFinal.toFixed(2)}/3.0</strong> (${mindStatus}). ${isdOmega ? '⚠️ Disyuntor Omega activado por estructura concentrada. ' : ''}${mindOmega ? '⚠️ Disyuntor Cognitivo activado por diseño persuasivo crítico. ' : ''}${d9Omega ? '⚠️ Omega D9 activado por daño interno documentado.' : ''}`;
   document.getElementById('veredicto-final').innerHTML = veredicto;
 
-  // Radares
   const isdRadarData = ISD_DIMS.map(d => isdValues[d.id] !== undefined ? parseFloat(isdValues[d.id]) : 0);
   chartISD.data.datasets[0].data = isdRadarData;
   chartISD.update();
-
   const mindRadarData = MIND_DIMS.filter(d => !d.isDisruptor).map(d => mindValues[d.id] !== undefined ? parseFloat(mindValues[d.id]) : 0);
   chartMIND.data.datasets[0].data = mindRadarData;
   chartMIND.update();
 }
 
-// ------------------------------------------------------------
-// 5. EVENTOS Y PERSISTENCIA
-// ------------------------------------------------------------
+// Eventos de cambio
 function updateISD() {
   for (let d of ISD_DIMS) {
     const sel = document.getElementById(`isd-${d.id}`);
     if (sel && sel.value !== '') isdValues[d.id] = parseInt(sel.value);
     else delete isdValues[d.id];
   }
+  updateISDProgress();
   updateAll();
   localStorage.setItem('isdValues', JSON.stringify(isdValues));
 }
@@ -791,6 +898,7 @@ function updateMIND() {
     if (sel && sel.value !== '') mindValues[d.id] = parseInt(sel.value);
     else delete mindValues[d.id];
   }
+  updateMINDProgress();
   updateAll();
   localStorage.setItem('mindValues', JSON.stringify(mindValues));
 }
@@ -800,13 +908,27 @@ function updateD9() {
     if (sel && sel.value !== '') d9Values[d.id] = parseInt(sel.value);
     else delete d9Values[d.id];
   }
+  updateD9Progress();
   updateAll();
   localStorage.setItem('d9Values', JSON.stringify(d9Values));
 }
 
+// Resets
 function fullReset() {
   localStorage.clear();
-  location.reload();
+  isdValues = {};
+  mindValues = {};
+  d9Values = {};
+  isdScore = 0; mindScore = 0; d9Score = 0;
+  isdOmega = false; mindOmega = false; d9Omega = false;
+  document.getElementById('systemName').value = '';
+  renderISD();
+  renderMIND();
+  renderD9();
+  updateAll();
+  updateSearchLinks();
+  const fb = document.getElementById('feedbackMsg');
+  if (fb) { fb.textContent = '✓ Todo reiniciado'; setTimeout(() => fb.textContent = '', 2000); }
 }
 function resetEvaluacion() {
   isdValues = {};
@@ -819,25 +941,26 @@ function resetEvaluacion() {
   renderMIND();
   renderD9();
   updateAll();
-  document.getElementById('feedbackMsg').textContent = '✓ Evaluación reiniciada';
-  setTimeout(() => { document.getElementById('feedbackMsg').textContent = ''; }, 2000);
+  const fb = document.getElementById('feedbackMsg');
+  if (fb) { fb.textContent = '✓ Respuestas reiniciadas'; setTimeout(() => fb.textContent = '', 2000); }
 }
 
+// Búsquedas
 function updateSearchLinks() {
   const system = document.getElementById('systemName').value.trim() || 'este sistema';
-  document.querySelectorAll('#isd-questions .btn-buscar').forEach(link => {
+  const links = document.querySelectorAll('#isd-questions .btn-buscar');
+  links.forEach(link => {
     const searchTerm = link.getAttribute('data-search');
     if (searchTerm) {
       link.href = `https://www.google.com/search?q=${encodeURIComponent(`"${system}" ${searchTerm}`)}`;
     }
   });
-  document.getElementById('feedbackMsg').textContent = '✓ Enlaces actualizados';
-  setTimeout(() => { document.getElementById('feedbackMsg').textContent = ''; }, 2000);
 }
 
+// Exportación
 function exportarJSON() {
   const data = {
-    version: 'ControlCheck v3.3',
+    version: 'ControlCheck v3.5',
     fecha: new Date().toISOString(),
     sistema: document.getElementById('systemName').value.trim() || 'No especificado',
     isd_estructural: { puntuacion: isdScore, omega: isdOmega, dimensiones: isdValues },
@@ -854,7 +977,7 @@ function exportarJSON() {
 }
 function exportarMD() {
   const sistema = document.getElementById('systemName').value.trim() || 'No especificado';
-  let md = `# Informe ControlCheck v3.3\n\n**Sistema auditado:** ${sistema}\n**Fecha:** ${new Date().toISOString()}\n\n## ISD Estructural\n**Puntuación:** ${isdScore.toFixed(2)}/3.0\n**Omega activado:** ${isdOmega}\n\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
+  let md = `# Informe ControlCheck v3.5\n\n**Sistema auditado:** ${sistema}\n**Fecha:** ${new Date().toISOString()}\n\n## ISD Estructural\n**Puntuación:** ${isdScore.toFixed(2)}/3.0\n**Omega activado:** ${isdOmega}\n\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
   for (let d of ISD_DIMS) {
     md += `| ${d.label} | ${isdValues[d.id] !== undefined ? isdValues[d.id] : '—'} |\n`;
   }
@@ -876,9 +999,51 @@ function exportarMD() {
   URL.revokeObjectURL(url);
 }
 
-// ------------------------------------------------------------
-// 6. INICIALIZACIÓN
-// ------------------------------------------------------------
+// Ejemplos (FUNCIONAL)
+function cargarEjemplo(ej) {
+  // Reiniciar solo respuestas de ISD (mantener nombre)
+  isdValues = {};
+  mindValues = {};
+  d9Values = {};
+  localStorage.removeItem('isdValues');
+  localStorage.removeItem('mindValues');
+  localStorage.removeItem('d9Values');
+  renderISD();
+  renderMIND();
+  renderD9();
+  // Establecer nombre en el campo
+  const systemInput = document.getElementById('systemName');
+  systemInput.value = ej.nombre;
+  updateSearchLinks();
+  // Cargar valores del ejemplo en isdValues y selects
+  for (let d of ISD_DIMS) {
+    const val = ej.pts[d.id];
+    if (val !== undefined) {
+      isdValues[d.id] = val;
+      const sel = document.getElementById(`isd-${d.id}`);
+      if (sel) sel.value = val;
+    }
+  }
+  updateISDProgress();
+  updateAll();
+  const fb = document.getElementById('feedbackMsg');
+  if (fb) { fb.textContent = `✓ Ejemplo "${ej.nombre}" cargado`; setTimeout(() => fb.textContent = '', 2000); }
+}
+
+function renderEjemplos() {
+  const grid = document.getElementById('ejemplosGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  EJEMPLOS.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'ej-item';
+    div.innerHTML = `<div class="ej-nombre">${e.nombre}</div><div class="ej-tipo">${e.tipo}</div>`;
+    div.addEventListener('click', () => cargarEjemplo(e));
+    grid.appendChild(div);
+  });
+}
+
+// Cargar datos guardados
 function loadStored() {
   const storedISD = localStorage.getItem('isdValues');
   if (storedISD) isdValues = JSON.parse(storedISD);
@@ -888,6 +1053,7 @@ function loadStored() {
   if (storedD9) d9Values = JSON.parse(storedD9);
 }
 
+// Inicialización
 window.onload = () => {
   loadStored();
   renderISD();
@@ -895,16 +1061,27 @@ window.onload = () => {
   renderD9();
   initCharts();
   updateAll();
+  renderEjemplos();
 
-  document.getElementById('updateSearchBtn').addEventListener('click', updateSearchLinks);
+  const systemInput = document.getElementById('systemName');
+  let timeout;
+  systemInput.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => { updateSearchLinks(); }, 500);
+  });
+  systemInput.addEventListener('change', updateSearchLinks);
+
+  document.getElementById('updateSearchBtn').addEventListener('click', () => {
+    updateSearchLinks();
+    const fb = document.getElementById('feedbackMsg');
+    if (fb) { fb.textContent = '✓ Enlaces actualizados'; setTimeout(() => fb.textContent = '', 1500); }
+  });
   document.getElementById('fullResetBtn').addEventListener('click', fullReset);
   document.getElementById('resetEvaluacionBtn').addEventListener('click', resetEvaluacion);
   document.getElementById('exportJSONBtn').addEventListener('click', exportarJSON);
   document.getElementById('exportMDBtn').addEventListener('click', exportarMD);
-  document.getElementById('systemName').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') updateSearchLinks();
-  });
-  if (document.getElementById('systemName').value.trim() !== '') updateSearchLinks();
+
+  if (systemInput.value.trim() !== '') updateSearchLinks();
 };
 </script>
 </body>
