@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ControlCheck v3.6 | Veredicto Ejecutivo | Accesible</title>
+<title>ControlCheck v3.6 · Veredicto Ejecutivo · Accesible · Historial + Exclusión</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
@@ -11,993 +11,222 @@
   --bg: #05070a; --card: #0d1117; --accent: #58a6ff; --text: #c9d1d9;
   --green: #3fb950; --yellow: #d29922; --red: #f85149; --border: #30363d;
   --mind: #ff7b72; --fondo2: #0d1117; --fondo3: #111820;
-  /* WCAG AA corregido: mínimo 4.5:1 sobre fondo oscuro */
   --texto2: #adb5bd;
   --borde: #21262d; --borde2: #30363d;
 }
-
-/* ===== SKIP LINK ACCESIBILIDAD ===== */
-.skip-link {
-  position: absolute;
-  top: -999px;
-  left: 8px;
-  background: var(--accent);
-  color: #000;
-  padding: 8px 14px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.85rem;
-  border-radius: 0 0 6px 6px;
-  z-index: 9999;
-  text-decoration: none;
-  font-weight: bold;
-}
+.skip-link { position: absolute; top: -999px; left: 8px; background: var(--accent); color: #000; padding: 8px 14px; font-family: 'IBM Plex Mono', monospace; z-index: 9999; font-weight: bold; }
 .skip-link:focus { top: 0; }
-
-/* ===== SEMÁFORO FLOTANTE FIJO ===== */
-/* ===== SEMÁFORO FLOTANTE — COLAPSADO POR DEFECTO ===== */
 .semaforo-flotante {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 999px;        /* píldora */
-  padding: 6px 12px 6px 8px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-  cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s, border-radius 0.3s, padding 0.3s;
-  overflow: hidden;
-  max-width: 44px;             /* colapsado: solo emoji */
+  position: fixed; top: 20px; right: 20px; z-index: 1000; background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 48px; padding: 10px 18px 10px 14px; display: flex; flex-direction: row; align-items: center; gap: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4); cursor: pointer; transition: all 0.2s ease; overflow: hidden; max-width: 80px;
 }
-/* Expandido al hover / focus / clase .open */
-.semaforo-flotante:hover,
-.semaforo-flotante:focus-within,
-.semaforo-flotante.open {
-  border-radius: 14px;
-  padding: 12px 16px;
-  max-width: 200px;
-  flex-direction: column;
-  gap: 4px;
-}
+.semaforo-flotante:hover, .semaforo-flotante.open { border-radius: 20px; padding: 12px 20px; max-width: 280px; flex-direction: column; }
 .semaforo-flotante.green { border-color: var(--green); }
 .semaforo-flotante.yellow { border-color: var(--yellow); }
 .semaforo-flotante.red { border-color: var(--red); }
-.semaforo-flotante.green:hover,
-.semaforo-flotante.green:focus-within,
-.semaforo-flotante.green.open { box-shadow: 0 4px 20px rgba(63,185,80,0.2); }
-.semaforo-flotante.yellow:hover,
-.semaforo-flotante.yellow:focus-within,
-.semaforo-flotante.yellow.open { box-shadow: 0 4px 20px rgba(210,153,34,0.2); }
-.semaforo-flotante.red:hover,
-.semaforo-flotante.red:focus-within,
-.semaforo-flotante.red.open { box-shadow: 0 4px 20px rgba(248,81,73,0.2); }
-
-.sf-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.52rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--texto2);
-  /* oculto en píldora */
-  display: none;
-  white-space: nowrap;
-}
-.semaforo-flotante:hover .sf-label,
-.semaforo-flotante:focus-within .sf-label,
-.semaforo-flotante.open .sf-label { display: block; }
-
-.sf-emoji {
-  font-size: 1.3rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.sf-score {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.82rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-/* En expandido, score se hace más grande */
-.semaforo-flotante:hover .sf-score,
-.semaforo-flotante:focus-within .sf-score,
-.semaforo-flotante.open .sf-score { font-size: 1.3rem; }
-
-/* ===== SEMÁFORO FLOTANTE — COLAPSADO POR DEFECTO ===== */
-.semaforo-flotante {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 48px;               /* píldora más grande */
-  padding: 10px 18px 10px 14px;      /* mayor área táctil */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  overflow: hidden;
-  max-width: 80px;                   /* espacio para emoji + score */
-  touch-action: manipulation;        /* mejora respuesta táctil */
-}
-/* Expandido al hover / focus / clase .open */
-.semaforo-flotante:hover,
-.semaforo-flotante:focus-within,
-.semaforo-flotante.open {
-  border-radius: 20px;
-  padding: 12px 20px;
-  max-width: 280px;
-  flex-direction: column;
-  gap: 8px;
-}
-.semaforo-flotante.green { border-color: var(--green); }
-.semaforo-flotante.yellow { border-color: var(--yellow); }
-.semaforo-flotante.red { border-color: var(--red); }
-.semaforo-flotante.green:hover,
-.semaforo-flotante.green:focus-within,
-.semaforo-flotante.green.open { box-shadow: 0 4px 20px rgba(63,185,80,0.2); }
-.semaforo-flotante.yellow:hover,
-.semaforo-flotante.yellow:focus-within,
-.semaforo-flotante.yellow.open { box-shadow: 0 4px 20px rgba(210,153,34,0.2); }
-.semaforo-flotante.red:hover,
-.semaforo-flotante.red:focus-within,
-.semaforo-flotante.red.open { box-shadow: 0 4px 20px rgba(248,81,73,0.2); }
-
-.sf-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.52rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--texto2);
-  display: none;
-  white-space: nowrap;
-}
-.semaforo-flotante:hover .sf-label,
-.semaforo-flotante:focus-within .sf-label,
-.semaforo-flotante.open .sf-label { display: block; }
-
-.sf-emoji {
-  font-size: 1.5rem;        /* un poco más grande */
-  line-height: 1;
-  flex-shrink: 0;
-}
-.sf-score {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.9rem;        /* más visible */
-  font-weight: 700;
-  white-space: nowrap;
-}
-/* En expandido, score se hace más grande */
-.semaforo-flotante:hover .sf-score,
-.semaforo-flotante:focus-within .sf-score,
-.semaforo-flotante.open .sf-score { font-size: 1.4rem; }
-
-.sf-status {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--texto2);
-  display: none;
-  white-space: nowrap;
-}
-.semaforo-flotante:hover .sf-status,
-.semaforo-flotante:focus-within .sf-status,
-.semaforo-flotante.open .sf-status { display: block; }
-
-.sf-tts-btn {
-  display: none;
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--borde2);
-  color: var(--texto2);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.75rem;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 8px;
-  white-space: nowrap;
-  touch-action: manipulation;
-}
-.semaforo-flotante:hover .sf-tts-btn,
-.semaforo-flotante:focus-within .sf-tts-btn,
-.semaforo-flotante.open .sf-tts-btn { display: block; }
-.sf-tts-btn:hover, .sf-tts-btn:focus {
-  border-color: var(--accent);
-  color: var(--accent);
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-.sf-tts-btn.speaking {
-  border-color: var(--green);
-  color: var(--green);
-  animation: pulse-tts 1.2s infinite;
-}
-@keyframes pulse-tts {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Ya no movemos el semáforo abajo en móviles — siempre arriba */
-@media (max-width: 600px) {
-  /* se comenta la regla que lo movía a bottom */
-  /* .semaforo-flotante { top: auto; bottom: 20px; right: 16px; } */
-}
-
-/* ===== VEREDICTO EJECUTIVO ===== */
-.veredicto-ejecutivo {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px 24px 20px;
-  margin: 30px 0;
-}
-.ve-header {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 12px;
-  flex-wrap: wrap;
-}
-.ve-title {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 3px;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.ve-sistema-nombre {
-  font-size: 1.1rem;
-  color: var(--text);
-  font-weight: 700;
-}
-/* Semáforo grande inline en el veredicto */
-.ve-semaforo-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-.ve-semaforo {
-  text-align: center;
-  background: #0d1117;
-  border: 3px solid var(--border);
-  border-radius: 50%;
-  width: 180px;
-  height: 180px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  transition: border-color 0.4s, box-shadow 0.4s;
-}
-.ve-semaforo.green { border-color: var(--green); box-shadow: 0 0 30px rgba(63,185,80,0.3); }
-.ve-semaforo.yellow { border-color: var(--yellow); box-shadow: 0 0 30px rgba(210,153,34,0.3); }
-.ve-semaforo.red { border-color: var(--red); box-shadow: 0 0 30px rgba(248,81,73,0.3); }
-.ve-emoji { font-size: 2.8rem; line-height: 1; }
-.ve-status-text {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--texto2);
-  padding: 0 8px;
-  text-align: center;
-}
-.ve-score-global {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-.ve-score-label {
-  font-size: 0.6rem;
-  color: var(--texto2);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-/* Desglose 3 índices */
-.ve-desglose {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-@media (max-width: 700px) {
-  .ve-desglose { grid-template-columns: 1fr; }
-}
-.ve-index-card {
-  background: #111820;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 16px 14px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  transition: border-color 0.3s;
-}
-.ve-index-card.green { border-color: var(--green); }
-.ve-index-card.yellow { border-color: var(--yellow); }
-.ve-index-card.red { border-color: var(--red); }
-.ve-index-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--texto2);
-}
-.ve-index-score {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--text);
-}
-.ve-index-bar-wrap {
-  background: var(--borde);
-  border-radius: 4px;
-  height: 6px;
-  overflow: hidden;
-}
-.ve-index-bar {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--accent);
-  width: 0%;
-  transition: width 0.6s cubic-bezier(.4,0,.2,1);
-}
-.ve-index-status {
-  font-size: 0.78rem;
-  color: var(--texto2);
-  font-weight: 500;
-}
-.ve-index-omega {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  color: var(--red);
-  letter-spacing: 1px;
-  animation: pulse-omega 1.5s infinite;
-}
-@keyframes pulse-omega {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-/* Recomendación técnica */
-.ve-recomendacion {
-  background: #0d1117;
-  border-left: 4px solid var(--accent);
-  border-radius: 0 8px 8px 0;
-  padding: 16px 18px;
-  margin-bottom: 4px;
-}
-.ve-recomendacion.green { border-left-color: var(--green); }
-.ve-recomendacion.yellow { border-left-color: var(--yellow); }
-.ve-recomendacion.red { border-left-color: var(--red); }
-.ve-rec-title {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--texto2);
-  margin-bottom: 8px;
-}
-.ve-rec-body {
-  font-size: 0.92rem;
-  color: var(--text);
-  line-height: 1.7;
-}
-
-/* ===== ACCESIBILIDAD: FOCUS VISIBLE GLOBAL ===== */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 3px;
-}
-/* Aumentar contraste en textos secundarios */
-.preg-fuente, .ayuda-texto, .progress-indicator, .subtitulo {
-  color: var(--texto2);
-}
-/* Tamaño base más grande */
+.sf-label { font-family: 'IBM Plex Mono'; font-size: 0.52rem; letter-spacing: 2px; text-transform: uppercase; color: var(--texto2); display: none; }
+.semaforo-flotante:hover .sf-label, .semaforo-flotante.open .sf-label { display: block; }
+.sf-emoji { font-size: 1.5rem; }
+.sf-score { font-family: 'IBM Plex Mono'; font-size: 0.9rem; font-weight: 700; }
+.semaforo-flotante:hover .sf-score, .semaforo-flotante.open .sf-score { font-size: 1.4rem; }
+.sf-status { font-family: 'IBM Plex Mono'; font-size: 0.62rem; text-transform: uppercase; display: none; }
+.semaforo-flotante:hover .sf-status, .semaforo-flotante.open .sf-status { display: block; }
+.sf-tts-btn { display: none; width: 100%; background: transparent; border: 1px solid var(--borde2); color: var(--texto2); font-family: 'IBM Plex Mono'; font-size: 0.75rem; padding: 8px; border-radius: 10px; cursor: pointer; margin-top: 8px; }
+.semaforo-flotante:hover .sf-tts-btn, .semaforo-flotante.open .sf-tts-btn { display: block; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 17px;
-  line-height: 1.65;
-  padding: 20px;
-}
+body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; font-size: 17px; line-height: 1.65; padding: 20px; }
 .container { max-width: 1400px; margin: 0 auto; }
-.header {
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 20px;
-  margin-bottom: 30px;
-}
-h1 {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 1.8rem;
-  color: var(--accent);
-  margin-bottom: 5px;
-}
-.badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-family: 'IBM Plex Mono';
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  padding: 2px 8px;
-  margin-bottom: 10px;
-}
-.doi-badge {
-  background: #1c2128;
-  padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  color: var(--accent);
-  text-decoration: none;
-  font-size: 0.7rem;
-  font-family: 'IBM Plex Mono';
-}
-.subtitulo {
-  font-size: 0.85rem;
-  color: var(--texto2);
-  margin-top: 5px;
-}
+.header { text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; }
+h1 { font-family: 'IBM Plex Mono', monospace; font-size: 1.8rem; color: var(--accent); margin-bottom: 5px; }
+.badge { display: inline-block; font-size: 0.7rem; font-family: 'IBM Plex Mono'; color: var(--accent); border: 1px solid var(--accent); padding: 2px 8px; margin-bottom: 10px; }
+.doi-badge { background: #1c2128; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); color: var(--accent); text-decoration: none; font-size: 0.7rem; font-family: 'IBM Plex Mono'; }
+.subtitulo { font-size: 0.85rem; color: var(--texto2); margin-top: 5px; }
 .system-bar {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: flex-end;
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 30px;
+  display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
 }
-.system-input-group {
-  flex: 3;
-  min-width: 200px;
-}
-.system-input-group label {
-  display: block;
-  font-family: 'IBM Plex Mono';
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--texto2);
-  margin-bottom: 5px;
-}
-.system-input-group input {
-  width: 100%;
-  background: var(--fondo2);
-  border: 1px solid var(--borde2);
-  color: var(--text);
-  font-size: 1.2rem;
-  padding: 12px 16px;
-  font-family: inherit;
-  border-radius: 6px;
-}
-.system-input-group input:focus {
-  border-color: var(--accent);
-  outline: none;
-}
-.action-buttons {
-  display: flex;
-  gap: 12px;
-  flex: 2;
-}
-.big-button, .reset-button {
-  flex: 1;
-  font-family: 'IBM Plex Mono';
-  font-size: 0.9rem;
-  font-weight: bold;
-  padding: 12px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-align: center;
-}
-.big-button {
-  background: var(--accent);
-  border: none;
-  color: #000;
-}
-.big-button:hover { background: #79c0ff; transform: scale(1.02); }
-.reset-button {
-  background: transparent;
-  border: 1px solid var(--borde2);
-  color: var(--texto2);
-}
-.reset-button:hover { border-color: var(--texto); color: var(--text); }
-.feedback-msg {
-  font-size: 0.7rem;
-  color: var(--green);
-  margin-left: 5px;
-  align-self: center;
-}
-.two-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 30px;
-}
-.column {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-}
-.column h2 {
-  font-family: 'IBM Plex Mono';
-  font-size: 1.2rem;
-  margin-top: 0;
-  margin-bottom: 15px;
-  border-bottom: 1px solid var(--borde);
-  padding-bottom: 8px;
-}
-.column h2 .accent { color: var(--accent); }
-.column h2 .mind-accent { color: var(--mind); }
-canvas {
-  max-height: 260px;
-  margin-bottom: 20px;
-}
-.pregunta-card {
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-  background: var(--fondo3);
-  margin-bottom: 12px;
-  padding: 12px;
-}
-.preg-header {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-.preg-num {
-  font-family: 'IBM Plex Mono';
-  font-size: 0.7rem;
-  font-weight: bold;
-  color: var(--accent);
-  background: rgba(88,166,255,0.1);
-  padding: 0 4px;
-  border-radius: 3px;
-}
-.preg-texto {
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-.preg-fuente {
-  font-size: 0.7rem;
-  color: var(--texto2);
-  margin: 5px 0 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.btn-buscar {
-  font-family: 'IBM Plex Mono';
-  font-size: 0.65rem;
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  padding: 2px 6px;
-  text-decoration: none;
-  border-radius: 3px;
-}
-.ayuda-texto {
-  font-size: 0.7rem;
-  color: var(--texto2);
-  margin-top: 5px;
-  padding: 4px;
-  background: var(--fondo2);
-  border-radius: 4px;
-}
-select {
-  background: var(--fondo2);
-  border: 1px solid var(--borde2);
-  color: var(--text);
-  padding: 8px;
-  width: 100%;
-  font-family: inherit;
-  font-size: 0.8rem;
-  border-radius: 4px;
-}
-.score-summary {
-  margin-top: 20px;
-  padding: 15px;
-  background: var(--fondo3);
-  border-radius: 8px;
-  text-align: center;
-}
-.big-score {
-  font-family: 'IBM Plex Mono';
-  font-size: 2rem;
-  font-weight: bold;
-  display: block;
-}
-.status-label {
-  font-size: 0.7rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-.omega-msg {
-  color: var(--red);
-  font-size: 0.7rem;
-  margin-top: 8px;
-  font-weight: bold;
-  display: none;
-}
-.progress-indicator {
-  font-size: 0.7rem;
-  color: var(--texto2);
-  margin: 5px 0 10px;
-  text-align: right;
-  font-family: 'IBM Plex Mono';
-}
-.veto-msg, .alternativas-sugeridas {
-  background: rgba(248,81,73,0.1);
-  border-left: 3px solid var(--red);
-  padding: 10px;
-  margin: 15px 0;
-  font-size: 0.8rem;
-}
-.alternativas-sugeridas {
-  border-left-color: var(--green);
-  background: rgba(63,185,80,0.05);
-}
-.resultados-globales {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.resultados-grid {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.resultado-item {
-  text-align: center;
-  flex: 1;
-}
-.resultado-item .valor {
-  font-family: 'IBM Plex Mono';
-  font-size: 2rem;
-  font-weight: bold;
-}
-.btn-group {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.btn-export, .btn-reiniciar {
-  background: transparent;
-  border: 1px solid var(--borde2);
-  color: var(--texto2);
-  padding: 8px 16px;
-  font-family: 'IBM Plex Mono';
-  font-size: 0.7rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-export:hover, .btn-reiniciar:hover {
-  border-color: var(--texto);
-  color: var(--text);
-}
-.veredicto {
-  border-left: 3px solid;
-  padding: 15px;
-  margin: 20px 0;
-  font-size: 0.9rem;
-  background: var(--fondo3);
-}
-footer {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-  text-align: center;
-  font-family: 'IBM Plex Mono';
-  font-size: 0.7rem;
-  color: var(--texto2);
-}
-details {
-  margin-top: 20px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px;
-}
-summary {
-  font-family: 'IBM Plex Mono';
-  cursor: pointer;
-  color: var(--yellow);
-}
-.d9-indicador {
-  border: 1px solid var(--borde);
-  background: var(--fondo3);
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-}
-.d9-indicador select {
-  margin-top: 8px;
-}
-.ejemplos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 8px;
-  margin-top: 10px;
-}
-.ej-item {
-  background: var(--fondo3);
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-  padding: 8px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s;
-}
+.system-input-group { flex: 3; min-width: 200px; }
+.system-input-group label { display: block; font-family: 'IBM Plex Mono'; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--texto2); margin-bottom: 5px; }
+.system-input-group input { width: 100%; background: var(--fondo2); border: 1px solid var(--borde2); color: var(--text); font-size: 1.2rem; padding: 12px 16px; font-family: inherit; border-radius: 6px; }
+.action-buttons { display: flex; gap: 12px; flex: 2; }
+.big-button, .reset-button { flex: 1; font-family: 'IBM Plex Mono'; font-size: 0.9rem; font-weight: bold; padding: 12px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; text-align: center; }
+.big-button { background: var(--accent); border: none; color: #000; }
+.reset-button { background: transparent; border: 1px solid var(--borde2); color: var(--texto2); }
+.feedback-msg { font-size: 0.7rem; color: var(--green); margin-left: 5px; align-self: center; }
+.two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px; }
+.column { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+.column h2 { font-family: 'IBM Plex Mono'; font-size: 1.2rem; margin-bottom: 15px; border-bottom: 1px solid var(--borde); padding-bottom: 8px; }
+canvas { max-height: 260px; margin-bottom: 20px; }
+.pregunta-card { border: 1px solid var(--borde); border-radius: 6px; background: var(--fondo3); margin-bottom: 12px; padding: 12px; }
+.preg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.preg-num { font-family: 'IBM Plex Mono'; font-size: 0.7rem; font-weight: bold; color: var(--accent); background: rgba(88,166,255,0.1); padding: 0 4px; border-radius: 3px; }
+.preg-texto { font-size: 0.85rem; font-weight: 500; }
+.preg-fuente { font-size: 0.7rem; color: var(--texto2); margin: 5px 0 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-buscar { font-family: 'IBM Plex Mono'; font-size: 0.65rem; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; text-decoration: none; border-radius: 3px; }
+.ayuda-texto { font-size: 0.7rem; color: var(--texto2); margin-top: 5px; padding: 4px; background: var(--fondo2); border-radius: 4px; }
+select { background: var(--fondo2); border: 1px solid var(--borde2); color: var(--text); padding: 8px; width: 100%; font-size: 0.8rem; border-radius: 4px; }
+.score-summary { margin-top: 20px; padding: 15px; background: var(--fondo3); border-radius: 8px; text-align: center; }
+.big-score { font-family: 'IBM Plex Mono'; font-size: 2rem; font-weight: bold; display: block; }
+.omega-msg { color: var(--red); font-size: 0.7rem; margin-top: 8px; font-weight: bold; display: none; }
+.progress-indicator { font-size: 0.7rem; color: var(--texto2); margin: 5px 0 10px; text-align: right; }
+.veto-msg, .alternativas-sugeridas { background: rgba(248,81,73,0.1); border-left: 3px solid var(--red); padding: 10px; margin: 15px 0; font-size: 0.8rem; }
+.alternativas-sugeridas { border-left-color: var(--green); background: rgba(63,185,80,0.05); }
+.resultados-globales { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+.btn-group { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-export, .btn-reiniciar { background: transparent; border: 1px solid var(--borde2); color: var(--texto2); padding: 8px 16px; font-family: 'IBM Plex Mono'; font-size: 0.7rem; cursor: pointer; }
+.veredicto { border-left: 3px solid; padding: 15px; margin: 20px 0; font-size: 0.9rem; background: var(--fondo3); }
+footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; font-family: 'IBM Plex Mono'; font-size: 0.7rem; color: var(--texto2); }
+details { margin-top: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+summary { font-family: 'IBM Plex Mono'; cursor: pointer; color: var(--yellow); }
+.d9-indicador { border: 1px solid var(--borde); background: var(--fondo3); padding: 12px; margin-bottom: 12px; border-radius: 6px; }
+.ejemplos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; }
+.ej-item { background: var(--fondo3); border: 1px solid var(--borde); border-radius: 6px; padding: 8px; cursor: pointer; text-align: center; transition: all 0.2s; }
 .ej-item:hover { background: var(--fondo2); border-color: var(--accent); }
 .ej-nombre { font-weight: bold; font-size: 0.8rem; }
 .ej-tipo { font-size: 0.7rem; color: var(--texto2); }
-@media (max-width: 800px) {
-  .two-columns { grid-template-columns: 1fr; }
-  .system-bar { flex-direction: column; align-items: stretch; }
-  .action-buttons { flex-direction: column; }
-}
-/* ===== PROGRESO GLOBAL ===== */
-.progreso-global {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 18px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.pg-textos {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.pg-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--texto2);
-}
-.pg-count {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--accent);
-  transition: color 0.3s;
-}
-.pg-count.completo { color: var(--green); }
-.pg-barra-wrap {
-  background: var(--borde);
-  border-radius: 999px;
-  height: 6px;
-  overflow: hidden;
-}
-.pg-barra {
-  height: 100%;
-  border-radius: 999px;
-  background: var(--accent);
-  transition: width 0.4s ease, background 0.3s;
-}
+.progreso-global { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 7px; }
+.pg-textos { display: flex; justify-content: space-between; }
+.pg-count { font-family: 'IBM Plex Mono'; font-size: 0.72rem; font-weight: 600; color: var(--accent); }
+.pg-barra-wrap { background: var(--borde); border-radius: 999px; height: 6px; overflow: hidden; }
+.pg-barra { height: 100%; border-radius: 999px; background: var(--accent); transition: width 0.4s ease; }
 .pg-barra.completo { background: var(--green); }
-/* ========================== */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.ve-notas { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; }
+.ve-notas textarea { width: 100%; background: var(--fondo3); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 6px; font-family: inherit; font-size: 0.85rem; }
+.historial { margin-top: 20px; background: var(--fondo3); border-radius: 8px; padding: 12px; font-size: 0.8rem; }
+.historial h4 { font-family: 'IBM Plex Mono'; font-size: 0.7rem; margin-bottom: 8px; color: var(--accent); }
+.historial ul { list-style: none; padding-left: 0; max-height: 150px; overflow-y: auto; }
+.historial li { padding: 4px 0; border-bottom: 1px solid var(--borde); font-size: 0.7rem; }
+.exclusion-badge { background: var(--red); color: #fff; font-size: 0.6rem; padding: 2px 6px; border-radius: 12px; display: inline-block; margin-left: 8px; text-transform: uppercase; font-weight: bold; }
+@media (max-width: 800px) { .two-columns { grid-template-columns: 1fr; } .system-bar { flex-direction: column; } .action-buttons { flex-direction: column; } }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); }
 </style>
 </head>
 <body>
-<!-- SKIP LINK ACCESIBILIDAD -->
 <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-<!-- SEMÁFORO FLOTANTE — colapsado por defecto, expandido al hover/click -->
-<div class="semaforo-flotante" id="sf-panel"
-  role="status" aria-live="polite" aria-label="Veredicto actual — expandir para detalles"
-  aria-atomic="true" tabindex="0"
-  onclick="this.classList.toggle('open')"
-  onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('open')">
+<div class="semaforo-flotante" id="sf-panel" role="status" aria-live="polite" tabindex="0" onclick="this.classList.toggle('open')" onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('open')">
   <span class="sf-emoji" id="sf-emoji" aria-hidden="true">⏳</span>
   <span class="sf-score" id="sf-score" style="color:var(--texto2)">—</span>
   <span class="sf-label">ControlCheck v3.6</span>
   <span class="sf-status" id="sf-status">Sin datos</span>
-  <button class="sf-tts-btn" id="sf-tts-btn" aria-label="Leer veredicto en voz alta"
-    onclick="event.stopPropagation(); toggleTTS()">🔊 Leer resultado</button>
+  <button class="sf-tts-btn" id="sf-tts-btn" aria-label="Leer veredicto en voz alta" onclick="event.stopPropagation(); toggleTTS()">🔊 Leer resultado</button>
 </div>
 
 <div class="container" id="main-content">
   <div class="header">
     <div class="badge">Argira Station · Portal 2030</div>
-    <h1>Control<em style="color:var(--accent)">ControlCheck</em> v3.6</h1>
-    <div class="subtitulo">ControlCheck v3.6 – Veredicto ejecutivo accesible, semáforo colapsado y progreso global<strong style="color:var(--accent)">Veredicto Ejecutivo · Lector de Voz</strong></div>
-    <a href="https://doi.org/10.5281/zenodo.19349824" target="_blank" class="doi-badge" aria-label="DOI Zenodo versión 3.6">DOI: 10.5281/zenodo.19349824</a>
+    <h1>Control<em style="color:var(--accent)">Check</em> v3.6</h1>
+    <div class="subtitulo">Auditoría Dual · Historial · Zonas de Exclusión</div>
+    <a href="https://doi.org/10.5281/zenodo.19349824" target="_blank" class="doi-badge">DOI: 10.5281/zenodo.19349824</a>
   </div>
 
   <div class="system-bar">
     <div class="system-input-group">
       <label for="systemName">Sistema / Plataforma a analizar</label>
-      <input type="text" id="systemName"
-        placeholder="Escribe el nombre del sistema: ej. Facebook, TikTok, Wikipedia…"
-        aria-describedby="systemName-hint"
-        value="">
-      <span id="systemName-hint" class="sr-only">Introduce el nombre de la plataforma o servicio digital que quieres auditar. Puedes usar los ejemplos rápidos de abajo.</span>
+      <input type="text" id="systemName" placeholder="Escribe el nombre del sistema: ej. Facebook, TikTok, Wikipedia…" value="">
     </div>
     <div class="action-buttons">
-      <button class="big-button" id="updateSearchBtn" aria-label="Actualizar enlaces de búsqueda para el sistema introducido">🔍 BUSCAR (opcional)</button>
-      <button class="reset-button" id="fullResetBtn" aria-label="Borrar todo y comenzar una evaluación nueva">⟳ NUEVA EVALUACIÓN</button>
+      <button class="big-button" id="updateSearchBtn">🔍 BUSCAR (opcional)</button>
+      <button class="reset-button" id="fullResetBtn">⟳ NUEVA EVALUACIÓN</button>
     </div>
     <span id="feedbackMsg" class="feedback-msg" aria-live="polite"></span>
   </div>
 
-  <!-- PROGRESO GLOBAL -->
-  <div class="progreso-global" id="progreso-global" aria-label="Progreso total de la auditoría" role="region">
+  <div class="progreso-global" id="progreso-global" aria-label="Progreso total">
     <div class="pg-textos">
       <span class="pg-label">Progreso total</span>
-      <span class="pg-count" id="pg-count" aria-live="polite">0 / 22 preguntas respondidas</span>
+      <span class="pg-count" id="pg-count">0 / 22 preguntas respondidas</span>
     </div>
-    <div class="pg-barra-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="22" aria-valuenow="0" id="pg-bar-wrap">
+    <div class="pg-barra-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="22" aria-valuenow="0">
       <div class="pg-barra" id="pg-barra" style="width:0%"></div>
     </div>
   </div>
 
   <div style="margin-bottom: 20px;">
-    <div class="subtitulo" style="margin-bottom: 5px;">📋 Ejemplos rápidos:</div>
+    <div class="subtitulo" style="margin-bottom: 5px;">📋 Ejemplos rápidos (datos a 31‑03‑2026) – <span style="color:var(--yellow);">🔍 los términos pueden cambiar, verifica con el botón buscar</span></div>
     <div class="ejemplos-grid" id="ejemplosGrid"></div>
   </div>
 
   <div class="two-columns">
     <div class="column">
       <h2><span class="accent">[ ISD ]</span> Soberanía Digital</h2>
-      <canvas id="chartISD" width="400" height="300"
-        role="img"
-        aria-label="Gráfico radar con las 8 dimensiones de soberanía digital. Los valores se actualizan al responder las preguntas.">
-      </canvas>
-      <div id="isd-questions" role="group" aria-label="Preguntas de soberanía digital ISD"></div>
-      <div class="progress-indicator" id="isd-progress" aria-live="polite">0/8 respondidas</div>
-      <div class="score-summary" aria-label="Puntuación ISD">
+      <canvas id="chartISD" width="400" height="300" role="img" aria-label="Radar ISD"></canvas>
+      <div id="isd-questions"></div>
+      <div class="progress-indicator" id="isd-progress">0/8 respondidas</div>
+      <div class="score-summary">
         <span class="status-label" id="isd-status-label">Puntuación</span>
-        <span class="big-score" id="isd-score" aria-live="polite">--</span>
-        <div id="omega-isd-msg" class="omega-msg" role="alert">⚠ OMEGA: ESTRUCTURA CONCENTRADA ACTIVADA</div>
+        <span class="big-score" id="isd-score">--</span>
+        <div id="omega-isd-msg" class="omega-msg">⚠ OMEGA: ESTRUCTURA CONCENTRADA</div>
       </div>
-      <div id="veto-isd-msg" class="veto-msg" style="display:none;" role="alert"></div>
+      <div id="veto-isd-msg" class="veto-msg" style="display:none;"></div>
       <div id="alternativas-isd" class="alternativas-sugeridas" style="display:none;"></div>
     </div>
 
     <div class="column">
       <h2><span style="color:var(--mind)">[ ISD‑MIND ]</span> Soberanía Cognitiva</h2>
-      <canvas id="chartMIND" width="400" height="300"
-        role="img"
-        aria-label="Gráfico radar con las 8 dimensiones de soberanía cognitiva. Los valores se actualizan al responder las preguntas.">
-      </canvas>
-      <div id="mind-questions" role="group" aria-label="Preguntas de soberanía cognitiva ISD-MIND"></div>
-      <div class="progress-indicator" id="mind-progress" aria-live="polite">0/9 respondidas</div>
-      <div class="score-summary" aria-label="Puntuación ISD-MIND">
+      <canvas id="chartMIND" width="400" height="300" role="img"></canvas>
+      <div id="mind-questions"></div>
+      <div class="progress-indicator" id="mind-progress">0/9 respondidas</div>
+      <div class="score-summary">
         <span class="status-label" id="mind-status-label">Puntuación</span>
-        <span class="big-score" id="mind-score" aria-live="polite">--</span>
-        <div id="omega-mind-msg" class="omega-msg" role="alert">⚠ DISYUNTOR COGNITIVO: DISEÑO PERSUASIVO CRÍTICO</div>
+        <span class="big-score" id="mind-score">--</span>
+        <div id="omega-mind-msg" class="omega-msg">⚠ DISYUNTOR COGNITIVO</div>
       </div>
     </div>
   </div>
 
-  <!-- D9 ANTES DEL VEREDICTO -->
   <details>
     <summary>⚠️ D9 – Daño Psicológico y Captura Conductual (opcional)</summary>
-    <div id="d9-panel" style="margin-top:15px;" role="group" aria-label="Preguntas de daño psicológico D9"></div>
-    <div class="progress-indicator" id="d9-progress" aria-live="polite">0/5 respondidas</div>
-    <div class="score-summary" style="margin-top:15px;" aria-label="Puntuación D9">
+    <div id="d9-panel" style="margin-top:15px;"></div>
+    <div class="progress-indicator" id="d9-progress">0/5 respondidas</div>
+    <div class="score-summary" style="margin-top:15px;">
       <span class="status-label" id="d9-status-label">Puntuación D9</span>
-      <span class="big-score" id="d9-score" aria-live="polite">--</span>
-      <div id="omega-d9-msg" class="omega-msg" role="alert">⚠ OMEGA D9: DAÑO INTERNO DOCUMENTADO ACTIVADO</div>
+      <span class="big-score" id="d9-score">--</span>
+      <div id="omega-d9-msg" class="omega-msg">⚠ OMEGA D9: DAÑO INTERNO</div>
     </div>
   </details>
 
-  <!-- VEREDICTO EJECUTIVO v3.6 -->
-  <section class="veredicto-ejecutivo" id="veredicto-ejecutivo" aria-label="Veredicto ejecutivo de la auditoría">
+  <section class="veredicto-ejecutivo" id="veredicto-ejecutivo" aria-label="Veredicto ejecutivo">
     <div class="ve-header">
-      <span class="ve-title" aria-hidden="true">[ VEREDICTO EJECUTIVO ]</span>
-      <h2 style="font-size:1.1rem; margin:0; font-family:'IBM Plex Sans',sans-serif; font-weight:700;" id="ve-sistema-nombre">—</h2>
+      <span class="ve-title">[ VEREDICTO EJECUTIVO ]</span>
+      <h2 style="font-size:1.1rem; margin:0;" id="ve-sistema-nombre">—</h2>
     </div>
-
-    <!-- Semáforo visual grande -->
     <div class="ve-semaforo-wrap">
-      <div class="ve-semaforo" id="ve-semaforo" role="img" aria-labelledby="ve-status-text ve-score-global">
-        <span class="ve-emoji" id="ve-emoji" aria-hidden="true">⏳</span>
+      <div class="ve-semaforo" id="ve-semaforo">
+        <span class="ve-emoji" id="ve-emoji">⏳</span>
         <span class="ve-status-text" id="ve-status-text">Esperando datos…</span>
         <span class="ve-score-global" id="ve-score-global">—</span>
         <span class="ve-score-label">Score Global</span>
       </div>
     </div>
-
-    <!-- Desglose 3 índices -->
-    <div class="ve-desglose" role="list" aria-label="Desglose de índices">
-      <div class="ve-index-card" id="ve-isd-card" role="listitem">
-        <div class="ve-index-label">ISD Estructural</div>
-        <div class="ve-index-score" id="ve-isd-score">--</div>
-        <div class="ve-index-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ve-isd-bar-wrap" aria-label="Barra ISD">
-          <div class="ve-index-bar" id="ve-isd-bar" style="background:var(--accent)"></div>
-        </div>
-        <div class="ve-index-status" id="ve-isd-status">—</div>
-        <div class="ve-index-omega" id="ve-isd-omega" style="display:none" role="alert">⚡ Ω ACTIVO</div>
-      </div>
-      <div class="ve-index-card" id="ve-mind-card" role="listitem">
-        <div class="ve-index-label">ISD-MIND Cognitivo</div>
-        <div class="ve-index-score" id="ve-mind-score">--</div>
-        <div class="ve-index-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ve-mind-bar-wrap" aria-label="Barra MIND">
-          <div class="ve-index-bar" id="ve-mind-bar" style="background:var(--mind)"></div>
-        </div>
-        <div class="ve-index-status" id="ve-mind-status">—</div>
-        <div class="ve-index-omega" id="ve-mind-omega" style="display:none" role="alert">⚡ Ω ACTIVO</div>
-      </div>
-      <div class="ve-index-card" id="ve-d9-card" role="listitem">
-        <div class="ve-index-label">D9 Daño Psicológico</div>
-        <div class="ve-index-score" id="ve-d9-score">--</div>
-        <div class="ve-index-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ve-d9-bar-wrap" aria-label="Barra D9">
-          <div class="ve-index-bar" id="ve-d9-bar" style="background:#c9a0ff"></div>
-        </div>
-        <div class="ve-index-status" id="ve-d9-status">—</div>
-        <div class="ve-index-omega" id="ve-d9-omega" style="display:none" role="alert">⚡ Ω ACTIVO</div>
-      </div>
+    <div class="ve-desglose" role="list">
+      <div class="ve-index-card" id="ve-isd-card"><div class="ve-index-label">ISD Estructural</div><div class="ve-index-score" id="ve-isd-score">--</div><div class="ve-index-bar-wrap"><div class="ve-index-bar" id="ve-isd-bar"></div></div><div class="ve-index-status" id="ve-isd-status">—</div><div class="ve-index-omega" id="ve-isd-omega" style="display:none">⚡ Ω ACTIVO</div></div>
+      <div class="ve-index-card" id="ve-mind-card"><div class="ve-index-label">ISD-MIND Cognitivo</div><div class="ve-index-score" id="ve-mind-score">--</div><div class="ve-index-bar-wrap"><div class="ve-index-bar" id="ve-mind-bar"></div></div><div class="ve-index-status" id="ve-mind-status">—</div><div class="ve-index-omega" id="ve-mind-omega" style="display:none">⚡ Ω ACTIVO</div></div>
+      <div class="ve-index-card" id="ve-d9-card"><div class="ve-index-label">D9 Daño Psicológico</div><div class="ve-index-score" id="ve-d9-score">--</div><div class="ve-index-bar-wrap"><div class="ve-index-bar" id="ve-d9-bar"></div></div><div class="ve-index-status" id="ve-d9-status">—</div><div class="ve-index-omega" id="ve-d9-omega" style="display:none">⚡ Ω ACTIVO</div></div>
     </div>
 
-    <!-- Recomendación técnica -->
-    <div class="ve-recomendacion" id="ve-recomendacion" aria-live="polite" aria-atomic="true">
+    <div class="ve-recomendacion" id="ve-recomendacion">
       <div class="ve-rec-title">💡 Recomendación técnica</div>
       <div class="ve-rec-body" id="ve-rec-body">Completa al menos el módulo ISD para obtener una recomendación.</div>
     </div>
 
-    <!-- Veredicto oculto para TTS y legacy -->
-    <div id="veredicto-final" style="display:none" aria-hidden="true"></div>
-    <!-- IDs legacy para exportación -->
-    <div style="display:none">
-      <span id="final-isd-val">--</span>
-      <span id="final-mind-val">--</span>
+    <div class="ve-notas">
+      <label for="friccion-notas">📝 Observaciones de fricción (opcional)</label>
+      <textarea id="friccion-notas" rows="3" placeholder="Anota aquí cualquier fricción ética, vacío legal o experiencia negativa… Estos datos se guardarán localmente para este sistema."></textarea>
     </div>
 
-    <!-- Botones -->
+    <div class="historial" id="historial-container">
+      <h4>📜 Historial de auditorías (últimas 10)</h4>
+      <ul id="historial-lista">
+        <li>Ninguna auditoría guardada aún.</li>
+      </ul>
+    </div>
+
     <div class="btn-group" style="margin-top:20px;">
-      <button class="btn-export" id="exportJSONBtn" aria-label="Exportar resultados en formato JSON">📄 Exportar JSON</button>
-      <button class="btn-export" id="exportMDBtn" aria-label="Exportar informe en formato Markdown">📝 Exportar Markdown</button>
-      <button class="btn-reiniciar" id="resetEvaluacionBtn" aria-label="Reiniciar solo las respuestas de la evaluación actual">⟳ Reiniciar evaluación</button>
+      <button class="btn-export" id="exportJSONBtn">📄 Exportar JSON</button>
+      <button class="btn-export" id="exportMDBtn">📝 Exportar Markdown</button>
+      <button class="btn-reiniciar" id="resetEvaluacionBtn">⟳ Reiniciar evaluación</button>
     </div>
   </section>
 
@@ -1015,189 +244,134 @@ const ISD_DIMS = [
     ayuda: 'Busca en los "Términos de Servicio" palabras como "terminación", "suspensión", "cancelación". Si dice que pueden cerrarte la cuenta sin aviso o por cualquier motivo, es 1p. Si dan aviso previo (24-30 días) o hay posibilidad de apelar, es 2p. Si requieren causa legal y proceso formal, es 3p.',
     fuente: 'Términos de Servicio → Sección "Terminación"',
     search_es: 'cláusula de terminación condiciones servicio',
-    opts: ['1p — Sí, sin aviso previo ni justificación requerida',
-           '2p — Sí, pero con aviso mínimo (24-30 días) o proceso de apelación',
-           '3p — No, requiere causa documentada y proceso formal'] },
+    opts: ['1p — Sí, sin aviso previo ni justificación requerida', '2p — Sí, pero con aviso mínimo (24-30 días) o proceso de apelación', '3p — No, requiere causa documentada y proceso formal'] },
   { id: 'portabilidad', label: 'Portabilidad de datos', weight: 0.15,
     desc: '¿Puedes exportar todos tus datos en formato abierto e interoperable?',
     ayuda: 'Busca "exportar datos", "descargar información", "portabilidad". Si no se puede exportar o es en formato propietario, 1p. Si se puede exportar pero en formato poco útil o faltan datos, 2p. Si exportación completa en JSON/CSV/XML estándar, 3p.',
     fuente: 'Política de privacidad → "Portabilidad de datos" · GDPR Art. 20',
     search_es: 'exportar datos portabilidad formato abierto',
-    opts: ['1p — No existe exportación o el formato es propietario no estándar',
-           '2p — Exportación parcial o en formato poco interoperable',
-           '3p — Exportación completa en formato abierto (JSON, CSV, XML estándar)'] },
+    opts: ['1p — No existe exportación o el formato es propietario no estándar', '2p — Exportación parcial o en formato poco interoperable', '3p — Exportación completa en formato abierto (JSON, CSV, XML estándar)'] },
   { id: 'estructura', label: 'Estructura legal', weight: 0.10,
     desc: '¿Cuál es la estructura legal de propiedad de la entidad?',
     ayuda: 'Investiga si es una empresa con ánimo de lucro (Sociedad Anónima, LLC) → 1p. Si es fundación, B-Corp o tiene compromisos públicos → 2p. Si es cooperativa, bien común, sin ánimo de lucro con voto de los miembros → 3p.',
     fuente: 'Registro Mercantil · Wikipedia · Crunchbase',
     search_es: 'estructura legal propiedad empresa',
-    opts: ['1p — Sociedad Anónima o LLC con accionistas privados (lucro)',
-           '2p — Fundación, B-Corp o empresa mixta con compromisos públicos',
-           '3p — Cooperativa, bien común, entidad sin ánimo de lucro con voto de miembros'] },
+    opts: ['1p — Sociedad Anónima o LLC con accionistas privados (lucro)', '2p — Fundación, B-Corp o empresa mixta con compromisos públicos', '3p — Cooperativa, bien común, entidad sin ánimo de lucro con voto de miembros'] },
   { id: 'beneficios', label: 'Distribución de beneficios', weight: 0.10,
     desc: '¿Cómo se distribuyen los beneficios económicos generados?',
     ayuda: 'Si los beneficios van a accionistas privados (dividendos) → 1p. Si reinvierten parte en la comunidad o trabajadores → 2p. Si reparten entre todos los participantes o reinvierten totalmente en la misión → 3p.',
     fuente: 'Informe anual · Estructura accionarial pública',
     search_es: 'distribución de beneficios informe anual',
-    opts: ['1p — Se concentran en accionistas o propietarios (dividendos privados)',
-           '2p — Reinversión parcial, con retorno moderado a comunidad o trabajadores',
-           '3p — Reparto entre todos los participantes o reinversión total en misión'] },
+    opts: ['1p — Se concentran en accionistas o propietarios (dividendos privados)', '2p — Reinversión parcial, con retorno moderado a comunidad o trabajadores', '3p — Reparto entre todos los participantes o reinversión total en misión'] },
   { id: 'jurisdiccion', label: 'Jurisdicción', weight: 0.10,
     desc: '¿En qué jurisdicción opera legalmente el servicio?',
     ayuda: 'Si está en paraíso fiscal o sin tratados de protección de datos → 1p. Si está en EE.UU. (sujeta a Cloud Act) → 2p. Si está en UE/EEE con GDPR aplicable → 3p.',
     fuente: 'Privacy Policy → "Governing Law"',
     search_es: 'jurisdicción ley aplicable política privacidad',
-    opts: ['1p — Paraíso fiscal, jurisdicción opaca o sin tratados de protección de datos',
-           '2p — EE.UU. u otra con tratados parciales (sujeta a Cloud Act u equivalente)',
-           '3p — UE / Espacio Económico Europeo con GDPR aplicable y derecho al olvido'] },
+    opts: ['1p — Paraíso fiscal, jurisdicción opaca o sin tratados de protección de datos', '2p — EE.UU. u otra con tratados parciales (sujeta a Cloud Act u equivalente)', '3p — UE / Espacio Económico Europeo con GDPR aplicable y derecho al olvido'] },
   { id: 'gobierno', label: 'Gobernanza', weight: 0.10,
     desc: '¿Cómo se toman las decisiones sobre el servicio?',
     ayuda: 'Si decide el CEO o accionistas mayoritarios → 1p. Si hay junta directiva con rendición de cuentas → 2p. Si los usuarios o miembros votan decisiones clave → 3p.',
     fuente: 'Estatutos · Informes de gobernanza',
     search_es: 'gobernanza estructura consejo',
-    opts: ['1p — Decisión unilateral del CEO/fundador o accionistas mayoritarios',
-           '2p — Junta directiva con cierta rendición de cuentas pública',
-           '3p — Voto real de usuarios o miembros en decisiones clave'] },
+    opts: ['1p — Decisión unilateral del CEO/fundador o accionistas mayoritarios', '2p — Junta directiva con cierta rendición de cuentas pública', '3p — Voto real de usuarios o miembros en decisiones clave'] },
   { id: 'codigo', label: 'Código fuente auditable', weight: 0.20,
     desc: '¿Es el código fuente auditable externamente?',
     ayuda: 'Si es 100% propietario y no se puede auditar → 1p. Si es parcialmente abierto o hay auditorías externas periódicas → 2p. Si es open source con licencia libre (MIT, GPL, AGPL) → 3p.',
     fuente: 'GitHub · Open Source Initiative',
     search_es: 'código fuente abierto licencia',
-    opts: ['1p — Código 100% propietario, no auditable',
-           '2p — Parcialmente abierto o con auditorías externas periódicas',
-           '3p — 100% open source con licencia libre (MIT, GPL, AGPL, Apache)'] },
+    opts: ['1p — Código 100% propietario, no auditable', '2p — Parcialmente abierto o con auditorías externas periódicas', '3p — 100% open source con licencia libre (MIT, GPL, AGPL, Apache)'] },
   { id: 'alternativas', label: 'Alternativas interoperables', weight: 0.10,
     desc: '¿Existen alternativas reales con interoperabilidad de datos?',
     ayuda: 'Si no hay alternativas viables o los formatos son incompatibles → 1p. Si hay alternativas pero migrar es costoso o con pérdida de datos → 2p. Si hay múltiples alternativas con estándares comunes de importación/exportación → 3p.',
     fuente: 'AlternativeTo · F-Droid',
     search_es: 'alternativas código abierto interoperabilidad',
-    opts: ['1p — No hay alternativas viables o el formato es incompatible con todas',
-           '2p — Hay alternativas pero la migración es costosa o con pérdida de datos',
-           '3p — Múltiples alternativas con estándar de importación/exportación común'] }
+    opts: ['1p — No hay alternativas viables o el formato es incompatible con todas', '2p — Hay alternativas pero la migración es costosa o con pérdida de datos', '3p — Múltiples alternativas con estándar de importación/exportación común'] }
 ];
 
 const MIND_DIMS = [
-  { id: 'd1', label: 'Ritmo Cognitivo', weight: 0.15,
-    desc: '¿La app interrumpe constantemente con notificaciones o estímulos rápidos?',
-    ayuda: 'Si te bombardea con notificaciones sin control → 0p. Si es frecuente → 1p. Si a veces → 2p. Si respeta tu ritmo y puedes silenciar → 3p.',
-    opts: ['0 — Sí, constantemente (muy intrusiva)',
-           '1 — Frecuentemente',
-           '2 — A veces',
-           '3 — No, respeta el ritmo del usuario'] },
-  { id: 'd2', label: 'Dependencia Emocional', weight: 0.10,
-    desc: '¿La app usa métricas sociales (likes, vistas, rachas) para generar dependencia?',
-    ayuda: 'Si usa likes, rachas, recompensas para engancharte → 0p. Si lo usa moderadamente → 1p. Si muy poco → 2p. Si no usa métricas dopaminérgicas → 3p.',
-    opts: ['0 — Sí, de forma intensa',
-           '1 — Sí, moderadamente',
-           '2 — Muy poco',
-           '3 — No, evita métricas dopaminérgicas'] },
-  { id: 'd3', label: 'Captura de Contexto Personal', weight: 0.10,
-    desc: '¿La app infiere emociones, hábitos o patrones íntimos?',
-    ayuda: 'Si analiza tus emociones y patrones de forma profunda → 0p. Si parcialmente → 1p. Si muy poco → 2p. Si respeta tu contexto → 3p.',
-    opts: ['0 — Sí, de forma profunda',
-           '1 — Sí, parcialmente',
-           '2 — Muy poco',
-           '3 — No, respeta el contexto personal'] },
-  { id: 'd4', label: 'Diseño Persuasivo', weight: 0.15,
-    desc: '¿La app usa scroll infinito, autoplay o nudges manipulativos?',
-    ayuda: 'Si usa scroll infinito, autoplay, etc. intensamente → 0p. Si moderadamente → 1p. Si muy poco → 2p. Si diseño ético → 3p.',
-    opts: ['0 — Sí, intensamente',
-           '1 — Sí, moderadamente',
-           '2 — Muy poco',
-           '3 — No, diseño ético'] },
-  { id: 'd5', label: 'Autonomía Cognitiva', weight: 0.15,
-    desc: '¿La app permite controlar el feed, desconectar y decidir el ritmo?',
-    ayuda: 'Si controla todo (no puedes silenciar, no puedes elegir orden) → 0p. Si muy poco control → 1p. Si control parcial → 2p. Si control total → 3p.',
-    opts: ['0 — No, controla todo',
-           '1 — Muy poco control',
-           '2 — Control parcial',
-           '3 — Control total del usuario'] },
-  { id: 'd6', label: 'Portabilidad Cognitiva', weight: 0.10,
-    desc: '¿Puedes mantener tus hábitos y tu identidad fuera de la app?',
-    ayuda: 'Si genera dependencia total (no puedes dejar de usarla) → 0p. Si es difícil → 1p. Si es posible → 2p. Si totalmente → 3p.',
-    opts: ['0 — No, genera dependencia total',
-           '1 — Difícil',
-           '2 — Posible',
-           '3 — Sí, totalmente'] },
-  { id: 'd7', label: 'Transparencia Psicológica', weight: 0.10,
-    desc: '¿La app explica cómo te influye y qué datos emocionales usa?',
-    ayuda: 'Si nada transparente → 0p. Si poca transparencia → 1p. Si transparencia parcial → 2p. Si transparencia total → 3p.',
-    opts: ['0 — Nada transparente',
-           '1 — Poca transparencia',
-           '2 — Transparencia parcial',
-           '3 — Transparencia total'] },
-  { id: 'd8', label: 'Riesgo Psicológico', weight: 0.15,
-    desc: '¿La app genera ansiedad, estrés, adicción o afecta al sueño?',
-    ayuda: 'Si mucho → 0p. Si moderado → 1p. Si bajo → 2p. Si protege la salud mental → 3p.',
-    opts: ['0 — Sí, mucho',
-           '1 — Moderado',
-           '2 — Bajo',
-           '3 — No, protege la salud mental'] },
-  { id: 'd9', label: 'Disyuntor Cognitivo', weight: 0, isDisruptor: true,
-    desc: '¿La app puede llegar a tomar control de tu atención o emociones?',
-    ayuda: 'Si claramente puede tomar control → 0p. Si a veces → 1p. Si muy poco → 2p. Si nunca → 3p.',
-    opts: ['0 — Sí, claramente',
-           '1 — A veces',
-           '2 — Muy poco',
-           '3 — No, nunca'] }
+  { id: 'd1', label: 'Ritmo Cognitivo', weight: 0.15, desc: '¿La app interrumpe constantemente con notificaciones o estímulos rápidos?', ayuda: 'Si te bombardea sin control → 0p. Si frecuente → 1p. Si a veces → 2p. Si respeta ritmo → 3p.', opts: ['0 — Sí, constantemente (muy intrusiva)', '1 — Frecuentemente', '2 — A veces', '3 — No, respeta el ritmo del usuario'] },
+  { id: 'd2', label: 'Dependencia Emocional', weight: 0.10, desc: '¿La app usa métricas sociales (likes, vistas, rachas) para generar dependencia?', ayuda: 'Si usa likes/rachas intensamente → 0p. Moderado → 1p. Muy poco → 2p. No usa → 3p.', opts: ['0 — Sí, de forma intensa', '1 — Sí, moderadamente', '2 — Muy poco', '3 — No, evita métricas dopaminérgicas'] },
+  { id: 'd3', label: 'Captura de Contexto Personal', weight: 0.10, desc: '¿La app infiere emociones, hábitos o patrones íntimos?', ayuda: 'Profundo → 0p. Parcial → 1p. Muy poco → 2p. Respeta contexto → 3p.', opts: ['0 — Sí, de forma profunda', '1 — Sí, parcialmente', '2 — Muy poco', '3 — No, respeta el contexto personal'] },
+  { id: 'd4', label: 'Diseño Persuasivo', weight: 0.15, desc: '¿La app usa scroll infinito, autoplay o nudges manipulativos?', ayuda: 'Intenso → 0p. Moderado → 1p. Muy poco → 2p. Diseño ético → 3p.', opts: ['0 — Sí, intensamente', '1 — Sí, moderadamente', '2 — Muy poco', '3 — No, diseño ético'] },
+  { id: 'd5', label: 'Autonomía Cognitiva', weight: 0.15, desc: '¿La app permite controlar el feed, desconectar y decidir el ritmo?', ayuda: 'Control total → 0p. Muy poco → 1p. Parcial → 2p. Total → 3p.', opts: ['0 — No, controla todo', '1 — Muy poco control', '2 — Control parcial', '3 — Control total del usuario'] },
+  { id: 'd6', label: 'Portabilidad Cognitiva', weight: 0.10, desc: '¿Puedes mantener tus hábitos y tu identidad fuera de la app?', ayuda: 'Dependencia total → 0p. Difícil → 1p. Posible → 2p. Totalmente → 3p.', opts: ['0 — No, genera dependencia total', '1 — Difícil', '2 — Posible', '3 — Sí, totalmente'] },
+  { id: 'd7', label: 'Transparencia Psicológica', weight: 0.10, desc: '¿La app explica cómo te influye y qué datos emocionales usa?', ayuda: 'Nada transparente → 0p. Poca → 1p. Parcial → 2p. Total → 3p.', opts: ['0 — Nada transparente', '1 — Poca transparencia', '2 — Transparencia parcial', '3 — Transparencia total'] },
+  { id: 'd8', label: 'Riesgo Psicológico', weight: 0.15, desc: '¿La app genera ansiedad, estrés, adicción o afecta al sueño?', ayuda: 'Mucho → 0p. Moderado → 1p. Bajo → 2p. Protege → 3p.', opts: ['0 — Sí, mucho', '1 — Moderado', '2 — Bajo', '3 — No, protege la salud mental'] },
+  { id: 'd9', label: 'Disyuntor Cognitivo', weight: 0, isDisruptor: true, desc: '¿La app puede llegar a tomar control de tu atención o emociones?', ayuda: 'Claramente → 0p. A veces → 1p. Muy poco → 2p. Nunca → 3p.', opts: ['0 — Sí, claramente', '1 — A veces', '2 — Muy poco', '3 — No, nunca'] }
 ];
 
 const D9_INDICADORES = [
-  { id: 'd9_1', nombre: 'Patrones de Diseño Persuasivo', peso: 0.25,
-    desc: 'Notificaciones de refuerzo variable, rachas, recompensas intermitentes.',
-    ayuda: '¿La plataforma usa técnicas de enganche como notificaciones constantes, rachas, recompensas?',
-    fuente: 'Center for Humane Technology',
-    opts: ['1p — Múltiples patrones activos sin opt-out real',
-           '2p — Patrones presentes pero con opt-out disponible',
-           '3p — Sin patrones persuasivos o con control total'] },
-  { id: 'd9_2', nombre: 'Conocimiento Interno del Daño', peso: 0.30, critico: true,
-    desc: 'Existencia de documentos internos que evidencien daño psicológico.',
-    ayuda: '¿Se han filtrado documentos internos (ej. Facebook Papers) que muestren que sabían del daño y lo ocultaron?',
-    fuente: 'Facebook Papers, litigios',
-    opts: ['1p — Daño documentado internamente y ocultado',
-           '2p — Daño reconocido sin acción correctiva',
-           '3p — Sin evidencia de daño conocido'] },
-  { id: 'd9_3', nombre: 'Opacidad de Datos', peso: 0.20,
-    desc: 'Informes de transparencia periódicos y verificables.',
-    ayuda: '¿Publican informes de transparencia sobre solicitudes de datos, moderación, etc.?',
-    fuente: 'ToS;DR',
-    opts: ['1p — Sin informes de transparencia',
-           '2p — Informes parciales',
-           '3p — Informes completos auditados'] },
-  { id: 'd9_4', nombre: 'Costo de Salida (Lock-in)', peso: 0.15,
-    desc: 'Pasos y tiempo para eliminar cuenta y exportar datos.',
-    ayuda: '¿Cuántos pasos y tiempo cuesta eliminar la cuenta y exportar tus datos?',
-    fuente: 'JustDeleteMe',
-    opts: ['1p — Más de 10 pasos o datos no exportables',
-           '2p — Proceso complejo con pérdida parcial',
-           '3p — Menos de 3 pasos con exportación completa'] },
-  { id: 'd9_5', nombre: 'Autonomía de Interfaz', peso: 0.10,
-    desc: 'Capacidad de desactivar algoritmos de recomendación y usar orden cronológico puro.',
-    ayuda: '¿Puedes usar un feed cronológico sin algoritmo?',
-    fuente: 'Configuración pública',
-    opts: ['1p — Algoritmo forzado, sin alternativa',
-           '2p — Control parcial del algoritmo',
-           '3p — Control total – feed cronológico disponible'] }
+  { id: 'd9_1', nombre: 'Patrones de Diseño Persuasivo', peso: 0.25, desc: 'Notificaciones de refuerzo variable, rachas...', ayuda: '¿Técnicas de enganche?', fuente: 'Center for Humane Technology', opts: ['1p — Múltiples patrones activos sin opt-out real', '2p — Patrones presentes pero con opt-out disponible', '3p — Sin patrones persuasivos o con control total'] },
+  { id: 'd9_2', nombre: 'Conocimiento Interno del Daño', peso: 0.30, critico: true, desc: 'Documentos internos que evidencien daño psicológico.', ayuda: '¿Facebook Papers o similares?', fuente: 'Facebook Papers', opts: ['1p — Daño documentado internamente y ocultado', '2p — Daño reconocido sin acción correctiva', '3p — Sin evidencia de daño conocido'] },
+  { id: 'd9_3', nombre: 'Opacidad de Datos', peso: 0.20, desc: 'Informes de transparencia periódicos.', ayuda: '¿Publican informes?', fuente: 'ToS;DR', opts: ['1p — Sin informes de transparencia', '2p — Informes parciales', '3p — Informes completos auditados'] },
+  { id: 'd9_4', nombre: 'Costo de Salida (Lock-in)', peso: 0.15, desc: 'Pasos para eliminar cuenta y exportar datos.', ayuda: '¿>10 pasos?', fuente: 'JustDeleteMe', opts: ['1p — Más de 10 pasos o datos no exportables', '2p — Proceso complejo con pérdida parcial', '3p — Menos de 3 pasos con exportación completa'] },
+  { id: 'd9_5', nombre: 'Autonomía de Interfaz', peso: 0.10, desc: 'Desactivar algoritmos de recomendación.', ayuda: '¿Feed cronológico?', fuente: 'Configuración', opts: ['1p — Algoritmo forzado, sin alternativa', '2p — Control parcial del algoritmo', '3p — Control total – feed cronológico disponible'] }
 ];
 
+// EJEMPLOS: ISD + MIND + D9 completos (valores representativos a 31-03-2026)
 const EJEMPLOS = [
-  { nombre:'Spotify', tipo:'Streaming', pts:{terminacion:1,portabilidad:1,estructura:1,beneficios:1,jurisdiccion:2,gobierno:1,codigo:1,alternativas:2} },
-  { nombre:'Wikipedia', tipo:'Enciclopedia', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} },
-  { nombre:'Signal', tipo:'Mensajería', pts:{terminacion:2,portabilidad:2,estructura:3,beneficios:3,jurisdiccion:2,gobierno:2,codigo:3,alternativas:2} },
-  { nombre:'Twitter/X', tipo:'Red social', pts:{terminacion:1,portabilidad:1,estructura:1,beneficios:1,jurisdiccion:2,gobierno:1,codigo:1,alternativas:1} },
-  { nombre:'Som Energia', tipo:'Cooperativa', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:3,codigo:2,alternativas:2} },
-  { nombre:'Linux', tipo:'SO', pts:{terminacion:3,portabilidad:3,estructura:3,beneficios:3,jurisdiccion:3,gobierno:2,codigo:3,alternativas:3} }
+  { nombre:'Spotify', tipo:'Streaming', 
+    isd: [1,1,1,1,2,1,1,2],
+    mind: [1,2,2,2,1,1,1,1],
+    d9: [1,1,1,1,1] },
+  { nombre:'Wikipedia', tipo:'Enciclopedia',
+    isd: [3,3,3,3,3,2,3,3],
+    mind: [3,3,3,3,3,3,3,3],
+    d9: [3,3,3,3,3] },
+  { nombre:'Signal', tipo:'Mensajería',
+    isd: [2,2,3,3,2,2,3,2],
+    mind: [3,3,3,2,3,3,2,3],
+    d9: [3,3,2,3,3] },
+  { nombre:'Twitter/X', tipo:'Red social',
+    isd: [2,1,1,1,1,1,1,1],
+    mind: [1,1,2,1,1,1,1,1],
+    d9: [1,1,1,2,1] },
+  { nombre:'Som Energia', tipo:'Cooperativa',
+    isd: [3,3,3,3,3,3,2,2],
+    mind: [3,2,2,2,2,2,2,2],
+    d9: [2,3,2,3,3] },
+  { nombre:'Linux', tipo:'SO',
+    isd: [3,2,3,3,3,2,2,3],
+    mind: [2,1,1,2,1,1,1,1],
+    d9: [2,3,2,3,3] },
+  { nombre:'Facebook', tipo:'Red social',
+    isd: [1,1,1,1,2,1,1,1],
+    mind: [1,1,2,1,1,1,1,1],
+    d9: [1,1,1,2,1] },
+  { nombre:'Instagram', tipo:'Red social',
+    isd: [1,1,1,1,2,1,1,1],
+    mind: [1,1,2,1,1,1,1,1],
+    d9: [1,1,1,2,1] },
+  { nombre:'WhatsApp', tipo:'Mensajería',
+    isd: [1,1,1,1,1,2,1,1],
+    mind: [1,1,1,1,2,1,2,1],
+    d9: [1,2,1,1,1] },
+  { nombre:'Telegram', tipo:'Mensajería',
+    isd: [2,2,1,2,1,1,2,2],
+    mind: [2,2,2,2,2,2,2,2],
+    d9: [2,2,2,2,2] },
+  { nombre:'TikTok', tipo:'Red social',
+    isd: [1,2,1,1,1,1,1,1],
+    mind: [1,1,1,1,1,1,1,1],
+    d9: [1,1,1,1,1] },
+  { nombre:'Claude', tipo:'IA',
+    isd: [1,2,2,1,1,2,1,2],
+    mind: [3,2,2,2,2,2,2,2],
+    d9: [2,2,2,3,3] },
+  { nombre:'Mastodon', tipo:'Red social',
+    isd: [3,2,3,3,2,2,3,3],
+    mind: [3,3,3,3,3,3,2,3],
+    d9: [3,3,3,3,3] }
 ];
 
 // Estado global
-let isdValues = {};
-let mindValues = {};
-let d9Values = {};
+let isdValues = {}, mindValues = {}, d9Values = {};
 let isdScore = 0, mindScore = 0, d9Score = 0;
 let isdOmega = false, mindOmega = false, d9Omega = false;
 let chartISD, chartMIND;
 
-// ==================== 2. RENDERIZADO DE PREGUNTAS ====================
+// ==================== FUNCIONES RENDER ====================
 function renderISD() {
   const container = document.getElementById('isd-questions');
   if (!container) return;
@@ -1207,30 +381,16 @@ function renderISD() {
     const optsHtml = d.opts.map((txt, idx) => `<option value="${idx+1}">${txt}</option>`).join('');
     return `
       <div class="pregunta-card">
-        <div class="preg-header">
-          <span class="preg-num">${d.id.slice(0,1).toUpperCase()}</span>
-          <span class="preg-texto">${d.desc}</span>
-        </div>
-        <div class="preg-fuente">
-          📁 ${d.fuente}
-          <a href="${searchUrl}" target="_blank" class="btn-buscar" data-search="${d.search_es}">🔍 Buscar en Google</a>
-        </div>
+        <div class="preg-header"><span class="preg-num">${d.id.slice(0,1).toUpperCase()}</span><span class="preg-texto">${d.desc}</span></div>
+        <div class="preg-fuente">📁 ${d.fuente} <a href="${searchUrl}" target="_blank" class="btn-buscar" data-search="${d.search_es}">🔍 Buscar en Google</a></div>
         <div class="ayuda-texto">💡 ${d.ayuda}</div>
-        <label for="isd-${d.id}" class="sr-only">${d.desc} — selecciona una opción</label>
-        <select id="isd-${d.id}" onchange="updateISD()" aria-label="${d.desc}">
-          <option value="">— Selecciona según lo que encuentres —</option>
-          ${optsHtml}
-        </select>
+        <select id="isd-${d.id}" onchange="updateISD()"><option value="">— Selecciona —</option>${optsHtml}</select>
       </div>
     `;
   }).join('');
-  for (let d of ISD_DIMS) {
-    const sel = document.getElementById(`isd-${d.id}`);
-    if (sel && isdValues[d.id] !== undefined) sel.value = isdValues[d.id];
-  }
+  for (let d of ISD_DIMS) { const sel = document.getElementById(`isd-${d.id}`); if (sel && isdValues[d.id] !== undefined) sel.value = isdValues[d.id]; }
   updateISDProgress();
 }
-
 function renderMIND() {
   const container = document.getElementById('mind-questions');
   if (!container) return;
@@ -1238,26 +398,15 @@ function renderMIND() {
     const optsHtml = d.opts.map(txt => `<option value="${txt.split(' — ')[0]}">${txt}</option>`).join('');
     return `
       <div class="pregunta-card">
-        <div class="preg-header">
-          <span class="preg-num">${d.id.toUpperCase()}</span>
-          <span class="preg-texto">${d.desc}</span>
-        </div>
+        <div class="preg-header"><span class="preg-num">${d.id.toUpperCase()}</span><span class="preg-texto">${d.desc}</span></div>
         <div class="ayuda-texto">💡 ${d.ayuda}</div>
-        <label for="mind-${d.id}" class="sr-only">${d.desc} — selecciona una opción</label>
-        <select id="mind-${d.id}" onchange="updateMIND()" aria-label="${d.desc}">
-          <option value="">— Selecciona según tu experiencia —</option>
-          ${optsHtml}
-        </select>
+        <select id="mind-${d.id}" onchange="updateMIND()"><option value="">— Selecciona —</option>${optsHtml}</select>
       </div>
     `;
   }).join('');
-  for (let d of MIND_DIMS) {
-    const sel = document.getElementById(`mind-${d.id}`);
-    if (sel && mindValues[d.id] !== undefined) sel.value = mindValues[d.id];
-  }
+  for (let d of MIND_DIMS) { const sel = document.getElementById(`mind-${d.id}`); if (sel && mindValues[d.id] !== undefined) sel.value = mindValues[d.id]; }
   updateMINDProgress();
 }
-
 function renderD9() {
   const container = document.getElementById('d9-panel');
   if (!container) return;
@@ -1267,57 +416,30 @@ function renderD9() {
       <div class="d9-indicador">
         <strong>${d.nombre} ${d.critico ? '⚠️' : ''}</strong><br>
         <span style="font-size:0.75rem; color:var(--texto2);">${d.desc} (Peso ${d.peso*100}%)</span><br>
-        <div class="ayuda-texto" style="margin:4px 0;">💡 ${d.ayuda}</div>
+        <div class="ayuda-texto">💡 ${d.ayuda}</div>
         <span style="font-size:0.7rem; color:#555;">📁 ${d.fuente}</span>
-        <label for="d9-${d.id}" class="sr-only">${d.nombre} — selecciona una opción</label>
-        <select id="d9-${d.id}" onchange="updateD9()" aria-label="${d.nombre}">
-          <option value="">— Selecciona —</option>
-          ${optsHtml}
-        </select>
+        <select id="d9-${d.id}" onchange="updateD9()"><option value="">— Selecciona —</option>${optsHtml}</select>
       </div>
     `;
   }).join('');
-  for (let d of D9_INDICADORES) {
-    const sel = document.getElementById(`d9-${d.id}`);
-    if (sel && d9Values[d.id] !== undefined) sel.value = d9Values[d.id];
-  }
+  for (let d of D9_INDICADORES) { const sel = document.getElementById(`d9-${d.id}`); if (sel && d9Values[d.id] !== undefined) sel.value = d9Values[d.id]; }
   updateD9Progress();
 }
+function updateISDProgress() { const answered = ISD_DIMS.filter(d => isdValues[d.id] !== undefined).length; document.getElementById('isd-progress').innerText = `${answered}/8 respondidas`; }
+function updateMINDProgress() { const answered = MIND_DIMS.filter(d => mindValues[d.id] !== undefined).length; document.getElementById('mind-progress').innerText = `${answered}/9 respondidas`; }
+function updateD9Progress() { const answered = D9_INDICADORES.filter(d => d9Values[d.id] !== undefined).length; document.getElementById('d9-progress').innerText = `${answered}/5 respondidas`; }
 
-// Progreso
-function updateISDProgress() {
-  const total = ISD_DIMS.length;
-  const answered = ISD_DIMS.filter(d => isdValues[d.id] !== undefined).length;
-  const el = document.getElementById('isd-progress');
-  if (el) el.innerText = `${answered}/${total} respondidas`;
-}
-function updateMINDProgress() {
-  const total = MIND_DIMS.length;
-  const answered = MIND_DIMS.filter(d => mindValues[d.id] !== undefined).length;
-  const el = document.getElementById('mind-progress');
-  if (el) el.innerText = `${answered}/${total} respondidas`;
-}
-function updateD9Progress() {
-  const total = D9_INDICADORES.length;
-  const answered = D9_INDICADORES.filter(d => d9Values[d.id] !== undefined).length;
-  const el = document.getElementById('d9-progress');
-  if (el) el.innerText = `${answered}/${total} respondidas`;
-}
-
-// Cálculos
+// ==================== CÁLCULOS CON OMEGA ENDURECIDO ====================
 function computeISD() {
   let sum = 0, totalWeight = 0;
   for (let d of ISD_DIMS) {
     const val = isdValues[d.id];
-    if (val !== undefined && val !== '') {
-      sum += val * d.weight;
-      totalWeight += d.weight;
-    }
+    if (val !== undefined) { sum += val * d.weight; totalWeight += d.weight; }
   }
   let raw = totalWeight > 0 ? sum / totalWeight : 0;
   isdOmega = (isdValues['estructura'] == 1 || isdValues['beneficios'] == 1);
   let final = raw;
-  if (isdOmega) final = raw * 0.4;
+  if (isdOmega) final = raw * 0.35;
   final = Math.min(3, Math.max(1, final));
   isdScore = final;
   return final;
@@ -1327,15 +449,12 @@ function computeMIND() {
   for (let d of MIND_DIMS) {
     if (d.isDisruptor) continue;
     const val = mindValues[d.id];
-    if (val !== undefined && val !== '') {
-      sum += val * d.weight;
-      totalWeight += d.weight;
-    }
+    if (val !== undefined) { sum += val * d.weight; totalWeight += d.weight; }
   }
   let raw = totalWeight > 0 ? sum / totalWeight : 0;
   mindOmega = (mindValues['d4'] == 0 || mindValues['d4'] == 1);
   let final = raw;
-  if (mindOmega) final = raw * 0.4;
+  if (mindOmega) final = raw * 0.35;
   if (mindValues['d9'] == 0) final *= 0.6;
   final = Math.min(3, Math.max(1, final));
   mindScore = final;
@@ -1345,15 +464,12 @@ function computeD9() {
   let sum = 0, totalWeight = 0;
   for (let d of D9_INDICADORES) {
     const val = d9Values[d.id];
-    if (val !== undefined && val !== '') {
-      sum += val * d.peso;
-      totalWeight += d.peso;
-    }
+    if (val !== undefined) { sum += val * d.peso; totalWeight += d.peso; }
   }
   let raw = totalWeight > 0 ? sum / totalWeight : 0;
   d9Omega = (d9Values['d9_2'] == 1);
   let final = raw;
-  if (d9Omega) final = raw * 0.2;
+  if (d9Omega) final = raw * 0.15;
   final = Math.min(3, Math.max(1, final));
   d9Score = final;
   return final;
@@ -1364,379 +480,120 @@ function initCharts() {
   const ctxISD = document.getElementById('chartISD').getContext('2d');
   const ctxMIND = document.getElementById('chartMIND').getContext('2d');
   chartISD = new Chart(ctxISD, {
-    type: 'radar',
-    data: { labels: ISD_DIMS.map(d => d.label), datasets: [{ data: [], backgroundColor: 'rgba(88,166,255,0.2)', borderColor: '#58a6ff', borderWidth: 2, pointRadius: 3 }] },
-    options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' }, pointLabels: { color: '#adb5bd', font: { size: 11 } } } }, plugins: { legend: { display: false } } }
+    type: 'radar', data: { labels: ISD_DIMS.map(d => d.label), datasets: [{ data: [], backgroundColor: 'rgba(88,166,255,0.2)', borderColor: '#58a6ff', borderWidth: 2 }] },
+    options: { scales: { r: { min: 0, max: 3, ticks: { display: false } } }, plugins: { legend: { display: false } } }
   });
   chartMIND = new Chart(ctxMIND, {
-    type: 'radar',
-    data: { labels: MIND_DIMS.filter(d => !d.isDisruptor).map(d => d.label), datasets: [{ data: [], backgroundColor: 'rgba(255,123,114,0.2)', borderColor: '#ff7b72', borderWidth: 2, pointRadius: 3 }] },
-    options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' }, pointLabels: { color: '#adb5bd', font: { size: 11 } } } }, plugins: { legend: { display: false } } }
+    type: 'radar', data: { labels: MIND_DIMS.filter(d => !d.isDisruptor).map(d => d.label), datasets: [{ data: [], backgroundColor: 'rgba(255,123,114,0.2)', borderColor: '#ff7b72', borderWidth: 2 }] },
+    options: { scales: { r: { min: 0, max: 3, ticks: { display: false } } }, plugins: { legend: { display: false } } }
   });
 }
 
-// ==================== UPDATE ALL ====================
+// ==================== ACTUALIZAR TODO + HISTORIAL + EXCLUSIÓN ====================
 function updateAll() {
   const isdFinal = computeISD();
   const mindFinal = computeMIND();
   const d9Final = computeD9();
+  const d9HasData = Object.keys(d9Values).length > 0;
+  const global = d9HasData ? isdFinal * 0.40 + mindFinal * 0.35 + d9Final * 0.25 : isdFinal * 0.53 + mindFinal * 0.47;
+  const globalFinal = Math.min(3, Math.max(1, global));
+  const color = globalFinal >= 2.5 ? 'green' : globalFinal >= 1.5 ? 'yellow' : 'red';
+  const emoji = globalFinal >= 2.5 ? '🟢' : globalFinal >= 1.5 ? '🟡' : '🔴';
+  const statusLabel = globalFinal >= 2.5 ? 'LIBERTAD DIGITAL' : globalFinal >= 1.5 ? 'RIESGO MODERADO' : 'CAPTURA CRÍTICA';
+  const sistema = document.getElementById('systemName').value.trim();
 
-  // --- ISD panel ---
-  const isdColor = isdFinal < 1.5 ? '#f85149' : (isdFinal < 2.5 ? '#d29922' : '#3fb950');
-  const isdStatus = isdFinal < 1.5 ? 'Captura Crítica' : (isdFinal < 2.5 ? 'Riesgo Moderado' : 'Soberanía Simbiótica');
-  const isdScoreEl = document.getElementById('isd-score');
-  if (isdScoreEl) { isdScoreEl.innerText = isdFinal.toFixed(2); isdScoreEl.style.color = isdColor; }
-  const finalIsdEl = document.getElementById('final-isd-val');
-  if (finalIsdEl) finalIsdEl.innerText = isdFinal.toFixed(2);
-  document.getElementById('omega-isd-msg').style.display = isdOmega ? 'block' : 'none';
-  document.getElementById('isd-status-label').innerHTML = isdStatus;
+  // Guardar historial
+  if (sistema && (isdValues['terminacion'] !== undefined || mindValues['d1'] !== undefined)) {
+    guardarHistorial(sistema, globalFinal, isdFinal, mindFinal, d9Final, isdOmega, mindOmega, d9Omega);
+    renderHistorial();
+  }
 
-  // --- MIND panel ---
-  const mindColor = mindFinal < 1.5 ? '#f85149' : (mindFinal < 2.5 ? '#d29922' : '#3fb950');
-  const mindStatus = mindFinal < 1.5 ? 'Captura Cognitiva' : (mindFinal < 2.5 ? 'Riesgo Cognitivo Moderado' : 'Soberanía Cognitiva');
-  const mindScoreEl = document.getElementById('mind-score');
-  if (mindScoreEl) { mindScoreEl.innerText = mindFinal.toFixed(2); mindScoreEl.style.color = mindColor; }
-  const finalMindEl = document.getElementById('final-mind-val');
-  if (finalMindEl) finalMindEl.innerText = mindFinal.toFixed(2);
-  document.getElementById('omega-mind-msg').style.display = mindOmega ? 'block' : 'none';
-  document.getElementById('mind-status-label').innerHTML = mindStatus;
+  // Zona de exclusión
+  const exclusion = globalFinal < 1.5;
+  const recBody = document.getElementById('ve-rec-body');
+  let rec = '';
+  if (exclusion) {
+    rec = `🔴 <strong>ZONA DE EXCLUSIÓN ACTIVADA</strong> (score ${globalFinal.toFixed(2)} &lt; 1.5). No compartas datos personales sensibles con este sistema.`;
+  } else if (globalFinal >= 2.5) {
+    rec = `✅ <strong>${sistema || 'Sistema'}</strong> muestra soberanía sólida.`;
+  } else {
+    rec = `⚠️ <strong>${sistema || 'Sistema'}</strong> presenta riesgos identificables. Revisa dimensiones críticas.`;
+  }
+  if (recBody) recBody.innerHTML = rec;
 
-  // --- D9 panel ---
-  const d9Color = d9Final < 1.5 ? '#f85149' : (d9Final < 2.5 ? '#d29922' : '#3fb950');
-  const d9Status = d9Final < 1.5 ? 'Captura Conductual' : (d9Final < 2.5 ? 'Riesgo Moderado' : 'Libertad Digital');
-  const d9ScoreEl = document.getElementById('d9-score');
-  if (d9ScoreEl) { d9ScoreEl.innerText = d9Final.toFixed(2); d9ScoreEl.style.color = d9Color; }
-  document.getElementById('omega-d9-msg').style.display = d9Omega ? 'block' : 'none';
-  document.getElementById('d9-status-label').innerHTML = d9Status;
+  // Actualizar elementos visuales
+  document.getElementById('ve-sistema-nombre').textContent = sistema || '—';
+  document.getElementById('ve-score-global').textContent = globalFinal.toFixed(2);
+  document.getElementById('ve-semaforo').className = 've-semaforo ' + color;
+  document.getElementById('ve-emoji').textContent = emoji;
+  document.getElementById('ve-status-text').textContent = statusLabel;
+  document.getElementById('ve-isd-score').textContent = isdFinal.toFixed(2);
+  document.getElementById('ve-mind-score').textContent = mindFinal.toFixed(2);
+  document.getElementById('ve-d9-score').textContent = d9Final.toFixed(2);
+  document.getElementById('sf-score').textContent = globalFinal.toFixed(2);
+  document.getElementById('sf-emoji').textContent = emoji;
+  document.getElementById('sf-status').textContent = statusLabel;
+  document.getElementById('sf-panel').className = 'semaforo-flotante ' + color;
+  document.getElementById('ve-semaforo').className = 've-semaforo ' + color;
 
-  // --- Disyuntor veto ---
-  const vetoDiv = document.getElementById('veto-isd-msg');
-  if (isdValues['terminacion'] == 1 || isdValues['portabilidad'] == 1) {
-    vetoDiv.style.display = 'block';
-    vetoDiv.innerHTML = '⚠️ <strong>Disyuntor de Emergencia activado</strong>: la terminación unilateral o la falta de portabilidad crítica anulan parte de la soberanía. El ISD final ya ha sido penalizado un 20%.';
-  } else { vetoDiv.style.display = 'none'; }
-
-  // --- Alternativas ---
-  const altDiv = document.getElementById('alternativas-isd');
-  if (isdFinal < 1.8) {
-    altDiv.style.display = 'block';
-    altDiv.innerHTML = '<strong>💡 Alternativas con mayor soberanía:</strong><br> → Mastodon / Pixelfed (redes sociales)<br> → Signal / Matrix (mensajería)<br> → Bandcamp / Funkwhale (música)<br> → <a href="https://alternativeto.net" target="_blank" style="color:var(--accent)">AlternativeTo.net</a>';
-  } else { altDiv.style.display = 'none'; }
-
-  // --- veredicto-final legacy (oculto) ---
-  const vtxt = `${document.getElementById('systemName').value.trim() || 'Sistema'}: ISD ${isdFinal.toFixed(2)} (${isdStatus}), MIND ${mindFinal.toFixed(2)} (${mindStatus}), D9 ${d9Final.toFixed(2)} (${d9Status}).`;
-  const vfEl = document.getElementById('veredicto-final');
-  if (vfEl) vfEl.textContent = vtxt;
-
-  // --- Radares ---
-  const isdRadarData = ISD_DIMS.map(d => isdValues[d.id] !== undefined ? parseFloat(isdValues[d.id]) : 0);
-  chartISD.data.datasets[0].data = isdRadarData;
+  // Radares
+  chartISD.data.datasets[0].data = ISD_DIMS.map(d => isdValues[d.id] || 0);
   chartISD.update();
-  const mindRadarData = MIND_DIMS.filter(d => !d.isDisruptor).map(d => mindValues[d.id] !== undefined ? parseFloat(mindValues[d.id]) : 0);
-  chartMIND.data.datasets[0].data = mindRadarData;
+  chartMIND.data.datasets[0].data = MIND_DIMS.filter(d => !d.isDisruptor).map(d => mindValues[d.id] || 0);
   chartMIND.update();
 
-  // --- Progreso global (ISD 8 + MIND 9 + D9 5 = 22) ---
-  const totalPreguntas = ISD_DIMS.length + MIND_DIMS.filter(d => !d.isDisruptor).length + D9_INDICADORES.length;
+  // Progreso total
+  const total = ISD_DIMS.length + MIND_DIMS.filter(d => !d.isDisruptor).length + D9_INDICADORES.length;
   const respondidas = ISD_DIMS.filter(d => isdValues[d.id] !== undefined).length
     + MIND_DIMS.filter(d => !d.isDisruptor && mindValues[d.id] !== undefined).length
     + D9_INDICADORES.filter(d => d9Values[d.id] !== undefined).length;
-  const pct = (respondidas / totalPreguntas * 100).toFixed(1);
-  const pgCount = document.getElementById('pg-count');
-  const pgBarra = document.getElementById('pg-barra');
-  const pgBarWrap = document.getElementById('pg-bar-wrap');
-  const completo = respondidas === totalPreguntas;
-  if (pgCount) { pgCount.textContent = `${respondidas} / ${totalPreguntas} preguntas respondidas${completo ? ' ✓' : ''}`; pgCount.className = 'pg-count' + (completo ? ' completo' : ''); }
-  if (pgBarra) { pgBarra.style.width = pct + '%'; pgBarra.className = 'pg-barra' + (completo ? ' completo' : ''); }
-  if (pgBarWrap) pgBarWrap.setAttribute('aria-valuenow', respondidas);
-
-  // --- Veredicto Ejecutivo + Semáforo flotante ---
-  updateVeredictoEjecutivo(isdFinal, mindFinal, d9Final, isdOmega, mindOmega, d9Omega, isdStatus, mindStatus, d9Status);
+  document.getElementById('pg-count').textContent = `${respondidas} / ${total} preguntas respondidas`;
+  document.getElementById('pg-barra').style.width = (respondidas/total*100)+'%';
 }
 
-// ==================== VEREDICTO EJECUTIVO v3.6 ====================
-function updateVeredictoEjecutivo(isd, mind, d9, isdOm, mindOm, d9Om, isdSt, mindSt, d9St) {
-  const sistema = document.getElementById('systemName').value.trim() || '—';
-
-  // Nombre sistema en cabecera
-  const veNombre = document.getElementById('ve-sistema-nombre');
-  if (veNombre) veNombre.textContent = sistema === '—' ? 'Sin nombre' : sistema;
-
-  // Score global: ISD 40% + MIND 35% + D9 25% (si hay datos D9)
-  const d9HasData = Object.keys(d9Values).length > 0;
-  let global = d9HasData
-    ? isd * 0.40 + mind * 0.35 + d9 * 0.25
-    : isd * 0.53 + mind * 0.47;
-  global = Math.min(3, Math.max(1, global));
-
-  const color = global >= 2.5 ? 'green' : global >= 1.5 ? 'yellow' : 'red';
-  const emoji = global >= 2.5 ? '🟢' : global >= 1.5 ? '🟡' : '🔴';
-  const statusLabel = global >= 2.5 ? 'LIBERTAD DIGITAL' : global >= 1.5 ? 'RIESGO MODERADO' : 'CAPTURA CRÍTICA';
-  const scoreColor = color === 'green' ? 'var(--green)' : color === 'yellow' ? 'var(--yellow)' : 'var(--red)';
-
-  // --- Semáforo inline grande ---
-  const semEl = document.getElementById('ve-semaforo');
-  if (semEl) semEl.className = 've-semaforo ' + color;
-  _set('ve-emoji', emoji, 'textContent');
-  _set('ve-status-text', statusLabel, 'textContent');
-  _setStyled('ve-score-global', global.toFixed(2) + '/3.0', scoreColor);
-
-  // --- Semáforo flotante fijo ---
-  const sfPanel = document.getElementById('sf-panel');
-  if (sfPanel) sfPanel.className = 'semaforo-flotante ' + color;
-  _set('sf-emoji', emoji, 'textContent');
-  _setStyled('sf-score', global.toFixed(2), scoreColor);
-  _set('sf-status', statusLabel, 'textContent');
-
-  // --- Tarjetas índice ---
-  function setCard(idCard, idScore, idBar, idBarWrap, idStatus, idOmega, score, status, omega, barColor) {
-    const c = score >= 2.5 ? 'green' : score >= 1.5 ? 'yellow' : 'red';
-    const sc = score >= 2.5 ? 'var(--green)' : score >= 1.5 ? 'var(--yellow)' : 'var(--red)';
-    const card = document.getElementById(idCard);
-    if (card) card.className = 've-index-card ' + c;
-    _setStyled(idScore, score.toFixed(2), sc);
-    const bar = document.getElementById(idBar);
-    const pct = ((score - 1) / 2 * 100).toFixed(1);
-    if (bar) bar.style.width = pct + '%';
-    const bw = document.getElementById(idBarWrap);
-    if (bw) bw.setAttribute('aria-valuenow', pct);
-    _set(idStatus, status, 'textContent');
-    const om = document.getElementById(idOmega);
-    if (om) om.style.display = omega ? 'block' : 'none';
-  }
-  setCard('ve-isd-card','ve-isd-score','ve-isd-bar','ve-isd-bar-wrap','ve-isd-status','ve-isd-omega', isd, isdSt, isdOm, 'var(--accent)');
-  setCard('ve-mind-card','ve-mind-score','ve-mind-bar','ve-mind-bar-wrap','ve-mind-status','ve-mind-omega', mind, mindSt, mindOm, 'var(--mind)');
-  setCard('ve-d9-card','ve-d9-score','ve-d9-bar','ve-d9-bar-wrap','ve-d9-status','ve-d9-omega',
-    d9HasData ? d9 : 1, d9HasData ? d9St : 'Sin datos D9', d9Om, '#c9a0ff');
-
-  // --- Recomendación técnica ---
-  const recEl = document.getElementById('ve-recomendacion');
-  if (recEl) recEl.className = 've-recomendacion ' + color;
-  let rec = '';
-  if (global >= 2.5) {
-    rec = `✅ <strong>${sistema}</strong> muestra soberanía sólida. ISD ${isd.toFixed(2)} y MIND ${mind.toFixed(2)} en zona verde.`;
-    if (!d9HasData) rec += ' Completa D9 para el perfil completo.';
-    else rec += ` D9 ${d9.toFixed(2)}: ${d9St.toLowerCase()}.`;
-    rec += ' Monitoriza cambios en los Términos de Servicio periódicamente.';
-  } else if (global >= 1.5) {
-    rec = `⚠️ <strong>${sistema}</strong> presenta riesgos identificables. `;
-    if (isd < 2.5) rec += `ISD ${isd.toFixed(2)}: revisa cláusulas de terminación y portabilidad de datos. `;
-    if (mind < 2.5) rec += `MIND ${mind.toFixed(2)}: valora el impacto cognitivo y el diseño persuasivo. `;
-    if (d9HasData && d9 < 2.5) rec += `D9 ${d9.toFixed(2)}: atención al historial de daño documentado. `;
-    rec += 'Busca alternativas para las dimensiones críticas.';
-  } else {
-    rec = `🔴 <strong>${sistema}</strong> muestra captura crítica. `;
-    if (isd < 1.5) rec += `ISD ${isd.toFixed(2)}: dependencia estructural severa — evalúa migración. `;
-    if (mind < 1.5) rec += `MIND ${mind.toFixed(2)}: diseño altamente persuasivo — limita el uso. `;
-    if (d9HasData && d9 < 1.5) rec += `D9 ${d9.toFixed(2)}: daño documentado — prioriza la salida. `;
-    if (isdOm || mindOm || d9Om) rec += '⚡ Disyuntor Omega activo: alerta máxima.';
-  }
-  const recBody = document.getElementById('ve-rec-body');
-  if (recBody) recBody.innerHTML = rec;
-
-  // --- TTS: actualizar texto para cuando se pulse el botón ---
-  window._ttsText = buildTTSText(sistema, global, statusLabel, isd, isdSt, mind, mindSt, d9, d9St, d9HasData, isdOm, mindOm, d9Om);
-}
-
-// Helpers
-function _set(id, val, prop) {
-  const el = document.getElementById(id);
-  if (el) el[prop] = val;
-}
-function _setStyled(id, val, color) {
-  const el = document.getElementById(id);
-  if (el) { el.textContent = val; el.style.color = color; }
-}
-
-// ==================== TTS BILINGÜE ====================
-function buildTTSText(sistema, global, statusLabel, isd, isdSt, mind, mindSt, d9, d9St, d9HasData, isdOm, mindOm, d9Om) {
-  // Construye texto limpio para lectura en voz alta, mezcla es/en según contexto
-  const sis = sistema === '—' ? 'el sistema analizado' : sistema;
-  let t = `Veredicto ControlCheck para ${sis}. `;
-  t += `Puntuación global: ${global.toFixed(2)} sobre 3. Estado: ${statusLabel}. `;
-  t += `Índice de Soberanía Digital: ${isd.toFixed(2)}, ${isdSt}. `;
-  t += `Soberanía Cognitiva: ${mind.toFixed(2)}, ${mindSt}. `;
-  if (d9HasData) t += `Daño Psicológico D9: ${d9.toFixed(2)}, ${d9St}. `;
-  else t += `Módulo D9 no completado. `;
-  if (isdOm) t += `Alerta: Disyuntor Omega ISD activado por estructura concentrada. `;
-  if (mindOm) t += `Alerta: Disyuntor Cognitivo activado por diseño persuasivo crítico. `;
-  if (d9Om) t += `Alerta: Omega D9 activado por daño documentado. `;
-  return t;
-}
-
-let _ttsSpeaking = false;
-function toggleTTS() {
-  if (!('speechSynthesis' in window)) {
-    alert('Tu navegador no soporta síntesis de voz. Prueba Chrome o Edge.');
-    return;
-  }
-  const btn = document.getElementById('sf-tts-btn');
-  if (_ttsSpeaking) {
-    window.speechSynthesis.cancel();
-    _ttsSpeaking = false;
-    if (btn) { btn.textContent = '🔊 Leer resultado'; btn.classList.remove('speaking'); btn.setAttribute('aria-label','Leer veredicto en voz alta'); }
-    return;
-  }
-  const text = window._ttsText || 'No hay datos suficientes para leer el veredicto. Completa al menos el módulo ISD.';
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'es-ES';
-  utt.rate = 0.95;
-  utt.pitch = 1.0;
-
-  // Detectar fragmentos en inglés (términos técnicos) y ajustar lang dinámicamente no es posible
-  // directamente en SpeechSynthesis, pero el motor español de los navegadores modernos
-  // lee los términos en inglés de forma aceptable con lang es-ES.
-
-  utt.onstart = () => {
-    _ttsSpeaking = true;
-    if (btn) { btn.textContent = '⏹ Detener'; btn.classList.add('speaking'); btn.setAttribute('aria-label','Detener lectura en voz alta'); }
-  };
-  utt.onend = () => {
-    _ttsSpeaking = false;
-    if (btn) { btn.textContent = '🔊 Leer resultado'; btn.classList.remove('speaking'); btn.setAttribute('aria-label','Leer veredicto en voz alta'); }
-  };
-  utt.onerror = () => {
-    _ttsSpeaking = false;
-    if (btn) { btn.textContent = '🔊 Leer resultado'; btn.classList.remove('speaking'); }
-  };
-  window.speechSynthesis.speak(utt);
-}
-
-// Eventos de cambio
-function updateISD() {
-  for (let d of ISD_DIMS) {
-    const sel = document.getElementById(`isd-${d.id}`);
-    if (sel && sel.value !== '') isdValues[d.id] = parseInt(sel.value);
-    else delete isdValues[d.id];
-  }
-  updateISDProgress();
-  updateAll();
-  localStorage.setItem('isdValues', JSON.stringify(isdValues));
-}
-function updateMIND() {
-  for (let d of MIND_DIMS) {
-    const sel = document.getElementById(`mind-${d.id}`);
-    if (sel && sel.value !== '') mindValues[d.id] = parseInt(sel.value);
-    else delete mindValues[d.id];
-  }
-  updateMINDProgress();
-  updateAll();
-  localStorage.setItem('mindValues', JSON.stringify(mindValues));
-}
-function updateD9() {
-  for (let d of D9_INDICADORES) {
-    const sel = document.getElementById(`d9-${d.id}`);
-    if (sel && sel.value !== '') d9Values[d.id] = parseInt(sel.value);
-    else delete d9Values[d.id];
-  }
-  updateD9Progress();
-  updateAll();
-  localStorage.setItem('d9Values', JSON.stringify(d9Values));
-}
-
-// Resets
-function fullReset() {
-  localStorage.clear();
-  isdValues = {};
-  mindValues = {};
-  d9Values = {};
-  isdScore = 0; mindScore = 0; d9Score = 0;
-  isdOmega = false; mindOmega = false; d9Omega = false;
-  document.getElementById('systemName').value = '';
-  renderISD();
-  renderMIND();
-  renderD9();
-  updateAll();
-  updateSearchLinks();
-  const fb = document.getElementById('feedbackMsg');
-  if (fb) { fb.textContent = '✓ Todo reiniciado'; setTimeout(() => fb.textContent = '', 2000); }
-}
-function resetEvaluacion() {
-  isdValues = {};
-  mindValues = {};
-  d9Values = {};
-  localStorage.removeItem('isdValues');
-  localStorage.removeItem('mindValues');
-  localStorage.removeItem('d9Values');
-  renderISD();
-  renderMIND();
-  renderD9();
-  updateAll();
-  const fb = document.getElementById('feedbackMsg');
-  if (fb) { fb.textContent = '✓ Respuestas reiniciadas'; setTimeout(() => fb.textContent = '', 2000); }
-}
-
-// Búsquedas
-function updateSearchLinks() {
-  const system = document.getElementById('systemName').value.trim() || 'este sistema';
-  const links = document.querySelectorAll('#isd-questions .btn-buscar');
-  links.forEach(link => {
-    const searchTerm = link.getAttribute('data-search');
-    if (searchTerm) {
-      link.href = `https://www.google.com/search?q=${encodeURIComponent(`"${system}" ${searchTerm}`)}`;
-    }
-  });
-}
-
-// Exportación
-function exportarJSON() {
-  const data = {
-    version: 'ControlCheck v3.6',
+// ==================== HISTORIAL ====================
+function guardarHistorial(sistema, global, isd, mind, d9, isdOm, mindOm, d9Om) {
+  let historial = JSON.parse(localStorage.getItem('audit_historial') || '[]');
+  historial.unshift({
     fecha: new Date().toISOString(),
-    sistema: document.getElementById('systemName').value.trim() || 'No especificado',
-    isd_estructural: { puntuacion: isdScore, omega: isdOmega, dimensiones: isdValues },
-    isd_mind: { puntuacion: mindScore, omega: mindOmega, dimensiones: mindValues },
-    d9_psicologico: { puntuacion: d9Score, omega: d9Omega, dimensiones: d9Values }
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `controlcheck_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+    sistema,
+    global: global.toFixed(2),
+    isd: isd.toFixed(2),
+    mind: mind.toFixed(2),
+    d9: d9.toFixed(2),
+    omegas: { isd: isdOm, mind: mindOm, d9: d9Om }
+  });
+  if (historial.length > 10) historial = historial.slice(0, 10);
+  localStorage.setItem('audit_historial', JSON.stringify(historial));
 }
-function exportarMD() {
-  const sistema = document.getElementById('systemName').value.trim() || 'No especificado';
-  const d9HasData = Object.keys(d9Values).length > 0;
-  const global = d9HasData
-    ? (isdScore * 0.40 + mindScore * 0.35 + d9Score * 0.25)
-    : (isdScore * 0.53 + mindScore * 0.47);
-  const globalFinal = Math.min(3, Math.max(1, global));
-  const statusGlobal = globalFinal >= 2.5 ? 'LIBERTAD DIGITAL' : globalFinal >= 1.5 ? 'RIESGO MODERADO' : 'CAPTURA CRÍTICA';
-  const recBody = document.getElementById('ve-rec-body');
-  const recTexto = recBody ? recBody.innerText : '—';
-
-  let md = `# Informe ControlCheck v3.6\n\n`;
-  md += `**Sistema auditado:** ${sistema}\n`;
-  md += `**Fecha:** ${new Date().toISOString()}\n`;
-  md += `**Score Global:** ${globalFinal.toFixed(2)}/3.0 — ${statusGlobal}\n\n`;
-  md += `## Recomendación técnica\n${recTexto}\n\n`;
-  md += `---\n\n`;
-  md += `## ISD Estructural\n**Puntuación:** ${isdScore.toFixed(2)}/3.0\n**Omega activado:** ${isdOmega}\n\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
-  for (let d of ISD_DIMS) {
-    md += `| ${d.label} | ${isdValues[d.id] !== undefined ? isdValues[d.id] : '—'} |\n`;
-  }
-  md += `\n## ISD-MIND Cognitivo\n**Puntuación:** ${mindScore.toFixed(2)}/3.0\n**Omega activado:** ${mindOmega}\n\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
-  for (let d of MIND_DIMS.filter(d => !d.isDisruptor)) {
-    md += `| ${d.label} | ${mindValues[d.id] !== undefined ? mindValues[d.id] : '—'} |\n`;
-  }
-  md += `\n## D9 – Daño Psicológico\n**Puntuación:** ${d9Score.toFixed(2)}/3.0\n**Omega activado:** ${d9Omega}\n\n| Indicador | Puntuación |\n|-----------|------------|\n`;
-  for (let d of D9_INDICADORES) {
-    md += `| ${d.nombre} | ${d9Values[d.id] !== undefined ? d9Values[d.id] : '—'} |\n`;
-  }
-  md += `\n---\n*Análisis basado en fuentes públicas. Licencia CC BY-SA 4.0. Autor: Jose Ranero García · ORCID: 0009-0009-3168-6379*`;
-  const blob = new Blob([md], { type: 'text/markdown' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `controlcheck_${sistema.replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.md`;
-  a.click();
-  URL.revokeObjectURL(url);
+function renderHistorial() {
+  const historial = JSON.parse(localStorage.getItem('audit_historial') || '[]');
+  const ul = document.getElementById('historial-lista');
+  if (!ul) return;
+  if (historial.length === 0) { ul.innerHTML = '<li>Ninguna auditoría guardada aún.</li>'; return; }
+  ul.innerHTML = historial.map(h => `<li><strong>${h.sistema}</strong> (${new Date(h.fecha).toLocaleDateString()}): Score ${h.global} | ISD ${h.isd} | MIND ${h.mind} | D9 ${h.d9} ${h.omegas.isd || h.omegas.mind || h.omegas.d9 ? '⚡' : ''}</li>`).join('');
 }
 
-// Ejemplos — carga ISD completo + nota de datos parciales
+// ==================== NOTAS ====================
+function cargarNotas() {
+  const sistema = document.getElementById('systemName').value.trim();
+  if (!sistema) return;
+  const notas = localStorage.getItem(`friccion_${sistema}`);
+  const textarea = document.getElementById('friccion-notas');
+  if (textarea && notas) textarea.value = notas;
+}
+function guardarNotas() {
+  const sistema = document.getElementById('systemName').value.trim();
+  if (!sistema) return;
+  const textarea = document.getElementById('friccion-notas');
+  if (textarea) localStorage.setItem(`friccion_${sistema}`, textarea.value);
+}
+document.getElementById('systemName').addEventListener('change', cargarNotas);
+document.getElementById('friccion-notas').addEventListener('input', guardarNotas);
+
+// ==================== EJEMPLOS (CARGA COMPLETA) ====================
 function cargarEjemplo(ej) {
+  // Limpiar todo
   isdValues = {};
   mindValues = {};
   d9Values = {};
@@ -1746,37 +603,50 @@ function cargarEjemplo(ej) {
   renderISD();
   renderMIND();
   renderD9();
-  const systemInput = document.getElementById('systemName');
-  systemInput.value = ej.nombre;
+  // Poner nombre
+  document.getElementById('systemName').value = ej.nombre;
   updateSearchLinks();
   // Cargar ISD
-  for (let d of ISD_DIMS) {
-    const val = ej.pts[d.id];
-    if (val !== undefined) {
-      isdValues[d.id] = val;
-      const sel = document.getElementById(`isd-${d.id}`);
-      if (sel) sel.value = val;
-    }
-  }
-  // Cargar MIND si el ejemplo tiene datos de MIND
-  if (ej.mind) {
-    for (let d of MIND_DIMS) {
-      const val = ej.mind[d.id];
+  if (ej.isd) {
+    ISD_DIMS.forEach((d, idx) => {
+      const val = ej.isd[idx];
       if (val !== undefined) {
+        isdValues[d.id] = val;
+        const sel = document.getElementById(`isd-${d.id}`);
+        if (sel) sel.value = val;
+      }
+    });
+  }
+  // Cargar MIND
+  if (ej.mind) {
+    MIND_DIMS.forEach((d, idx) => {
+      const val = ej.mind[idx];
+      if (val !== undefined && !d.isDisruptor) {
         mindValues[d.id] = val;
         const sel = document.getElementById(`mind-${d.id}`);
         if (sel) sel.value = val;
       }
-    }
+    });
+  }
+  // Cargar D9
+  if (ej.d9) {
+    D9_INDICADORES.forEach((d, idx) => {
+      const val = ej.d9[idx];
+      if (val !== undefined) {
+        d9Values[d.id] = val;
+        const sel = document.getElementById(`d9-${d.id}`);
+        if (sel) sel.value = val;
+      }
+    });
   }
   updateISDProgress();
   updateMINDProgress();
+  updateD9Progress();
   updateAll();
+  cargarNotas();
   const fb = document.getElementById('feedbackMsg');
-  const soloISD = !ej.mind ? ' (solo ISD — completa MIND y D9 para el score global)' : '';
-  if (fb) { fb.textContent = `✓ Ejemplo "${ej.nombre}" cargado${soloISD}`; setTimeout(() => fb.textContent = '', 4000); }
+  if (fb) { fb.textContent = `✓ Ejemplo "${ej.nombre}" cargado`; setTimeout(() => fb.textContent = '', 3000); }
 }
-
 function renderEjemplos() {
   const grid = document.getElementById('ejemplosGrid');
   if (!grid) return;
@@ -1790,45 +660,76 @@ function renderEjemplos() {
   });
 }
 
-// Cargar datos guardados
-function loadStored() {
-  const storedISD = localStorage.getItem('isdValues');
-  if (storedISD) isdValues = JSON.parse(storedISD);
-  const storedMIND = localStorage.getItem('mindValues');
-  if (storedMIND) mindValues = JSON.parse(storedMIND);
-  const storedD9 = localStorage.getItem('d9Values');
-  if (storedD9) d9Values = JSON.parse(storedD9);
+// ==================== OTRAS FUNCIONES ====================
+function updateSearchLinks() {
+  const system = document.getElementById('systemName').value.trim() || 'este sistema';
+  document.querySelectorAll('#isd-questions .btn-buscar').forEach(link => {
+    const term = link.getAttribute('data-search');
+    if (term) link.href = `https://www.google.com/search?q=${encodeURIComponent(`"${system}" ${term}`)}`;
+  });
+}
+function fullReset() { localStorage.clear(); location.reload(); }
+function resetEvaluacion() {
+  isdValues = {}; mindValues = {}; d9Values = {};
+  localStorage.removeItem('isdValues'); localStorage.removeItem('mindValues'); localStorage.removeItem('d9Values');
+  renderISD(); renderMIND(); renderD9(); updateAll();
+  document.getElementById('feedbackMsg').textContent = '✓ Respuestas reiniciadas';
+  setTimeout(() => document.getElementById('feedbackMsg').textContent = '', 2000);
+}
+function exportarMD() {
+  const sistema = document.getElementById('systemName').value.trim() || 'No especificado';
+  const d9HasData = Object.keys(d9Values).length > 0;
+  const global = d9HasData ? isdScore * 0.40 + mindScore * 0.35 + d9Score * 0.25 : isdScore * 0.53 + mindScore * 0.47;
+  const globalFinal = Math.min(3, Math.max(1, global));
+  const statusGlobal = globalFinal >= 2.5 ? 'LIBERTAD DIGITAL' : globalFinal >= 1.5 ? 'RIESGO MODERADO' : 'CAPTURA CRÍTICA';
+  const recBody = document.getElementById('ve-rec-body');
+  const recTexto = recBody ? recBody.innerText : '—';
+  let md = `# Informe ControlCheck v3.6\n\n**Sistema auditado:** ${sistema}\n**Fecha:** ${new Date().toISOString()}\n**Score Global:** ${globalFinal.toFixed(2)}/3.0 — ${statusGlobal}\n\n## Recomendación técnica\n${recTexto}\n\n---\n## ISD Estructural\n**Puntuación:** ${isdScore.toFixed(2)}/3.0\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
+  for (let d of ISD_DIMS) md += `| ${d.label} | ${isdValues[d.id] !== undefined ? isdValues[d.id] : '—'} |\n`;
+  md += `\n## ISD-MIND Cognitivo\n**Puntuación:** ${mindScore.toFixed(2)}/3.0\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
+  for (let d of MIND_DIMS.filter(d => !d.isDisruptor)) md += `| ${d.label} | ${mindValues[d.id] !== undefined ? mindValues[d.id] : '—'} |\n`;
+  md += `\n## D9 – Daño Psicológico\n**Puntuación:** ${d9Score.toFixed(2)}/3.0\n| Indicador | Puntuación |\n|-----------|------------|\n`;
+  for (let d of D9_INDICADORES) md += `| ${d.nombre} | ${d9Values[d.id] !== undefined ? d9Values[d.id] : '—'} |\n`;
+  md += `\n---\n*Análisis basado en fuentes públicas. Licencia CC BY-SA 4.0.*`;
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `controlcheck_${sistema.replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.md`;
+  a.click();
+}
+function exportarJSON() {
+  const data = {
+    version: 'ControlCheck v3.6',
+    fecha: new Date().toISOString(),
+    sistema: document.getElementById('systemName').value.trim() || 'No especificado',
+    isd_estructural: { puntuacion: isdScore, omega: isdOmega, dimensiones: isdValues },
+    isd_mind: { puntuacion: mindScore, omega: mindOmega, dimensiones: mindValues },
+    d9_psicologico: { puntuacion: d9Score, omega: d9Omega, dimensiones: d9Values }
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `controlcheck_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+function toggleTTS() {
+  if (!('speechSynthesis' in window)) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+  const text = `Veredicto para ${document.getElementById('systemName').value.trim() || 'el sistema'}. Score global ${document.getElementById('ve-score-global').innerText}. ${document.getElementById('ve-rec-body').innerText}`;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'es-ES';
+  window.speechSynthesis.speak(utterance);
 }
 
 // Inicialización
 window.onload = () => {
-  loadStored();
-  renderISD();
-  renderMIND();
-  renderD9();
-  initCharts();
-  updateAll();
-  renderEjemplos();
-
-  const systemInput = document.getElementById('systemName');
-  let timeout;
-  systemInput.addEventListener('input', () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => { updateSearchLinks(); }, 500);
-  });
-  systemInput.addEventListener('change', updateSearchLinks);
-
-  document.getElementById('updateSearchBtn').addEventListener('click', () => {
-    updateSearchLinks();
-    const fb = document.getElementById('feedbackMsg');
-    if (fb) { fb.textContent = '✓ Enlaces actualizados'; setTimeout(() => fb.textContent = '', 1500); }
-  });
+  renderISD(); renderMIND(); renderD9(); initCharts(); updateAll(); renderEjemplos();
+  cargarNotas(); renderHistorial();
+  document.getElementById('updateSearchBtn').addEventListener('click', updateSearchLinks);
   document.getElementById('fullResetBtn').addEventListener('click', fullReset);
   document.getElementById('resetEvaluacionBtn').addEventListener('click', resetEvaluacion);
   document.getElementById('exportJSONBtn').addEventListener('click', exportarJSON);
   document.getElementById('exportMDBtn').addEventListener('click', exportarMD);
-
-  if (systemInput.value.trim() !== '') updateSearchLinks();
+  document.getElementById('systemName').addEventListener('input', () => { cargarNotas(); updateSearchLinks(); });
 };
 </script>
 </body>
