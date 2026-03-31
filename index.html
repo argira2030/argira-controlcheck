@@ -3,23 +3,345 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ControlCheck v3.5 · Auditoría Dual + D9</title>
+<title>ControlCheck v3.6 · Veredicto Ejecutivo · Accesible</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #05070a; --card: #0d1117; --accent: #58a6ff; --text: #c9d1d9;
   --green: #3fb950; --yellow: #d29922; --red: #f85149; --border: #30363d;
-  --mind: #ff7b72; --fondo2: #0d1117; --fondo3: #111820; --texto2: #8b949e;
+  --mind: #ff7b72; --fondo2: #0d1117; --fondo3: #111820;
+  /* WCAG AA corregido: mínimo 4.5:1 sobre fondo oscuro */
+  --texto2: #adb5bd;
   --borde: #21262d; --borde2: #30363d;
 }
+
+/* ===== SKIP LINK ACCESIBILIDAD ===== */
+.skip-link {
+  position: absolute;
+  top: -999px;
+  left: 8px;
+  background: var(--accent);
+  color: #000;
+  padding: 8px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  border-radius: 0 0 6px 6px;
+  z-index: 9999;
+  text-decoration: none;
+  font-weight: bold;
+}
+.skip-link:focus { top: 0; }
+
+/* ===== SEMÁFORO FLOTANTE FIJO ===== */
+/* ===== SEMÁFORO FLOTANTE — COLAPSADO POR DEFECTO ===== */
+.semaforo-flotante {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;        /* píldora */
+  padding: 6px 12px 6px 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s, border-radius 0.3s, padding 0.3s;
+  overflow: hidden;
+  max-width: 44px;             /* colapsado: solo emoji */
+}
+/* Expandido al hover / focus / clase .open */
+.semaforo-flotante:hover,
+.semaforo-flotante:focus-within,
+.semaforo-flotante.open {
+  border-radius: 14px;
+  padding: 12px 16px;
+  max-width: 200px;
+  flex-direction: column;
+  gap: 4px;
+}
+.semaforo-flotante.green { border-color: var(--green); }
+.semaforo-flotante.yellow { border-color: var(--yellow); }
+.semaforo-flotante.red { border-color: var(--red); }
+.semaforo-flotante.green:hover,
+.semaforo-flotante.green:focus-within,
+.semaforo-flotante.green.open { box-shadow: 0 4px 20px rgba(63,185,80,0.2); }
+.semaforo-flotante.yellow:hover,
+.semaforo-flotante.yellow:focus-within,
+.semaforo-flotante.yellow.open { box-shadow: 0 4px 20px rgba(210,153,34,0.2); }
+.semaforo-flotante.red:hover,
+.semaforo-flotante.red:focus-within,
+.semaforo-flotante.red.open { box-shadow: 0 4px 20px rgba(248,81,73,0.2); }
+
+.sf-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--texto2);
+  /* oculto en píldora */
+  display: none;
+  white-space: nowrap;
+}
+.semaforo-flotante:hover .sf-label,
+.semaforo-flotante:focus-within .sf-label,
+.semaforo-flotante.open .sf-label { display: block; }
+
+.sf-emoji {
+  font-size: 1.3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.sf-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* En expandido, score se hace más grande */
+.semaforo-flotante:hover .sf-score,
+.semaforo-flotante:focus-within .sf-score,
+.semaforo-flotante.open .sf-score { font-size: 1.3rem; }
+
+.sf-status {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--texto2);
+  display: none;
+  white-space: nowrap;
+}
+.semaforo-flotante:hover .sf-status,
+.semaforo-flotante:focus-within .sf-status,
+.semaforo-flotante.open .sf-status { display: block; }
+
+.sf-tts-btn {
+  display: none;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--borde2);
+  color: var(--texto2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.semaforo-flotante:hover .sf-tts-btn,
+.semaforo-flotante:focus-within .sf-tts-btn,
+.semaforo-flotante.open .sf-tts-btn { display: block; }
+.sf-tts-btn:hover, .sf-tts-btn:focus {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.sf-tts-btn.speaking {
+  border-color: var(--green);
+  color: var(--green);
+  animation: pulse-tts 1.2s infinite;
+}
+@keyframes pulse-tts {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@media (max-width: 600px) {
+  .semaforo-flotante { top: auto; bottom: 20px; right: 16px; }
+}
+
+/* ===== VEREDICTO EJECUTIVO ===== */
+.veredicto-ejecutivo {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px 20px;
+  margin: 30px 0;
+}
+.ve-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  flex-wrap: wrap;
+}
+.ve-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.ve-sistema-nombre {
+  font-size: 1.1rem;
+  color: var(--text);
+  font-weight: 700;
+}
+/* Semáforo grande inline en el veredicto */
+.ve-semaforo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.ve-semaforo {
+  text-align: center;
+  background: #0d1117;
+  border: 3px solid var(--border);
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.ve-semaforo.green { border-color: var(--green); box-shadow: 0 0 30px rgba(63,185,80,0.3); }
+.ve-semaforo.yellow { border-color: var(--yellow); box-shadow: 0 0 30px rgba(210,153,34,0.3); }
+.ve-semaforo.red { border-color: var(--red); box-shadow: 0 0 30px rgba(248,81,73,0.3); }
+.ve-emoji { font-size: 2.8rem; line-height: 1; }
+.ve-status-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--texto2);
+  padding: 0 8px;
+  text-align: center;
+}
+.ve-score-global {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.ve-score-label {
+  font-size: 0.6rem;
+  color: var(--texto2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+/* Desglose 3 índices */
+.ve-desglose {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (max-width: 700px) {
+  .ve-desglose { grid-template-columns: 1fr; }
+}
+.ve-index-card {
+  background: #111820;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 16px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  transition: border-color 0.3s;
+}
+.ve-index-card.green { border-color: var(--green); }
+.ve-index-card.yellow { border-color: var(--yellow); }
+.ve-index-card.red { border-color: var(--red); }
+.ve-index-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--texto2);
+}
+.ve-index-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.ve-index-bar-wrap {
+  background: var(--borde);
+  border-radius: 4px;
+  height: 6px;
+  overflow: hidden;
+}
+.ve-index-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+.ve-index-status {
+  font-size: 0.78rem;
+  color: var(--texto2);
+  font-weight: 500;
+}
+.ve-index-omega {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--red);
+  letter-spacing: 1px;
+  animation: pulse-omega 1.5s infinite;
+}
+@keyframes pulse-omega {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+/* Recomendación técnica */
+.ve-recomendacion {
+  background: #0d1117;
+  border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 18px;
+  margin-bottom: 4px;
+}
+.ve-recomendacion.green { border-left-color: var(--green); }
+.ve-recomendacion.yellow { border-left-color: var(--yellow); }
+.ve-recomendacion.red { border-left-color: var(--red); }
+.ve-rec-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--texto2);
+  margin-bottom: 8px;
+}
+.ve-rec-body {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ===== ACCESIBILIDAD: FOCUS VISIBLE GLOBAL ===== */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+/* Aumentar contraste en textos secundarios */
+.preg-fuente, .ayuda-texto, .progress-indicator, .subtitulo {
+  color: var(--texto2);
+}
+/* Tamaño base más grande */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.65;
   padding: 20px;
 }
 .container { max-width: 1400px; margin: 0 auto; }
@@ -370,27 +692,115 @@ summary {
   .system-bar { flex-direction: column; align-items: stretch; }
   .action-buttons { flex-direction: column; }
 }
+/* ===== PROGRESO GLOBAL ===== */
+.progreso-global {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.pg-textos {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.pg-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--texto2);
+}
+.pg-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  transition: color 0.3s;
+}
+.pg-count.completo { color: var(--green); }
+.pg-barra-wrap {
+  background: var(--borde);
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+}
+.pg-barra {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.4s ease, background 0.3s;
+}
+.pg-barra.completo { background: var(--green); }
+/* ========================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
 </style>
 </head>
 <body>
-<div class="container">
+<!-- SKIP LINK ACCESIBILIDAD -->
+<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+<!-- SEMÁFORO FLOTANTE — colapsado por defecto, expandido al hover/click -->
+<div class="semaforo-flotante" id="sf-panel"
+  role="status" aria-live="polite" aria-label="Veredicto actual — expandir para detalles"
+  aria-atomic="true" tabindex="0"
+  onclick="this.classList.toggle('open')"
+  onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('open')">
+  <span class="sf-emoji" id="sf-emoji" aria-hidden="true">⏳</span>
+  <span class="sf-score" id="sf-score" style="color:var(--texto2)">—</span>
+  <span class="sf-label">ControlCheck v3.6</span>
+  <span class="sf-status" id="sf-status">Sin datos</span>
+  <button class="sf-tts-btn" id="sf-tts-btn" aria-label="Leer veredicto en voz alta"
+    onclick="event.stopPropagation(); toggleTTS()">🔊 Leer resultado</button>
+</div>
+
+<div class="container" id="main-content">
   <div class="header">
     <div class="badge">Argira Station · Portal 2030</div>
-    <h1>Control<em style="color:var(--accent)">Check</em> v3.5</h1>
-    <div class="subtitulo">Auditoría Dual: Poder Estructural (ISD) + Autonomía Cognitiva (ISD‑MIND) + D9</div>
-    <a href="https://doi.org/10.5281/zenodo.19336184" target="_blank" class="doi-badge">DOI: 10.5281/zenodo.19336184</a>
+    <h1>Control<em style="color:var(--accent)">Check</em> v3.6</h1>
+    <div class="subtitulo">Auditoría Dual: Poder Estructural (ISD) + Autonomía Cognitiva (ISD‑MIND) + D9 · <strong style="color:var(--accent)">Veredicto Ejecutivo · Lector de Voz</strong></div>
+    <a href="https://doi.org/10.5281/zenodo.19339425" target="_blank" class="doi-badge" aria-label="DOI Zenodo versión 3.5">DOI: 10.5281/zenodo.19339425</a>
   </div>
 
   <div class="system-bar">
     <div class="system-input-group">
-      <label>Sistema / Plataforma a analizar</label>
-      <input type="text" id="systemName" placeholder="ej: Facebook, TikTok, Instagram, Claude..." value="">
+      <label for="systemName">Sistema / Plataforma a analizar</label>
+      <input type="text" id="systemName"
+        placeholder="Escribe el nombre del sistema: ej. Facebook, TikTok, Wikipedia…"
+        aria-describedby="systemName-hint"
+        value="">
+      <span id="systemName-hint" class="sr-only">Introduce el nombre de la plataforma o servicio digital que quieres auditar. Puedes usar los ejemplos rápidos de abajo.</span>
     </div>
     <div class="action-buttons">
-      <button class="big-button" id="updateSearchBtn">🔍 BUSCAR (opcional)</button>
-      <button class="reset-button" id="fullResetBtn">⟳ NUEVA EVALUACIÓN</button>
+      <button class="big-button" id="updateSearchBtn" aria-label="Actualizar enlaces de búsqueda para el sistema introducido">🔍 BUSCAR (opcional)</button>
+      <button class="reset-button" id="fullResetBtn" aria-label="Borrar todo y comenzar una evaluación nueva">⟳ NUEVA EVALUACIÓN</button>
     </div>
-    <span id="feedbackMsg" class="feedback-msg"></span>
+    <span id="feedbackMsg" class="feedback-msg" aria-live="polite"></span>
+  </div>
+
+  <!-- PROGRESO GLOBAL -->
+  <div class="progreso-global" id="progreso-global" aria-label="Progreso total de la auditoría" role="region">
+    <div class="pg-textos">
+      <span class="pg-label">Progreso total</span>
+      <span class="pg-count" id="pg-count" aria-live="polite">0 / 22 preguntas respondidas</span>
+    </div>
+    <div class="pg-barra-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="22" aria-valuenow="0" id="pg-bar-wrap">
+      <div class="pg-barra" id="pg-barra" style="width:0%"></div>
+    </div>
   </div>
 
   <div style="margin-bottom: 20px;">
@@ -401,60 +811,118 @@ summary {
   <div class="two-columns">
     <div class="column">
       <h2><span class="accent">[ ISD ]</span> Soberanía Digital</h2>
-      <canvas id="chartISD" width="400" height="300"></canvas>
-      <div id="isd-questions"></div>
-      <div class="progress-indicator" id="isd-progress">0/8 respondidas</div>
-      <div class="score-summary">
+      <canvas id="chartISD" width="400" height="300"
+        role="img"
+        aria-label="Gráfico radar con las 8 dimensiones de soberanía digital. Los valores se actualizan al responder las preguntas.">
+      </canvas>
+      <div id="isd-questions" role="group" aria-label="Preguntas de soberanía digital ISD"></div>
+      <div class="progress-indicator" id="isd-progress" aria-live="polite">0/8 respondidas</div>
+      <div class="score-summary" aria-label="Puntuación ISD">
         <span class="status-label" id="isd-status-label">Puntuación</span>
-        <span class="big-score" id="isd-score">--</span>
-        <div id="omega-isd-msg" class="omega-msg">⚠ OMEGA: ESTRUCTURA CONCENTRADA ACTIVADA</div>
+        <span class="big-score" id="isd-score" aria-live="polite">--</span>
+        <div id="omega-isd-msg" class="omega-msg" role="alert">⚠ OMEGA: ESTRUCTURA CONCENTRADA ACTIVADA</div>
       </div>
-      <div id="veto-isd-msg" class="veto-msg" style="display:none;"></div>
+      <div id="veto-isd-msg" class="veto-msg" style="display:none;" role="alert"></div>
       <div id="alternativas-isd" class="alternativas-sugeridas" style="display:none;"></div>
     </div>
 
     <div class="column">
       <h2><span style="color:var(--mind)">[ ISD‑MIND ]</span> Soberanía Cognitiva</h2>
-      <canvas id="chartMIND" width="400" height="300"></canvas>
-      <div id="mind-questions"></div>
-      <div class="progress-indicator" id="mind-progress">0/9 respondidas</div>
-      <div class="score-summary">
+      <canvas id="chartMIND" width="400" height="300"
+        role="img"
+        aria-label="Gráfico radar con las 8 dimensiones de soberanía cognitiva. Los valores se actualizan al responder las preguntas.">
+      </canvas>
+      <div id="mind-questions" role="group" aria-label="Preguntas de soberanía cognitiva ISD-MIND"></div>
+      <div class="progress-indicator" id="mind-progress" aria-live="polite">0/9 respondidas</div>
+      <div class="score-summary" aria-label="Puntuación ISD-MIND">
         <span class="status-label" id="mind-status-label">Puntuación</span>
-        <span class="big-score" id="mind-score">--</span>
-        <div id="omega-mind-msg" class="omega-msg">⚠ DISYUNTOR COGNITIVO: DISEÑO PERSUASIVO CRÍTICO</div>
+        <span class="big-score" id="mind-score" aria-live="polite">--</span>
+        <div id="omega-mind-msg" class="omega-msg" role="alert">⚠ DISYUNTOR COGNITIVO: DISEÑO PERSUASIVO CRÍTICO</div>
       </div>
     </div>
   </div>
 
-  <div class="resultados-globales">
-    <div class="resultados-grid">
-      <div class="resultado-item">
-        <div class="valor" id="final-isd-val">--</div>
-        <div>ISD Estructural</div>
-      </div>
-      <div class="resultado-item">
-        <div class="valor" id="final-mind-val">--</div>
-        <div>ISD‑MIND Cognitivo</div>
-      </div>
-    </div>
-    <div id="veredicto-final" class="veredicto"></div>
-    <div class="btn-group">
-      <button class="btn-export" id="exportJSONBtn">📄 Exportar JSON</button>
-      <button class="btn-export" id="exportMDBtn">📝 Exportar Markdown</button>
-      <button class="btn-reiniciar" id="resetEvaluacionBtn">⟳ Reiniciar evaluación</button>
-    </div>
-  </div>
-
+  <!-- D9 ANTES DEL VEREDICTO -->
   <details>
     <summary>⚠️ D9 – Daño Psicológico y Captura Conductual (opcional)</summary>
-    <div id="d9-panel" style="margin-top:15px;"></div>
-    <div class="progress-indicator" id="d9-progress">0/5 respondidas</div>
-    <div class="score-summary" style="margin-top:15px;">
+    <div id="d9-panel" style="margin-top:15px;" role="group" aria-label="Preguntas de daño psicológico D9"></div>
+    <div class="progress-indicator" id="d9-progress" aria-live="polite">0/5 respondidas</div>
+    <div class="score-summary" style="margin-top:15px;" aria-label="Puntuación D9">
       <span class="status-label" id="d9-status-label">Puntuación D9</span>
-      <span class="big-score" id="d9-score">--</span>
-      <div id="omega-d9-msg" class="omega-msg">⚠ OMEGA D9: DAÑO INTERNO DOCUMENTADO ACTIVADO</div>
+      <span class="big-score" id="d9-score" aria-live="polite">--</span>
+      <div id="omega-d9-msg" class="omega-msg" role="alert">⚠ OMEGA D9: DAÑO INTERNO DOCUMENTADO ACTIVADO</div>
     </div>
   </details>
+
+  <!-- VEREDICTO EJECUTIVO v3.6 -->
+  <section class="veredicto-ejecutivo" id="veredicto-ejecutivo" aria-label="Veredicto ejecutivo de la auditoría">
+    <div class="ve-header">
+      <span class="ve-title" aria-hidden="true">[ VEREDICTO EJECUTIVO ]</span>
+      <h2 style="font-size:1.1rem; margin:0; font-family:'IBM Plex Sans',sans-serif; font-weight:700;" id="ve-sistema-nombre">—</h2>
+    </div>
+
+    <!-- Semáforo visual grande -->
+    <div class="ve-semaforo-wrap">
+      <div class="ve-semaforo" id="ve-semaforo" role="img" aria-labelledby="ve-status-text ve-score-global">
+        <span class="ve-emoji" id="ve-emoji" aria-hidden="true">⏳</span>
+        <span class="ve-status-text" id="ve-status-text">Esperando datos…</span>
+        <span class="ve-score-global" id="ve-score-global">—</span>
+        <span class="ve-score-label">Score Global</span>
+      </div>
+    </div>
+
+    <!-- Desglose 3 índices -->
+    <div class="ve-desglose" role="list" aria-label="Desglose de índices">
+      <div class="ve-index-card" id="ve-isd-card" role="listitem">
+        <div class="ve-index-label">ISD Estructural</div>
+        <div class="ve-index-score" id="ve-isd-score">--</div>
+        <div class="ve-index-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ve-isd-bar-wrap" aria-label="Barra ISD">
+          <div class="ve-index-bar" id="ve-isd-bar" style="background:var(--accent)"></div>
+        </div>
+        <div class="ve-index-status" id="ve-isd-status">—</div>
+        <div class="ve-index-omega" id="ve-isd-omega" style="display:none" role="alert">⚡ Ω ACTIVO</div>
+      </div>
+      <div class="ve-index-card" id="ve-mind-card" role="listitem">
+        <div class="ve-index-label">ISD-MIND Cognitivo</div>
+        <div class="ve-index-score" id="ve-mind-score">--</div>
+        <div class="ve-index-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ve-mind-bar-wrap" aria-label="Barra MIND">
+          <div class="ve-index-bar" id="ve-mind-bar" style="background:var(--mind)"></div>
+        </div>
+        <div class="ve-index-status" id="ve-mind-status">—</div>
+        <div class="ve-index-omega" id="ve-mind-omega" style="display:none" role="alert">⚡ Ω ACTIVO</div>
+      </div>
+      <div class="ve-index-card" id="ve-d9-card" role="listitem">
+        <div class="ve-index-label">D9 Daño Psicológico</div>
+        <div class="ve-index-score" id="ve-d9-score">--</div>
+        <div class="ve-index-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ve-d9-bar-wrap" aria-label="Barra D9">
+          <div class="ve-index-bar" id="ve-d9-bar" style="background:#c9a0ff"></div>
+        </div>
+        <div class="ve-index-status" id="ve-d9-status">—</div>
+        <div class="ve-index-omega" id="ve-d9-omega" style="display:none" role="alert">⚡ Ω ACTIVO</div>
+      </div>
+    </div>
+
+    <!-- Recomendación técnica -->
+    <div class="ve-recomendacion" id="ve-recomendacion" aria-live="polite" aria-atomic="true">
+      <div class="ve-rec-title">💡 Recomendación técnica</div>
+      <div class="ve-rec-body" id="ve-rec-body">Completa al menos el módulo ISD para obtener una recomendación.</div>
+    </div>
+
+    <!-- Veredicto oculto para TTS y legacy -->
+    <div id="veredicto-final" style="display:none" aria-hidden="true"></div>
+    <!-- IDs legacy para exportación -->
+    <div style="display:none">
+      <span id="final-isd-val">--</span>
+      <span id="final-mind-val">--</span>
+    </div>
+
+    <!-- Botones -->
+    <div class="btn-group" style="margin-top:20px;">
+      <button class="btn-export" id="exportJSONBtn" aria-label="Exportar resultados en formato JSON">📄 Exportar JSON</button>
+      <button class="btn-export" id="exportMDBtn" aria-label="Exportar informe en formato Markdown">📝 Exportar Markdown</button>
+      <button class="btn-reiniciar" id="resetEvaluacionBtn" aria-label="Reiniciar solo las respuestas de la evaluación actual">⟳ Reiniciar evaluación</button>
+    </div>
+  </section>
 
   <footer>
     <p>AUTOR: Jose Ranero García · ORCID: 0009-0009-3168-6379 · LICENCIA: CC BY-SA 4.0 (obra) / AGPLv3 (código)</p>
@@ -671,7 +1139,8 @@ function renderISD() {
           <a href="${searchUrl}" target="_blank" class="btn-buscar" data-search="${d.search_es}">🔍 Buscar en Google</a>
         </div>
         <div class="ayuda-texto">💡 ${d.ayuda}</div>
-        <select id="isd-${d.id}" onchange="updateISD()">
+        <label for="isd-${d.id}" class="sr-only">${d.desc} — selecciona una opción</label>
+        <select id="isd-${d.id}" onchange="updateISD()" aria-label="${d.desc}">
           <option value="">— Selecciona según lo que encuentres —</option>
           ${optsHtml}
         </select>
@@ -697,7 +1166,8 @@ function renderMIND() {
           <span class="preg-texto">${d.desc}</span>
         </div>
         <div class="ayuda-texto">💡 ${d.ayuda}</div>
-        <select id="mind-${d.id}" onchange="updateMIND()">
+        <label for="mind-${d.id}" class="sr-only">${d.desc} — selecciona una opción</label>
+        <select id="mind-${d.id}" onchange="updateMIND()" aria-label="${d.desc}">
           <option value="">— Selecciona según tu experiencia —</option>
           ${optsHtml}
         </select>
@@ -722,7 +1192,8 @@ function renderD9() {
         <span style="font-size:0.75rem; color:var(--texto2);">${d.desc} (Peso ${d.peso*100}%)</span><br>
         <div class="ayuda-texto" style="margin:4px 0;">💡 ${d.ayuda}</div>
         <span style="font-size:0.7rem; color:#555;">📁 ${d.fuente}</span>
-        <select id="d9-${d.id}" onchange="updateD9()">
+        <label for="d9-${d.id}" class="sr-only">${d.nombre} — selecciona una opción</label>
+        <select id="d9-${d.id}" onchange="updateD9()" aria-label="${d.nombre}">
           <option value="">— Selecciona —</option>
           ${optsHtml}
         </select>
@@ -811,74 +1282,247 @@ function computeD9() {
   return final;
 }
 
-// Radares y actualización UI
+// ==================== RADARES ====================
 function initCharts() {
   const ctxISD = document.getElementById('chartISD').getContext('2d');
   const ctxMIND = document.getElementById('chartMIND').getContext('2d');
   chartISD = new Chart(ctxISD, {
     type: 'radar',
     data: { labels: ISD_DIMS.map(d => d.label), datasets: [{ data: [], backgroundColor: 'rgba(88,166,255,0.2)', borderColor: '#58a6ff', borderWidth: 2, pointRadius: 3 }] },
-    options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' } } }, plugins: { legend: { display: false } } }
+    options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' }, pointLabels: { color: '#adb5bd', font: { size: 11 } } } }, plugins: { legend: { display: false } } }
   });
   chartMIND = new Chart(ctxMIND, {
     type: 'radar',
     data: { labels: MIND_DIMS.filter(d => !d.isDisruptor).map(d => d.label), datasets: [{ data: [], backgroundColor: 'rgba(255,123,114,0.2)', borderColor: '#ff7b72', borderWidth: 2, pointRadius: 3 }] },
-    options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' } } }, plugins: { legend: { display: false } } }
+    options: { scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: '#21262d' }, angleLines: { color: '#21262d' }, pointLabels: { color: '#adb5bd', font: { size: 11 } } } }, plugins: { legend: { display: false } } }
   });
 }
+
+// ==================== UPDATE ALL ====================
 function updateAll() {
   const isdFinal = computeISD();
   const mindFinal = computeMIND();
   const d9Final = computeD9();
 
-  document.getElementById('isd-score').innerText = isdFinal.toFixed(2);
-  document.getElementById('final-isd-val').innerText = isdFinal.toFixed(2);
+  // --- ISD panel ---
   const isdColor = isdFinal < 1.5 ? '#f85149' : (isdFinal < 2.5 ? '#d29922' : '#3fb950');
-  document.getElementById('isd-score').style.color = isdColor;
-  document.getElementById('omega-isd-msg').style.display = isdOmega ? 'block' : 'none';
   const isdStatus = isdFinal < 1.5 ? 'Captura Crítica' : (isdFinal < 2.5 ? 'Riesgo Moderado' : 'Soberanía Simbiótica');
+  const isdScoreEl = document.getElementById('isd-score');
+  if (isdScoreEl) { isdScoreEl.innerText = isdFinal.toFixed(2); isdScoreEl.style.color = isdColor; }
+  const finalIsdEl = document.getElementById('final-isd-val');
+  if (finalIsdEl) finalIsdEl.innerText = isdFinal.toFixed(2);
+  document.getElementById('omega-isd-msg').style.display = isdOmega ? 'block' : 'none';
   document.getElementById('isd-status-label').innerHTML = isdStatus;
 
-  document.getElementById('mind-score').innerText = mindFinal.toFixed(2);
-  document.getElementById('final-mind-val').innerText = mindFinal.toFixed(2);
+  // --- MIND panel ---
   const mindColor = mindFinal < 1.5 ? '#f85149' : (mindFinal < 2.5 ? '#d29922' : '#3fb950');
-  document.getElementById('mind-score').style.color = mindColor;
-  document.getElementById('omega-mind-msg').style.display = mindOmega ? 'block' : 'none';
   const mindStatus = mindFinal < 1.5 ? 'Captura Cognitiva' : (mindFinal < 2.5 ? 'Riesgo Cognitivo Moderado' : 'Soberanía Cognitiva');
+  const mindScoreEl = document.getElementById('mind-score');
+  if (mindScoreEl) { mindScoreEl.innerText = mindFinal.toFixed(2); mindScoreEl.style.color = mindColor; }
+  const finalMindEl = document.getElementById('final-mind-val');
+  if (finalMindEl) finalMindEl.innerText = mindFinal.toFixed(2);
+  document.getElementById('omega-mind-msg').style.display = mindOmega ? 'block' : 'none';
   document.getElementById('mind-status-label').innerHTML = mindStatus;
 
-  document.getElementById('d9-score').innerText = d9Final.toFixed(2);
+  // --- D9 panel ---
   const d9Color = d9Final < 1.5 ? '#f85149' : (d9Final < 2.5 ? '#d29922' : '#3fb950');
-  document.getElementById('d9-score').style.color = d9Color;
-  document.getElementById('omega-d9-msg').style.display = d9Omega ? 'block' : 'none';
   const d9Status = d9Final < 1.5 ? 'Captura Conductual' : (d9Final < 2.5 ? 'Riesgo Moderado' : 'Libertad Digital');
+  const d9ScoreEl = document.getElementById('d9-score');
+  if (d9ScoreEl) { d9ScoreEl.innerText = d9Final.toFixed(2); d9ScoreEl.style.color = d9Color; }
+  document.getElementById('omega-d9-msg').style.display = d9Omega ? 'block' : 'none';
   document.getElementById('d9-status-label').innerHTML = d9Status;
 
+  // --- Disyuntor veto ---
   const vetoDiv = document.getElementById('veto-isd-msg');
   if (isdValues['terminacion'] == 1 || isdValues['portabilidad'] == 1) {
     vetoDiv.style.display = 'block';
-    vetoDiv.innerHTML = '⚠️ <strong>Disyuntor de Emergencia activado</strong>: la terminación unilateral o la falta de portabilidad crítica anulan parte de la soberanía. El ISD final ya ha sido penalizado un 20% automáticamente.';
-  } else {
-    vetoDiv.style.display = 'none';
-  }
+    vetoDiv.innerHTML = '⚠️ <strong>Disyuntor de Emergencia activado</strong>: la terminación unilateral o la falta de portabilidad crítica anulan parte de la soberanía. El ISD final ya ha sido penalizado un 20%.';
+  } else { vetoDiv.style.display = 'none'; }
 
+  // --- Alternativas ---
   const altDiv = document.getElementById('alternativas-isd');
   if (isdFinal < 1.8) {
     altDiv.style.display = 'block';
-    altDiv.innerHTML = '<strong>💡 Alternativas con mayor soberanía:</strong><br> → Mastodon / Pixelfed (para redes sociales)<br> → Signal / Matrix (mensajería)<br> → Bandcamp / Funkwhale (música)<br> → Explora <a href="https://alternativeto.net" target="_blank" style="color:var(--accent)">AlternativeTo.net</a>';
-  } else {
-    altDiv.style.display = 'none';
-  }
+    altDiv.innerHTML = '<strong>💡 Alternativas con mayor soberanía:</strong><br> → Mastodon / Pixelfed (redes sociales)<br> → Signal / Matrix (mensajería)<br> → Bandcamp / Funkwhale (música)<br> → <a href="https://alternativeto.net" target="_blank" style="color:var(--accent)">AlternativeTo.net</a>';
+  } else { altDiv.style.display = 'none'; }
 
-  const veredicto = `<strong>Veredicto técnico:</strong> La entidad evaluada muestra un Índice de Soberanía Digital de <strong>${isdFinal.toFixed(2)}/3.0</strong> (${isdStatus}) y un Índice de Soberanía Cognitiva de <strong>${mindFinal.toFixed(2)}/3.0</strong> (${mindStatus}). ${isdOmega ? '⚠️ Disyuntor Omega activado por estructura concentrada. ' : ''}${mindOmega ? '⚠️ Disyuntor Cognitivo activado por diseño persuasivo crítico. ' : ''}${d9Omega ? '⚠️ Omega D9 activado por daño interno documentado.' : ''}`;
-  document.getElementById('veredicto-final').innerHTML = veredicto;
+  // --- veredicto-final legacy (oculto) ---
+  const vtxt = `${document.getElementById('systemName').value.trim() || 'Sistema'}: ISD ${isdFinal.toFixed(2)} (${isdStatus}), MIND ${mindFinal.toFixed(2)} (${mindStatus}), D9 ${d9Final.toFixed(2)} (${d9Status}).`;
+  const vfEl = document.getElementById('veredicto-final');
+  if (vfEl) vfEl.textContent = vtxt;
 
+  // --- Radares ---
   const isdRadarData = ISD_DIMS.map(d => isdValues[d.id] !== undefined ? parseFloat(isdValues[d.id]) : 0);
   chartISD.data.datasets[0].data = isdRadarData;
   chartISD.update();
   const mindRadarData = MIND_DIMS.filter(d => !d.isDisruptor).map(d => mindValues[d.id] !== undefined ? parseFloat(mindValues[d.id]) : 0);
   chartMIND.data.datasets[0].data = mindRadarData;
   chartMIND.update();
+
+  // --- Progreso global (ISD 8 + MIND 9 + D9 5 = 22) ---
+  const totalPreguntas = ISD_DIMS.length + MIND_DIMS.filter(d => !d.isDisruptor).length + D9_INDICADORES.length;
+  const respondidas = ISD_DIMS.filter(d => isdValues[d.id] !== undefined).length
+    + MIND_DIMS.filter(d => !d.isDisruptor && mindValues[d.id] !== undefined).length
+    + D9_INDICADORES.filter(d => d9Values[d.id] !== undefined).length;
+  const pct = (respondidas / totalPreguntas * 100).toFixed(1);
+  const pgCount = document.getElementById('pg-count');
+  const pgBarra = document.getElementById('pg-barra');
+  const pgBarWrap = document.getElementById('pg-bar-wrap');
+  const completo = respondidas === totalPreguntas;
+  if (pgCount) { pgCount.textContent = `${respondidas} / ${totalPreguntas} preguntas respondidas${completo ? ' ✓' : ''}`; pgCount.className = 'pg-count' + (completo ? ' completo' : ''); }
+  if (pgBarra) { pgBarra.style.width = pct + '%'; pgBarra.className = 'pg-barra' + (completo ? ' completo' : ''); }
+  if (pgBarWrap) pgBarWrap.setAttribute('aria-valuenow', respondidas);
+
+  // --- Veredicto Ejecutivo + Semáforo flotante ---
+  updateVeredictoEjecutivo(isdFinal, mindFinal, d9Final, isdOmega, mindOmega, d9Omega, isdStatus, mindStatus, d9Status);
+}
+
+// ==================== VEREDICTO EJECUTIVO v3.6 ====================
+function updateVeredictoEjecutivo(isd, mind, d9, isdOm, mindOm, d9Om, isdSt, mindSt, d9St) {
+  const sistema = document.getElementById('systemName').value.trim() || '—';
+
+  // Nombre sistema en cabecera
+  const veNombre = document.getElementById('ve-sistema-nombre');
+  if (veNombre) veNombre.textContent = sistema === '—' ? 'Sin nombre' : sistema;
+
+  // Score global: ISD 40% + MIND 35% + D9 25% (si hay datos D9)
+  const d9HasData = Object.keys(d9Values).length > 0;
+  let global = d9HasData
+    ? isd * 0.40 + mind * 0.35 + d9 * 0.25
+    : isd * 0.53 + mind * 0.47;
+  global = Math.min(3, Math.max(1, global));
+
+  const color = global >= 2.5 ? 'green' : global >= 1.5 ? 'yellow' : 'red';
+  const emoji = global >= 2.5 ? '🟢' : global >= 1.5 ? '🟡' : '🔴';
+  const statusLabel = global >= 2.5 ? 'LIBERTAD DIGITAL' : global >= 1.5 ? 'RIESGO MODERADO' : 'CAPTURA CRÍTICA';
+  const scoreColor = color === 'green' ? 'var(--green)' : color === 'yellow' ? 'var(--yellow)' : 'var(--red)';
+
+  // --- Semáforo inline grande ---
+  const semEl = document.getElementById('ve-semaforo');
+  if (semEl) semEl.className = 've-semaforo ' + color;
+  _set('ve-emoji', emoji, 'textContent');
+  _set('ve-status-text', statusLabel, 'textContent');
+  _setStyled('ve-score-global', global.toFixed(2) + '/3.0', scoreColor);
+
+  // --- Semáforo flotante fijo ---
+  const sfPanel = document.getElementById('sf-panel');
+  if (sfPanel) sfPanel.className = 'semaforo-flotante ' + color;
+  _set('sf-emoji', emoji, 'textContent');
+  _setStyled('sf-score', global.toFixed(2), scoreColor);
+  _set('sf-status', statusLabel, 'textContent');
+
+  // --- Tarjetas índice ---
+  function setCard(idCard, idScore, idBar, idBarWrap, idStatus, idOmega, score, status, omega, barColor) {
+    const c = score >= 2.5 ? 'green' : score >= 1.5 ? 'yellow' : 'red';
+    const sc = score >= 2.5 ? 'var(--green)' : score >= 1.5 ? 'var(--yellow)' : 'var(--red)';
+    const card = document.getElementById(idCard);
+    if (card) card.className = 've-index-card ' + c;
+    _setStyled(idScore, score.toFixed(2), sc);
+    const bar = document.getElementById(idBar);
+    const pct = ((score - 1) / 2 * 100).toFixed(1);
+    if (bar) bar.style.width = pct + '%';
+    const bw = document.getElementById(idBarWrap);
+    if (bw) bw.setAttribute('aria-valuenow', pct);
+    _set(idStatus, status, 'textContent');
+    const om = document.getElementById(idOmega);
+    if (om) om.style.display = omega ? 'block' : 'none';
+  }
+  setCard('ve-isd-card','ve-isd-score','ve-isd-bar','ve-isd-bar-wrap','ve-isd-status','ve-isd-omega', isd, isdSt, isdOm, 'var(--accent)');
+  setCard('ve-mind-card','ve-mind-score','ve-mind-bar','ve-mind-bar-wrap','ve-mind-status','ve-mind-omega', mind, mindSt, mindOm, 'var(--mind)');
+  setCard('ve-d9-card','ve-d9-score','ve-d9-bar','ve-d9-bar-wrap','ve-d9-status','ve-d9-omega',
+    d9HasData ? d9 : 1, d9HasData ? d9St : 'Sin datos D9', d9Om, '#c9a0ff');
+
+  // --- Recomendación técnica ---
+  const recEl = document.getElementById('ve-recomendacion');
+  if (recEl) recEl.className = 've-recomendacion ' + color;
+  let rec = '';
+  if (global >= 2.5) {
+    rec = `✅ <strong>${sistema}</strong> muestra soberanía sólida. ISD ${isd.toFixed(2)} y MIND ${mind.toFixed(2)} en zona verde.`;
+    if (!d9HasData) rec += ' Completa D9 para el perfil completo.';
+    else rec += ` D9 ${d9.toFixed(2)}: ${d9St.toLowerCase()}.`;
+    rec += ' Monitoriza cambios en los Términos de Servicio periódicamente.';
+  } else if (global >= 1.5) {
+    rec = `⚠️ <strong>${sistema}</strong> presenta riesgos identificables. `;
+    if (isd < 2.5) rec += `ISD ${isd.toFixed(2)}: revisa cláusulas de terminación y portabilidad de datos. `;
+    if (mind < 2.5) rec += `MIND ${mind.toFixed(2)}: valora el impacto cognitivo y el diseño persuasivo. `;
+    if (d9HasData && d9 < 2.5) rec += `D9 ${d9.toFixed(2)}: atención al historial de daño documentado. `;
+    rec += 'Busca alternativas para las dimensiones críticas.';
+  } else {
+    rec = `🔴 <strong>${sistema}</strong> muestra captura crítica. `;
+    if (isd < 1.5) rec += `ISD ${isd.toFixed(2)}: dependencia estructural severa — evalúa migración. `;
+    if (mind < 1.5) rec += `MIND ${mind.toFixed(2)}: diseño altamente persuasivo — limita el uso. `;
+    if (d9HasData && d9 < 1.5) rec += `D9 ${d9.toFixed(2)}: daño documentado — prioriza la salida. `;
+    if (isdOm || mindOm || d9Om) rec += '⚡ Disyuntor Omega activo: alerta máxima.';
+  }
+  const recBody = document.getElementById('ve-rec-body');
+  if (recBody) recBody.innerHTML = rec;
+
+  // --- TTS: actualizar texto para cuando se pulse el botón ---
+  window._ttsText = buildTTSText(sistema, global, statusLabel, isd, isdSt, mind, mindSt, d9, d9St, d9HasData, isdOm, mindOm, d9Om);
+}
+
+// Helpers
+function _set(id, val, prop) {
+  const el = document.getElementById(id);
+  if (el) el[prop] = val;
+}
+function _setStyled(id, val, color) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = val; el.style.color = color; }
+}
+
+// ==================== TTS BILINGÜE ====================
+function buildTTSText(sistema, global, statusLabel, isd, isdSt, mind, mindSt, d9, d9St, d9HasData, isdOm, mindOm, d9Om) {
+  // Construye texto limpio para lectura en voz alta, mezcla es/en según contexto
+  const sis = sistema === '—' ? 'el sistema analizado' : sistema;
+  let t = `Veredicto ControlCheck para ${sis}. `;
+  t += `Puntuación global: ${global.toFixed(2)} sobre 3. Estado: ${statusLabel}. `;
+  t += `Índice de Soberanía Digital: ${isd.toFixed(2)}, ${isdSt}. `;
+  t += `Soberanía Cognitiva: ${mind.toFixed(2)}, ${mindSt}. `;
+  if (d9HasData) t += `Daño Psicológico D9: ${d9.toFixed(2)}, ${d9St}. `;
+  else t += `Módulo D9 no completado. `;
+  if (isdOm) t += `Alerta: Disyuntor Omega ISD activado por estructura concentrada. `;
+  if (mindOm) t += `Alerta: Disyuntor Cognitivo activado por diseño persuasivo crítico. `;
+  if (d9Om) t += `Alerta: Omega D9 activado por daño documentado. `;
+  return t;
+}
+
+let _ttsSpeaking = false;
+function toggleTTS() {
+  if (!('speechSynthesis' in window)) {
+    alert('Tu navegador no soporta síntesis de voz. Prueba Chrome o Edge.');
+    return;
+  }
+  const btn = document.getElementById('sf-tts-btn');
+  if (_ttsSpeaking) {
+    window.speechSynthesis.cancel();
+    _ttsSpeaking = false;
+    if (btn) { btn.textContent = '🔊 Leer resultado'; btn.classList.remove('speaking'); btn.setAttribute('aria-label','Leer veredicto en voz alta'); }
+    return;
+  }
+  const text = window._ttsText || 'No hay datos suficientes para leer el veredicto. Completa al menos el módulo ISD.';
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'es-ES';
+  utt.rate = 0.95;
+  utt.pitch = 1.0;
+
+  // Detectar fragmentos en inglés (términos técnicos) y ajustar lang dinámicamente no es posible
+  // directamente en SpeechSynthesis, pero el motor español de los navegadores modernos
+  // lee los términos en inglés de forma aceptable con lang es-ES.
+
+  utt.onstart = () => {
+    _ttsSpeaking = true;
+    if (btn) { btn.textContent = '⏹ Detener'; btn.classList.add('speaking'); btn.setAttribute('aria-label','Detener lectura en voz alta'); }
+  };
+  utt.onend = () => {
+    _ttsSpeaking = false;
+    if (btn) { btn.textContent = '🔊 Leer resultado'; btn.classList.remove('speaking'); btn.setAttribute('aria-label','Leer veredicto en voz alta'); }
+  };
+  utt.onerror = () => {
+    _ttsSpeaking = false;
+    if (btn) { btn.textContent = '🔊 Leer resultado'; btn.classList.remove('speaking'); }
+  };
+  window.speechSynthesis.speak(utt);
 }
 
 // Eventos de cambio
@@ -960,7 +1604,7 @@ function updateSearchLinks() {
 // Exportación
 function exportarJSON() {
   const data = {
-    version: 'ControlCheck v3.5',
+    version: 'ControlCheck v3.6',
     fecha: new Date().toISOString(),
     sistema: document.getElementById('systemName').value.trim() || 'No especificado',
     isd_estructural: { puntuacion: isdScore, omega: isdOmega, dimensiones: isdValues },
@@ -977,7 +1621,22 @@ function exportarJSON() {
 }
 function exportarMD() {
   const sistema = document.getElementById('systemName').value.trim() || 'No especificado';
-  let md = `# Informe ControlCheck v3.5\n\n**Sistema auditado:** ${sistema}\n**Fecha:** ${new Date().toISOString()}\n\n## ISD Estructural\n**Puntuación:** ${isdScore.toFixed(2)}/3.0\n**Omega activado:** ${isdOmega}\n\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
+  const d9HasData = Object.keys(d9Values).length > 0;
+  const global = d9HasData
+    ? (isdScore * 0.40 + mindScore * 0.35 + d9Score * 0.25)
+    : (isdScore * 0.53 + mindScore * 0.47);
+  const globalFinal = Math.min(3, Math.max(1, global));
+  const statusGlobal = globalFinal >= 2.5 ? 'LIBERTAD DIGITAL' : globalFinal >= 1.5 ? 'RIESGO MODERADO' : 'CAPTURA CRÍTICA';
+  const recBody = document.getElementById('ve-rec-body');
+  const recTexto = recBody ? recBody.innerText : '—';
+
+  let md = `# Informe ControlCheck v3.6\n\n`;
+  md += `**Sistema auditado:** ${sistema}\n`;
+  md += `**Fecha:** ${new Date().toISOString()}\n`;
+  md += `**Score Global:** ${globalFinal.toFixed(2)}/3.0 — ${statusGlobal}\n\n`;
+  md += `## Recomendación técnica\n${recTexto}\n\n`;
+  md += `---\n\n`;
+  md += `## ISD Estructural\n**Puntuación:** ${isdScore.toFixed(2)}/3.0\n**Omega activado:** ${isdOmega}\n\n| Dimensión | Puntuación |\n|-----------|------------|\n`;
   for (let d of ISD_DIMS) {
     md += `| ${d.label} | ${isdValues[d.id] !== undefined ? isdValues[d.id] : '—'} |\n`;
   }
@@ -989,19 +1648,18 @@ function exportarMD() {
   for (let d of D9_INDICADORES) {
     md += `| ${d.nombre} | ${d9Values[d.id] !== undefined ? d9Values[d.id] : '—'} |\n`;
   }
-  md += `\n---\n*Análisis basado en fuentes públicas. Licencia CC BY-SA 4.0.*`;
+  md += `\n---\n*Análisis basado en fuentes públicas. Licencia CC BY-SA 4.0. Autor: Jose Ranero García · ORCID: 0009-0009-3168-6379*`;
   const blob = new Blob([md], { type: 'text/markdown' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `controlcheck_${new Date().toISOString().slice(0,10)}.md`;
+  a.download = `controlcheck_${sistema.replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.md`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-// Ejemplos (FUNCIONAL)
+// Ejemplos — carga ISD completo + nota de datos parciales
 function cargarEjemplo(ej) {
-  // Reiniciar solo respuestas de ISD (mantener nombre)
   isdValues = {};
   mindValues = {};
   d9Values = {};
@@ -1011,11 +1669,10 @@ function cargarEjemplo(ej) {
   renderISD();
   renderMIND();
   renderD9();
-  // Establecer nombre en el campo
   const systemInput = document.getElementById('systemName');
   systemInput.value = ej.nombre;
   updateSearchLinks();
-  // Cargar valores del ejemplo en isdValues y selects
+  // Cargar ISD
   for (let d of ISD_DIMS) {
     const val = ej.pts[d.id];
     if (val !== undefined) {
@@ -1024,10 +1681,23 @@ function cargarEjemplo(ej) {
       if (sel) sel.value = val;
     }
   }
+  // Cargar MIND si el ejemplo tiene datos de MIND
+  if (ej.mind) {
+    for (let d of MIND_DIMS) {
+      const val = ej.mind[d.id];
+      if (val !== undefined) {
+        mindValues[d.id] = val;
+        const sel = document.getElementById(`mind-${d.id}`);
+        if (sel) sel.value = val;
+      }
+    }
+  }
   updateISDProgress();
+  updateMINDProgress();
   updateAll();
   const fb = document.getElementById('feedbackMsg');
-  if (fb) { fb.textContent = `✓ Ejemplo "${ej.nombre}" cargado`; setTimeout(() => fb.textContent = '', 2000); }
+  const soloISD = !ej.mind ? ' (solo ISD — completa MIND y D9 para el score global)' : '';
+  if (fb) { fb.textContent = `✓ Ejemplo "${ej.nombre}" cargado${soloISD}`; setTimeout(() => fb.textContent = '', 4000); }
 }
 
 function renderEjemplos() {
