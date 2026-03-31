@@ -107,9 +107,82 @@
 .semaforo-flotante:focus-within .sf-score,
 .semaforo-flotante.open .sf-score { font-size: 1.3rem; }
 
+/* ===== SEMÁFORO FLOTANTE — COLAPSADO POR DEFECTO ===== */
+.semaforo-flotante {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 48px;               /* píldora más grande */
+  padding: 10px 18px 10px 14px;      /* mayor área táctil */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  max-width: 80px;                   /* espacio para emoji + score */
+  touch-action: manipulation;        /* mejora respuesta táctil */
+}
+/* Expandido al hover / focus / clase .open */
+.semaforo-flotante:hover,
+.semaforo-flotante:focus-within,
+.semaforo-flotante.open {
+  border-radius: 20px;
+  padding: 12px 20px;
+  max-width: 280px;
+  flex-direction: column;
+  gap: 8px;
+}
+.semaforo-flotante.green { border-color: var(--green); }
+.semaforo-flotante.yellow { border-color: var(--yellow); }
+.semaforo-flotante.red { border-color: var(--red); }
+.semaforo-flotante.green:hover,
+.semaforo-flotante.green:focus-within,
+.semaforo-flotante.green.open { box-shadow: 0 4px 20px rgba(63,185,80,0.2); }
+.semaforo-flotante.yellow:hover,
+.semaforo-flotante.yellow:focus-within,
+.semaforo-flotante.yellow.open { box-shadow: 0 4px 20px rgba(210,153,34,0.2); }
+.semaforo-flotante.red:hover,
+.semaforo-flotante.red:focus-within,
+.semaforo-flotante.red.open { box-shadow: 0 4px 20px rgba(248,81,73,0.2); }
+
+.sf-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--texto2);
+  display: none;
+  white-space: nowrap;
+}
+.semaforo-flotante:hover .sf-label,
+.semaforo-flotante:focus-within .sf-label,
+.semaforo-flotante.open .sf-label { display: block; }
+
+.sf-emoji {
+  font-size: 1.5rem;        /* un poco más grande */
+  line-height: 1;
+  flex-shrink: 0;
+}
+.sf-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.9rem;        /* más visible */
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* En expandido, score se hace más grande */
+.semaforo-flotante:hover .sf-score,
+.semaforo-flotante:focus-within .sf-score,
+.semaforo-flotante.open .sf-score { font-size: 1.4rem; }
+
 .sf-status {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   letter-spacing: 1px;
   text-transform: uppercase;
   text-align: center;
@@ -128,15 +201,16 @@
   border: 1px solid var(--borde2);
   color: var(--texto2);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  padding: 5px 8px;
-  border-radius: 6px;
+  font-size: 0.75rem;
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-top: 4px;
+  margin-top: 8px;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 .semaforo-flotante:hover .sf-tts-btn,
 .semaforo-flotante:focus-within .sf-tts-btn,
@@ -156,8 +230,11 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+
+/* Ya no movemos el semáforo abajo en móviles — siempre arriba */
 @media (max-width: 600px) {
-  .semaforo-flotante { top: auto; bottom: 20px; right: 16px; }
+  /* se comenta la regla que lo movía a bottom */
+  /* .semaforo-flotante { top: auto; bottom: 20px; right: 16px; } */
 }
 
 /* ===== VEREDICTO EJECUTIVO ===== */
